@@ -14,6 +14,8 @@ private:
 
 	void ProcessEvents();
 	void Update(float deltaTime);
+	void MoveRectangle(float deltaTime);
+	void ClampRectangleToWindow();
 	void Render();
 
 	// Прямоугольник в координатах окна.
