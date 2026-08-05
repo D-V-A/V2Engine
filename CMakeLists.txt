@@ -19,7 +19,8 @@ FetchContent_MakeAvailable(SDL3)
 add_executable(V2Engine
 	src/main.cpp
 	src/application.cpp 
-	src/renderer.cpp)
+	src/renderer.cpp 
+	src/player.cpp)
 
 target_include_directories(V2Engine PRIVATE
 	headers

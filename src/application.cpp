@@ -1,7 +1,6 @@
 #include "application.h"
 
 #include <iostream>
-#include <algorithm>
 
 Application::~Application()
 {
@@ -98,59 +97,15 @@ void Application::ProcessEvents()
 
 void Application::Update(float deltaTime)
 {
-	MoveRectangle(deltaTime);
-
-	ClampRectangleToWindow();
-}
-
-void Application::MoveRectangle(float deltaTime)
-{
-	constexpr float speed = 200.0f; // пикселей в секунду
-
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
-
-	if (keyboardState[SDL_SCANCODE_W])
-	{
-		rectangle.y -= speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_S])
-	{
-		rectangle.y += speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_A])
-	{
-		rectangle.x -= speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_D])
-	{
-		rectangle.x += speed * deltaTime;
-	}
-}
-
-void Application::ClampRectangleToWindow()
-{
-	int windowWidth;
-	int windowHeight;
-
-	SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-
-	rectangle.x = std::clamp(
-		rectangle.x,
-		0.0f,
-		windowWidth - rectangle.w);
-	rectangle.y = std::clamp(
-		rectangle.y,
-		0.0f,
-		windowHeight - rectangle.h);
+	player.MovePlayer(deltaTime, keyboardState);
 }
 
 void Application::Render()
 {
 	ProcessEvents();
+	player.CheckScreenBorders(window);
 	renderer.Clear();
-	renderer.FillRect(rectangle);
+	player.Render(renderer);
 	renderer.Present();
 }
