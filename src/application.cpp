@@ -57,13 +57,18 @@ int Application::Run()
 	isRunning = true;
 
 	constexpr Uint64 targetFrameTime = 1000 / 60;
+	Uint64 previousTime = SDL_GetTicks();
 
 	while (isRunning)
 	{
 		const Uint64 frameStart = SDL_GetTicks();
+		const float deltaTime =
+			static_cast<float>(frameStart - previousTime) / 1000.0f;
+
+		previousTime = frameStart;
 
 		ProcessEvents();
-		//Update();
+		Update(deltaTime);
 		Render();		
 
 		const Uint64 frameTime = SDL_GetTicks() - frameStart;
@@ -90,15 +95,20 @@ void Application::ProcessEvents()
 	}
 }
 
+void Application::Update(float deltaTime)
+{
+	constexpr float speed = 200.0f; // пикселей в секунду
+
+	rectangle.x += speed * deltaTime;
+
+	if (rectangle.x > 1280.0f)
+	{
+		rectangle.x = -rectangle.w;
+	}
+}
+
 void Application::Render()
 {
-	// Прямоугольник в координатах окна.
-	SDL_FRect rectangle{
-		440.0f,
-		260.0f,
-		400.0f,
-		200.0f
-	};
 	ProcessEvents();
 	renderer.Clear();
 	renderer.FillRect(rectangle);
