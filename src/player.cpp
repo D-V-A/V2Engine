@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <stdlib.h>
 
-#include "SDL3/SDL.h"
 #include "player.h"
 #include "renderer.h"
 
@@ -9,8 +8,8 @@ void Player::MovePlayer(float deltaTime, Vector2i direction)
 {
 	const float speed = (direction.x != 0 && direction.y != 0) ? 141.42136f : 200.0f; // пикселей в секунду
 	
-	rectangle.x += speed * direction.x * deltaTime;
-	rectangle.y -= speed * direction.y * deltaTime;
+	rectangle.position.x += speed * direction.x * deltaTime;
+	rectangle.position.y -= speed * direction.y * deltaTime;
 }
 
 void Player::Render(Renderer& renderer) const
@@ -20,12 +19,12 @@ void Player::Render(Renderer& renderer) const
 
 void Player::CheckScreenBorders(int width, int height)
 {
-	rectangle.x = std::clamp(
-		rectangle.x,
+	rectangle.position.x = std::clamp(
+		rectangle.position.x,
 		0.0f,
-		width - rectangle.w);
-	rectangle.y = std::clamp(
-		rectangle.y,
+		width - rectangle.size.x);
+	rectangle.position.y = std::clamp(
+		rectangle.position.y,
 		0.0f,
-		height - rectangle.h);
+		height - rectangle.size.y);
 }

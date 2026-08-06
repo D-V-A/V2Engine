@@ -1,12 +1,5 @@
 #include <SDL3/SDL.h>
-
-struct Color
-{
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-	uint8_t a = 255;
-};
+#include "rect.h"
 
 class Renderer
 {
@@ -18,7 +11,7 @@ public:
 	bool Initialize(SDL_Window* window);
 
 	void Clear();
-	void FillRect(const SDL_FRect& rect);
+	void FillRect(const Rect& rect);
 	void Present();
 
 private:

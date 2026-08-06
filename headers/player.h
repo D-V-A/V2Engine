@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SDL3/SDL_rect.h>
-
 #include "vector2i.h"
+#include "rect.h"
 
 class Renderer;
 class SDL_Window;
@@ -15,11 +14,9 @@ public:
 	void CheckScreenBorders(int width, int height);
 
 private:
-	SDL_FRect rectangle{
-		590.0f,
-		310.0f,
-		100.0f,
-		100.0f
+	Rect rectangle{
+		{440.0f, 260.0f},
+		{100.0f, 100.0f}
 	};
 
 	float speed = 200.0f;

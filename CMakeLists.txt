@@ -21,7 +21,7 @@ add_executable(V2Engine
 	src/application.cpp 
 	src/renderer.cpp 
 	src/player.cpp 
-	src/input.cpp)
+	src/input.cpp "headers/types/vector2f.h" "headers/types/rect.h")
 
 target_include_directories(V2Engine PRIVATE
 	headers
