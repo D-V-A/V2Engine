@@ -105,7 +105,12 @@ void Application::Update(float deltaTime)
 void Application::Render()
 {
 	ProcessEvents();
-	player.CheckScreenBorders(window);
+
+	int windowWidth = 0;
+	int windowHeight = 0;
+	SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+	player.CheckScreenBorders(windowWidth, windowHeight);
+
 	renderer.Clear();
 	player.Render(renderer);
 	renderer.Present();

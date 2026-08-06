@@ -10,9 +10,9 @@ class SDL_Window;
 class Player
 {
 public:
-	void MovePlayer(float deltaTime, const Vector2i direction);
+	void MovePlayer(float deltaTime, Vector2i direction);
 	void Render(Renderer& renderer) const;
-	void CheckScreenBorders(SDL_Window* window);
+	void CheckScreenBorders(int width, int height);
 
 private:
 	SDL_FRect rectangle{
