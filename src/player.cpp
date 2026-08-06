@@ -5,12 +5,12 @@
 #include "player.h"
 #include "renderer.h"
 
-void Player::MovePlayer(float deltaTime, std::pair<int, int> direction)
+void Player::MovePlayer(float deltaTime, const Vector2i direction)
 {
-	const float speed = (abs(direction.first) != abs(direction.second)) ? 200.0f : 100.0f; // пикселей в секунду
+	const float speed = (direction.x != 0 && direction.y != 0) ? 141.42136f : 200.0f; // пикселей в секунду
 	
-	rectangle.x += speed * direction.first * deltaTime;;
-	rectangle.y -= speed * direction.second * deltaTime;;
+	rectangle.x += speed * direction.x * deltaTime;;
+	rectangle.y -= speed * direction.y * deltaTime;;
 }
 
 void Player::Render(Renderer& renderer) const

@@ -1,15 +1,16 @@
 #pragma once
 
 #include <utility>
+#include "vector2i.h"
 
 class Input
 {
 public:
 	void Update();
 
-	std::pair<int, int> GetDirection() { return movementDirection; };
+	Vector2i GetDirection() const;
 
 private:
-	std::pair<int, int> movementDirection{ 0,0 };
+	Vector2i movementDirection{ 0,0 };
 	const bool* keyboardState = nullptr;
 };

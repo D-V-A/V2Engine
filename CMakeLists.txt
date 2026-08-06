@@ -25,6 +25,7 @@ add_executable(V2Engine
 
 target_include_directories(V2Engine PRIVATE
 	headers
+	headers/types
 )
 
 add_custom_command(TARGET V2Engine POST_BUILD
