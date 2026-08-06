@@ -1,32 +1,16 @@
 #include <algorithm>
+#include <stdlib.h>
 
 #include "SDL3/SDL.h"
 #include "player.h"
 #include "renderer.h"
 
-void Player::MovePlayer(float deltaTime, const bool* keyboardState)
+void Player::MovePlayer(float deltaTime, std::pair<int, int> direction)
 {
-	constexpr float speed = 200.0f; // пикселей в секунду
-
-	if (keyboardState[SDL_SCANCODE_W])
-	{
-		rectangle.y -= speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_S])
-	{
-		rectangle.y += speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_A])
-	{
-		rectangle.x -= speed * deltaTime;
-	}
-
-	if (keyboardState[SDL_SCANCODE_D])
-	{
-		rectangle.x += speed * deltaTime;
-	}
+	const float speed = (abs(direction.first) != abs(direction.second)) ? 200.0f : 100.0f; // пикселей в секунду
+	
+	rectangle.x += speed * direction.first * deltaTime;;
+	rectangle.y -= speed * direction.second * deltaTime;;
 }
 
 void Player::Render(Renderer& renderer) const

@@ -20,7 +20,8 @@ add_executable(V2Engine
 	src/main.cpp
 	src/application.cpp 
 	src/renderer.cpp 
-	src/player.cpp)
+	src/player.cpp 
+	src/input.cpp)
 
 target_include_directories(V2Engine PRIVATE
 	headers

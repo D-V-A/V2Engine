@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL_rect.h>
+#include <utility>
 
 class Renderer;
 class SDL_Window;
@@ -8,7 +9,7 @@ class SDL_Window;
 class Player
 {
 public:
-	void MovePlayer(float deltaTime, const bool* keyboardState);
+	void MovePlayer(float deltaTime, std::pair<int,int> direction);
 	void Render(Renderer& renderer) const;
 	void CheckScreenBorders(SDL_Window* window);
 

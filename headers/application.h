@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include "renderer.h"
 #include "player.h"
+#include "input.h"
 
 class Application
 {
@@ -20,6 +21,7 @@ private:
 	SDL_Window* window = nullptr;
 	Renderer renderer;
 	Player player;
+	Input input;
 
 	bool isRunning = false;
 };

@@ -98,7 +98,8 @@ void Application::ProcessEvents()
 void Application::Update(float deltaTime)
 {
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
-	player.MovePlayer(deltaTime, keyboardState);
+	input.Update();
+	player.MovePlayer(deltaTime, input.GetDirection());
 }
 
 void Application::Render()
