@@ -45,6 +45,13 @@ bool Application::Initialize()
 		return false;
 	}
 
+	if (!player.Initialize(renderer))
+	{
+		std::cerr << "Failed to init player model: "
+			<< SDL_GetError() << '\n';
+		return false;
+	}
+
 	return true;
 }
 

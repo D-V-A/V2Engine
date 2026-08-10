@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "texture.h"
 
 bool Renderer::Initialize(SDL_Window* window)
 {
@@ -36,8 +37,29 @@ void Renderer::FillRect(const Rect& rect)
 	SDL_RenderFillRect(sdlRenderer, &sdlRectangle);
 }
 
+void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
+{
+	const SDL_FRect dst{
+		destination.position.x,
+		destination.position.y,
+		destination.size.x,
+		destination.size.y
+	};
+
+	SDL_RenderTexture(
+		sdlRenderer,
+		texture.GetNativeTexture(),
+		nullptr,
+		&dst);
+}
+
 void Renderer::Present()
 {
 	// Показываем готовый кадр на экране.
 	SDL_RenderPresent(sdlRenderer);
+}
+
+SDL_Renderer* Renderer::GetNativeRenderer() const
+{
+	return sdlRenderer;
 }

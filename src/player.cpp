@@ -14,7 +14,7 @@ void Player::MovePlayer(float deltaTime, Vector2i direction)
 
 void Player::Render(Renderer& renderer) const
 {
-	renderer.FillRect(rectangle);
+	renderer.DrawTexture(texture, rectangle);
 }
 
 void Player::CheckScreenBorders(int width, int height)
@@ -27,4 +27,11 @@ void Player::CheckScreenBorders(int width, int height)
 		rectangle.position.y,
 		0.0f,
 		height - rectangle.size.y);
+}
+
+bool Player::Initialize(Renderer& renderer)
+{
+	return texture.Load(
+		renderer,
+		"assets/txt/player.bmp");
 }

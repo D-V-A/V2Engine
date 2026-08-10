@@ -21,7 +21,8 @@ add_executable(V2Engine
 	src/application.cpp 
 	src/renderer.cpp 
 	src/player.cpp 
-	src/input.cpp "headers/types/vector2f.h" "headers/types/rect.h")
+	src/input.cpp 
+	src/texture.cpp)
 
 target_include_directories(V2Engine PRIVATE
 	headers
@@ -32,6 +33,12 @@ add_custom_command(TARGET V2Engine POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:SDL3::SDL3>
 		$<TARGET_FILE_DIR:V2Engine>
+)
+
+add_custom_command(TARGET V2Engine POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/assets
+		$<TARGET_FILE_DIR:V2Engine>/assets
 )
 
 target_link_libraries(V2Engine PRIVATE SDL3::SDL3)
