@@ -16,7 +16,7 @@ public:
 	void FillRect(const Rect& rect);
 	void Present();
 
-	SDL_Renderer* GetNativeRenderer() const;
+	SDL_Renderer* GetNativeRenderer() const{ return sdlRenderer; }
 
 	void DrawTexture(const Texture& texture, const Rect& destination);
 

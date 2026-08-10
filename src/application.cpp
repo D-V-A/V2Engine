@@ -1,4 +1,5 @@
 #include "application.h"
+#include "isometric.h"
 
 #include <iostream>
 
@@ -112,19 +113,18 @@ void Application::Update(float deltaTime)
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 	input.Update();
 	player.MovePlayer(deltaTime, input.GetDirection());
+	player.CheckMapBorders(world.GetSize());
 }
 
 void Application::Render()
 {
 	ProcessEvents();
 
-	int windowWidth = 0;
-	int windowHeight = 0;
-	SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-	player.CheckScreenBorders(windowWidth, windowHeight);
-
 	renderer.Clear();
+
 	world.Render(renderer);
-	player.Render(renderer);
+
+	Vector2f screenPosition = WorldToScreen(player.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
+	player.Render(renderer, screenPosition);
 	renderer.Present();
 }

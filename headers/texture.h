@@ -11,8 +11,8 @@ public:
 
 	bool Load(Renderer& renderer, const char* path);
 
-	int GetWidth() const;
-	int GetHeight() const;
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
 
 	SDL_Texture* GetNativeTexture() const;
 

@@ -35,9 +35,6 @@ bool Texture::Load(Renderer& renderer, const char* path)
 	return true;
 }
 
-int Texture::GetWidth() const { return width; }
-int Texture::GetHeight() const { return height; }
-
 Texture::~Texture()
 {
 	if (sdlTexture != nullptr)

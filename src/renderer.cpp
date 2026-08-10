@@ -58,8 +58,3 @@ void Renderer::Present()
 	// Показываем готовый кадр на экране.
 	SDL_RenderPresent(sdlRenderer);
 }
-
-SDL_Renderer* Renderer::GetNativeRenderer() const
-{
-	return sdlRenderer;
-}

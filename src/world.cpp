@@ -1,28 +1,28 @@
 #include "world.h"
 #include "renderer.h"
+#include "isometric.h"
 
 #include "types/rect.h"
 
 bool World::Initialize(Renderer& renderer)
 {
-	return floorTexture.Load(
-		renderer,
-		"assets/txt/grass_tile.bmp");
-}
+	if (!floorTexture.Load(renderer, "assets/txt/grass_tile.bmp"))
+		return false;
 
-void World::Render(Renderer& renderer) const
-{
-	const float tileWidth =
-		static_cast<float>(floorTexture.GetWidth());
+	tileWidth = static_cast<float>(floorTexture.GetWidth());
 
-	const float tileHeight =
-		static_cast<float>(floorTexture.GetHeight());
+	tileHeight = static_cast<float>(floorTexture.GetHeight());
 
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
-	const float originX = windowWidth / 2;
-	const float originY = (windowHeight - height * tileHeight) / 2;
+	origin.x = windowWidth / 2 + tileWidth / 2;//origin is a middle of 0,0 now
+	origin.y = (windowHeight - height * tileHeight) / 2;
+	return true;
+}
+
+void World::Render(Renderer& renderer) const
+{
 
 	for (int y = 0; y < height; ++y)
 	{
@@ -30,18 +30,11 @@ void World::Render(Renderer& renderer) const
 		{
 			Rect tileRect;
 
-			tileRect.size = {
-				tileWidth,
-				tileHeight
-			};
+			tileRect.size = { tileWidth, tileHeight };
 
-			tileRect.position.x =
-				originX +
-				(x - y) * tileWidth / 2.0f;
+			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, origin);
 
-			tileRect.position.y =
-				originY +
-				(x + y) * tileHeight / 2.0f;
+			tileRect.position = GetTopLeft(tileCenter, tileRect.size, pivot);
 
 			renderer.DrawTexture(
 				floorTexture,

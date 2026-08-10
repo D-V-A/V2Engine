@@ -3,30 +3,39 @@
 
 #include "player.h"
 #include "renderer.h"
+#include "isometric.h"
 
 void Player::MovePlayer(float deltaTime, Vector2i direction)
 {
-	const float speed = (direction.x != 0 && direction.y != 0) ? 141.42136f : 200.0f; // пикселей в секунду
-	
-	rectangle.position.x += speed * direction.x * deltaTime;
-	rectangle.position.y -= speed * direction.y * deltaTime;
+	const float speed =
+		(direction.x != 0 && direction.y != 0)
+		? 1.4142136f
+		: 2.0f;
+
+	position.x += speed * direction.x * deltaTime;
+	position.y -= speed * direction.y * deltaTime;
 }
 
-void Player::Render(Renderer& renderer) const
+void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
 {
-	renderer.DrawTexture(texture, rectangle);
+	Rect renderRect = textureRectangle;
+
+	renderRect.position = GetTopLeft(screenPosition, renderRect.size, pivot);
+
+	renderer.DrawTexture(texture, renderRect);
 }
 
-void Player::CheckScreenBorders(int width, int height)
+void Player::CheckMapBorders(const Vector2f& worldSize)
 {
-	rectangle.position.x = std::clamp(
-		rectangle.position.x,
+	position.x = std::clamp(
+		position.x,
 		0.0f,
-		width - rectangle.size.x);
-	rectangle.position.y = std::clamp(
-		rectangle.position.y,
+		static_cast<float>(worldSize.x));
+
+	position.y = std::clamp(
+		position.y,
 		0.0f,
-		height - rectangle.size.y);
+		static_cast<float>(worldSize.y));
 }
 
 bool Player::Initialize(Renderer& renderer)
@@ -43,12 +52,12 @@ void Player::CalculateRect()
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
-	rectangle.size.x = static_cast<float>(texture.GetWidth());
-	rectangle.size.y = static_cast<float>(texture.GetHeight());
+	textureRectangle.size.x = static_cast<float>(texture.GetWidth());
+	textureRectangle.size.y = static_cast<float>(texture.GetHeight());
 
-	rectangle.position.x =
-		(windowWidth - rectangle.size.x) / 2.0f;
+	textureRectangle.position.x =
+		(windowWidth - textureRectangle.size.x) / 2.0f;
 
-	rectangle.position.y =
-		(windowHeight - rectangle.size.y) / 2.0f;
+	textureRectangle.position.y =
+		(windowHeight - textureRectangle.size.y) / 2.0f;
 }
