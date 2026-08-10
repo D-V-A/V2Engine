@@ -31,7 +31,21 @@ void Player::CheckScreenBorders(int width, int height)
 
 bool Player::Initialize(Renderer& renderer)
 {
-	return texture.Load(
-		renderer,
-		"assets/txt/player.bmp");
+	if(!texture.Load(renderer,"assets/txt/player.bmp"))
+		return false;
+
+	CalculateRect();
+	return true;
+}
+
+void Player::CalculateRect()
+{
+	rectangle.size.x = static_cast<float>(texture.GetWidth());
+	rectangle.size.y = static_cast<float>(texture.GetHeight());
+
+	rectangle.position.x =
+		(1280 - rectangle.size.x) / 2.0f;
+
+	rectangle.position.y =
+		(720 - rectangle.size.y) / 2.0f;
 }

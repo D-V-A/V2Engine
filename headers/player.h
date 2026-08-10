@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vector2i.h"
-#include "rect.h"
+#include "types/vector2i.h"
+#include "types/rect.h"
 #include "texture.h"
 class Renderer;
 class SDL_Window;
@@ -16,9 +16,10 @@ public:
 	void CheckScreenBorders(int width, int height);
 
 private:
+	void CalculateRect();
 	Rect rectangle{
-		{440.0f, 260.0f},
-		{100.0f, 100.0f}
+		{0.0f, 0.0f},
+		{0.0f, 0.0f}
 	};
 
 	float speed = 200.0f;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include "vector2i.h"
+#include "types/vector2i.h"
 
 class Input
 {

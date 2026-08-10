@@ -22,11 +22,20 @@ add_executable(V2Engine
 	src/renderer.cpp 
 	src/player.cpp 
 	src/input.cpp 
-	src/texture.cpp)
+	src/texture.cpp
+
+	headers/application.h
+	headers/renderer.h
+	headers/input.h
+	headers/player.h
+	headers/texture.h
+
+	headers/types/vector2i.h
+	headers/types/vector2f.h
+	headers/types/rect.h)
 
 target_include_directories(V2Engine PRIVATE
 	headers
-	headers/types
 )
 
 add_custom_command(TARGET V2Engine POST_BUILD
