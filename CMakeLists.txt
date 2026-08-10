@@ -23,16 +23,18 @@ add_executable(V2Engine
 	src/player.cpp 
 	src/input.cpp 
 	src/texture.cpp
+	src/world.cpp
 
 	headers/application.h
 	headers/renderer.h
 	headers/input.h
 	headers/player.h
 	headers/texture.h
+	headers/world.h
 
 	headers/types/vector2i.h
 	headers/types/vector2f.h
-	headers/types/rect.h)
+	headers/types/rect.h  )
 
 target_include_directories(V2Engine PRIVATE
 	headers

@@ -45,6 +45,11 @@ bool Application::Initialize()
 		return false;
 	}
 
+	if (!world.Initialize(renderer))
+	{
+		return false;
+	}
+
 	if (!player.Initialize(renderer))
 	{
 		std::cerr << "Failed to init player model: "
@@ -119,6 +124,7 @@ void Application::Render()
 	player.CheckScreenBorders(windowWidth, windowHeight);
 
 	renderer.Clear();
+	world.Render(renderer);
 	player.Render(renderer);
 	renderer.Present();
 }

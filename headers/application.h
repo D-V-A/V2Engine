@@ -1,5 +1,7 @@
 #include <SDL3/SDL.h>
+
 #include "renderer.h"
+#include "world.h"
 #include "player.h"
 #include "input.h"
 
@@ -20,6 +22,7 @@ private:
 
 	SDL_Window* window = nullptr;
 	Renderer renderer;
+	World world;
 	Player player;
 	Input input;
 

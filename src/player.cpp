@@ -40,7 +40,7 @@ bool Player::Initialize(Renderer& renderer)
 
 void Player::CalculateRect()
 {
-	constexpr float windowWidth = 1280.0f;
+	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
 	rectangle.size.x = static_cast<float>(texture.GetWidth());
