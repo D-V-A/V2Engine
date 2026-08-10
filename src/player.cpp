@@ -40,12 +40,15 @@ bool Player::Initialize(Renderer& renderer)
 
 void Player::CalculateRect()
 {
+	constexpr float windowWidth = 1280.0f;
+	constexpr float windowHeight = 720.0f;
+
 	rectangle.size.x = static_cast<float>(texture.GetWidth());
 	rectangle.size.y = static_cast<float>(texture.GetHeight());
 
 	rectangle.position.x =
-		(1280 - rectangle.size.x) / 2.0f;
+		(windowWidth - rectangle.size.x) / 2.0f;
 
 	rectangle.position.y =
-		(720 - rectangle.size.y) / 2.0f;
+		(windowHeight - rectangle.size.y) / 2.0f;
 }
