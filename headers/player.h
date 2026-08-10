@@ -4,7 +4,6 @@
 #include "types/rect.h"
 #include "texture.h"
 class Renderer;
-class SDL_Window;
 
 class Player
 {
@@ -19,7 +18,7 @@ public:
 	Vector2f GetPosition() const { return position;	}
 
 private:
-	void CalculateRect();
+	void CalculateRectSize();
 	Rect textureRectangle{
 		{0.0f, 0.0f},
 		{0.0f, 0.0f}

@@ -43,21 +43,12 @@ bool Player::Initialize(Renderer& renderer)
 	if(!texture.Load(renderer,"assets/txt/player.bmp"))
 		return false;
 
-	CalculateRect();
+	CalculateRectSize();
 	return true;
 }
 
-void Player::CalculateRect()
+void Player::CalculateRectSize()
 {
-	constexpr float windowWidth = 1280.0f;//todo: delete const
-	constexpr float windowHeight = 720.0f;
-
 	textureRectangle.size.x = static_cast<float>(texture.GetWidth());
 	textureRectangle.size.y = static_cast<float>(texture.GetHeight());
-
-	textureRectangle.position.x =
-		(windowWidth - textureRectangle.size.x) / 2.0f;
-
-	textureRectangle.position.y =
-		(windowHeight - textureRectangle.size.y) / 2.0f;
 }

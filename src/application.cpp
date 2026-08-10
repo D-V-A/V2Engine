@@ -110,7 +110,6 @@ void Application::ProcessEvents()
 
 void Application::Update(float deltaTime)
 {
-	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 	input.Update();
 	player.MovePlayer(deltaTime, input.GetDirection());
 	player.CheckMapBorders(world.GetSize());
@@ -118,8 +117,6 @@ void Application::Update(float deltaTime)
 
 void Application::Render()
 {
-	ProcessEvents();
-
 	renderer.Clear();
 
 	world.Render(renderer);
