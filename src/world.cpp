@@ -16,7 +16,7 @@ bool World::Initialize(Renderer& renderer)
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
-	origin.x = windowWidth / 2 + tileWidth / 2;//origin is a middle of 0,0 now
+	origin.x = windowWidth / 2;
 	origin.y = (windowHeight - height * tileHeight) / 2;
 	return true;
 }

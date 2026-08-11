@@ -22,7 +22,7 @@ private:
 	float tileWidth = 0.0f;
 	float tileHeight = 0.0f;
 	Vector2f origin;
-	const Vector2f pivot = { 0.5f, 0.0f };//middle, top
+	const Vector2f pivot = { 0.5f, 0.5f };//middle, middle
 
 	int width = 10;
 	int height = 10;
