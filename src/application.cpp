@@ -48,6 +48,9 @@ bool Application::Initialize()
 
 	if (!world.Initialize(renderer))
 	{
+		std::cerr << "Failed to init world: "
+			<< SDL_GetError() << '\n';
+
 		return false;
 	}
 
@@ -55,6 +58,15 @@ bool Application::Initialize()
 	{
 		std::cerr << "Failed to init player model: "
 			<< SDL_GetError() << '\n';
+
+		return false;
+	}
+
+	if (!worldObject.Initialize(renderer, "assets/txt/crate.bmp"))
+	{
+		std::cerr << "Failed to init object model: "
+			<< SDL_GetError() << '\n';
+
 		return false;
 	}
 
@@ -123,5 +135,7 @@ void Application::Render()
 
 	Vector2f screenPosition = WorldToScreen(player.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
 	player.Render(renderer, screenPosition);
+	screenPosition = WorldToScreen(worldObject.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
+	worldObject.Render(renderer, screenPosition);
 	renderer.Present();
 }
