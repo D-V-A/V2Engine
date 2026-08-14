@@ -41,7 +41,7 @@ void Player::CalculateRectSize()
 	textureRectangle.size.y = static_cast<float>(texture.GetHeight());
 }
 
-Rect Player::GetCollisionRectAt(const Vector2f pos) const
+Rect Player::GetCollisionRectAt(const Vector2f& pos) const
 {
 	Rect result = collisionRect;
 	result.position.x += pos.x;

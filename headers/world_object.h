@@ -28,6 +28,6 @@ private:
 	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
 
 	Rect collisionRect{
-	{-0.5f, -0.5f},
-	{1.0f, 1.0f} };
+	{-1.0f, -1.0f},//relative to map position
+	{1.0f, 1.0f} };//collision size
 };

@@ -15,7 +15,7 @@ public:
 
 	void SetPosition(const Vector2f& newPosition) { position = newPosition; };
 	Vector2f GetPosition() const { return position;	}
-	Rect GetCollisionRectAt(const Vector2f position) const;
+	Rect GetCollisionRectAt(const Vector2f& position) const;
 
 private:
 	Texture texture;
@@ -25,12 +25,10 @@ private:
 		{0.0f, 0.0f},
 		{0.0f, 0.0f} };
 
-	Vector2f position{ 0.5f, 0.5f };//in world coordinates
+	Vector2f position{ 3.5f, 3.5f };//in world coordinates
 	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
 
 	Rect collisionRect{
-		{0.0f, 0.0f},//relative to pivot
+		{ -0.25f, -0.25f },//relative to map position
 		{0.5f, 0.5f} };//collision size
-
-
 };

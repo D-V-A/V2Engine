@@ -36,7 +36,7 @@ bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
 {
 	for (WorldObject& object : objects)
 	{
-		if (!object.Initialize(renderer, "assets/txt/crate.bmp"))
+		if (!object.Initialize(renderer, texturePath))
 		{
 			return false;
 		}
@@ -75,7 +75,7 @@ void World::Render(Renderer& renderer) const
 	}
 }
 
-bool World::ValidatePlayerPos(Rect collisionRect)
+bool World::ValidatePlayerPos(Rect collisionRect) const
 {
 	if (!CheckMapBorders(collisionRect))
 	{
@@ -84,7 +84,7 @@ bool World::ValidatePlayerPos(Rect collisionRect)
 
 	for (const WorldObject& object : objects)
 	{
-		if (!IsOutsideBorders(collisionRect, object.GetCollisionRect()))
+		if (!IsOutside(collisionRect, object.GetCollisionRect()))
 		{
 			return false;
 		}
@@ -93,11 +93,11 @@ bool World::ValidatePlayerPos(Rect collisionRect)
 	return true;
 }
 
-bool World::CheckMapBorders(Rect collisionRect)
+bool World::CheckMapBorders(Rect collisionRect) const
 {
 	Vector2f world_size = GetSize();
 
-	if (!IsInsideBorders(collisionRect, { world_size.x/2, world_size.y/2, world_size }))
+	if (!IsInside(collisionRect, { 0, 0, world_size }))
 	{
 		return false;
 	}

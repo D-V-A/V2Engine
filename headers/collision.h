@@ -3,19 +3,19 @@
 #include"types/rect.h"
 
 //is object inside borders?
-bool IsInsideBorders(const Rect& obj, const Rect& borders)
+inline bool IsInside(const Rect& obj, const Rect& borders)
 {
-	return	obj.position.x + obj.size.x / 2 < borders.position.x + borders.size.x / 2 &&
-			obj.position.x - obj.size.x / 2 > borders.position.x - borders.size.x / 2 &&
-			obj.position.y + obj.size.y / 2 < borders.position.y + borders.size.y / 2 &&
-			obj.position.y - obj.size.y /2 > borders.position.y - borders.size.y / 2;
+	return	obj.position.x + obj.size.x < borders.position.x + borders.size.x &&
+			obj.position.x > borders.position.x &&
+			obj.position.y + obj.size.y < borders.position.y + borders.size.y &&
+			obj.position.y > borders.position.y;
 }
 
 //is object outside borders?
-bool IsOutsideBorders(const Rect& obj, const Rect& borders)
+inline bool IsOutside(const Rect& obj, const Rect& borders)
 {
-	return	obj.position.x + obj.size.x / 2 < borders.position.x - borders.size.x / 2 ||
-			obj.position.x - obj.size.x / 2 > borders.position.x + borders.size.x / 2 ||
-			obj.position.y + obj.size.y / 2 < borders.position.y - borders.size.y / 2 ||
-			obj.position.y - obj.size.y / 2 > borders.position.y + borders.size.y / 2;
+	return	obj.position.x + obj.size.x < borders.position.x		||
+			obj.position.x > borders.position.x + borders.size.x	||
+			obj.position.y + obj.size.y < borders.position.y		||
+			obj.position.y > borders.position.y + borders.size.y;
 }
