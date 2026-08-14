@@ -22,7 +22,7 @@ void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) con
 {
 	Rect renderRect = m_textureRectangle;
 
-	renderRect.position = GetTopLeft(screenPosition, renderRect.size, pivot);
+	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
 	renderer.DrawTexture(m_texture, renderRect);
 }

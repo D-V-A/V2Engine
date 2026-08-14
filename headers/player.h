@@ -16,14 +16,14 @@ public:
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 
 	void MovePlayer(const Vector2f& movement);
-	void SetPosition(const Vector2f& newPosition) { position = newPosition; };
-	Vector2f GetPosition() const { return position;	}
+	void SetPosition(const Vector2f& newPosition) { m_position = newPosition; };
+	Vector2f GetPosition() const { return m_position;	}
 
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
 
 private:
-	Texture texture;
+	Texture m_texture;
 
 	void CalculateRectSize();
 	Rect m_textureRectangle{

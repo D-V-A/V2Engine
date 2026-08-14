@@ -15,7 +15,7 @@ void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
 
 	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
-	renderer.DrawTexture(texture, renderRect);
+	renderer.DrawTexture(m_texture, renderRect);
 }
 
 bool Player::Initialize(Renderer& renderer)
