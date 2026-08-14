@@ -54,7 +54,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_player.Initialize(m_renderer))
+	if (!m_player.Initialize(m_renderer, "assets/txt/player.bmp"))
 	{
 		std::cerr << "Failed to init player model: "
 			<< SDL_GetError() << '\n';

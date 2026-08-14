@@ -3,28 +3,8 @@
 #include "renderer.h"
 #include "isometric.h"
 
-bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
+WorldObject::WorldObject() : Entity({ 4.0f, 5.0f }, { 0.5f, 1.0f })
 {
-	if (!m_texture.Load(renderer, texturePath))// "assets/txt/player.bmp"))
-		return false;
-
-	CalculateRectSize();
-	return true;
-}
-
-void WorldObject::CalculateRectSize()
-{
-	m_textureRectangle.size.x = static_cast<float>(m_texture.GetWidth());
-	m_textureRectangle.size.y = static_cast<float>(m_texture.GetHeight());
-}
-
-void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) const
-{
-	Rect renderRect = m_textureRectangle;
-
-	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
-
-	renderer.DrawTexture(m_texture, renderRect);
 }
 
 Rect WorldObject::GetCollisionRect() const

@@ -26,6 +26,7 @@ add_executable(V2Engine
 	src/world.cpp
 	src/isometric.cpp
 	src/world_object.cpp
+	src/world_entity.cpp
 
 	headers/application.h
 	headers/renderer.h
@@ -35,6 +36,7 @@ add_executable(V2Engine
 	headers/world.h
 	headers/isometric.h
 	headers/world_object.h
+	headers/world_entity.h
 
 	headers/types/vector2i.h
 	headers/types/vector2f.h
