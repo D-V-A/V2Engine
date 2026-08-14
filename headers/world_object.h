@@ -22,5 +22,5 @@ private:
 	{0.0f, 0.0f},
 	{0.0f, 0.0f} };
 	Vector2f position{ 4.0f, 5.0f };
-	Vector2f pivot = { 0.5f, 0.75f };//middle, lower
+	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
 };
