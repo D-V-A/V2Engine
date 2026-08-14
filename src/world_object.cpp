@@ -26,3 +26,12 @@ void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) con
 
 	renderer.DrawTexture(texture, renderRect);
 }
+
+Rect WorldObject::GetCollisionRect() const
+{
+	Rect result = collisionRect;
+	result.position.x += position.x;
+	result.position.y += position.y;
+
+	return result;
+}

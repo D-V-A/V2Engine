@@ -10,22 +10,27 @@ class Player
 public:
 	bool Initialize(Renderer& renderer);
 
-	void MovePlayer(float deltaTime, Vector2i direction);
-	void CheckMapBorders(const Vector2f& worldSize);
-
+	Vector2f CalculatePlayerMovement(float deltaTime, Vector2i direction) const;
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 
+	void SetPosition(const Vector2f& newPosition) { position = newPosition; };
 	Vector2f GetPosition() const { return position;	}
+	Rect GetCollisionRectAt(const Vector2f position) const;
 
 private:
+	Texture texture;
+
 	void CalculateRectSize();
 	Rect textureRectangle{
 		{0.0f, 0.0f},
-		{0.0f, 0.0f}
-	};
+		{0.0f, 0.0f} };
 
-	Vector2f position{ 0.5f, 0.5f };
+	Vector2f position{ 0.5f, 0.5f };//in world coordinates
 	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
 
-	Texture texture;
+	Rect collisionRect{
+		{0.0f, 0.0f},//relative to pivot
+		{0.5f, 0.5f} };//collision size
+
+
 };

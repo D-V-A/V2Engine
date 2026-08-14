@@ -62,7 +62,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!worldObject.Initialize(renderer, "assets/txt/crate.bmp"))
+	if (!world.InitializeObjects(renderer, "assets/txt/crate.bmp"))
 	{
 		std::cerr << "Failed to init object model: "
 			<< SDL_GetError() << '\n';
@@ -123,8 +123,14 @@ void Application::ProcessEvents()
 void Application::Update(float deltaTime)
 {
 	input.Update();
-	player.MovePlayer(deltaTime, input.GetDirection());
-	player.CheckMapBorders(world.GetSize());
+	Vector2i movementDirection = input.GetDirection();
+	if (movementDirection.x == 0 && movementDirection.y == 0) 
+	{
+		return;
+	}
+	Vector2f newPos = player.CalculatePlayerMovement(deltaTime, movementDirection);
+	if(world.ValidatePlayerPos(player.GetCollisionRectAt(newPos)))
+		player.SetPosition(newPos);
 }
 
 void Application::Render()
@@ -135,7 +141,6 @@ void Application::Render()
 
 	Vector2f screenPosition = WorldToScreen(player.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
 	player.Render(renderer, screenPosition);
-	screenPosition = WorldToScreen(worldObject.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
-	worldObject.Render(renderer, screenPosition);
+	world.RenderObjects(renderer);
 	renderer.Present();
 }

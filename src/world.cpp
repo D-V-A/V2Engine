@@ -1,6 +1,9 @@
+#include <algorithm>
+
 #include "world.h"
 #include "renderer.h"
 #include "isometric.h"
+#include "collision.h"
 
 #include "types/rect.h"
 
@@ -18,7 +21,36 @@ bool World::Initialize(Renderer& renderer)
 
 	origin.x = windowWidth / 2;
 	origin.y = (windowHeight - height * tileHeight) / 2;
+
+	CreateObjects();
+
 	return true;
+}
+
+void World::CreateObjects() 
+{
+	objects.resize(1);
+}
+
+bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
+{
+	for (WorldObject& object : objects)
+	{
+		if (!object.Initialize(renderer, "assets/txt/crate.bmp"))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+void World::RenderObjects(Renderer& renderer) const
+{
+	for (const WorldObject& object : objects)
+	{
+		Vector2f screenPosition = WorldToScreen(object.GetPosition(), { GetTileWidth(), GetTileHeight() }, GetOrigin());
+		object.Render(renderer, screenPosition);
+	}
 }
 
 void World::Render(Renderer& renderer) const
@@ -41,4 +73,33 @@ void World::Render(Renderer& renderer) const
 				tileRect);
 		}
 	}
+}
+
+bool World::ValidatePlayerPos(Rect collisionRect)
+{
+	if (!CheckMapBorders(collisionRect))
+	{
+		return false;
+	}
+
+	for (const WorldObject& object : objects)
+	{
+		if (!IsOutsideBorders(collisionRect, object.GetCollisionRect()))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool World::CheckMapBorders(Rect collisionRect)
+{
+	Vector2f world_size = GetSize();
+
+	if (!IsInsideBorders(collisionRect, { world_size.x/2, world_size.y/2, world_size }))
+	{
+		return false;
+	}
+	return true;
 }

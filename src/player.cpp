@@ -1,18 +1,20 @@
-#include <algorithm>
-
 #include "player.h"
 #include "renderer.h"
 #include "isometric.h"
 
-void Player::MovePlayer(float deltaTime, Vector2i direction)
+Vector2f Player::CalculatePlayerMovement(float deltaTime, Vector2i direction) const
 {
 	const float speed =
 		(direction.x != 0 && direction.y != 0)
 		? 1.4142136f
 		: 2.0f;
 
-	position.x += speed * direction.x * deltaTime;
-	position.y -= speed * direction.y * deltaTime;
+	Vector2f newPosition = position;
+
+	newPosition.x += speed * direction.x * deltaTime;
+	newPosition.y -= speed * direction.y * deltaTime;
+
+	return(newPosition);
 }
 
 void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
@@ -22,19 +24,6 @@ void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
 	renderRect.position = GetTopLeft(screenPosition, renderRect.size, pivot);
 
 	renderer.DrawTexture(texture, renderRect);
-}
-
-void Player::CheckMapBorders(const Vector2f& worldSize)
-{
-	position.x = std::clamp(
-		position.x,
-		0.0f,
-		static_cast<float>(worldSize.x));
-
-	position.y = std::clamp(
-		position.y,
-		0.0f,
-		static_cast<float>(worldSize.y));
 }
 
 bool Player::Initialize(Renderer& renderer)
@@ -50,4 +39,13 @@ void Player::CalculateRectSize()
 {
 	textureRectangle.size.x = static_cast<float>(texture.GetWidth());
 	textureRectangle.size.y = static_cast<float>(texture.GetHeight());
+}
+
+Rect Player::GetCollisionRectAt(const Vector2f pos) const
+{
+	Rect result = collisionRect;
+	result.position.x += pos.x;
+	result.position.y += pos.y;
+
+	return result;
 }
