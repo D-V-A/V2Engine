@@ -22,11 +22,11 @@ private:
 	void Update(float deltaTime);
 	void Render();
 
-	SDL_Window* window = nullptr;
-	Renderer renderer;
-	World world;
-	Player player;
-	Input input;
+	SDL_Window* m_window = nullptr;
+	Renderer m_renderer;
+	World m_world;
+	Player m_player;
+	Input m_input;
 
-	bool isRunning = false;
+	bool m_isRunning = false;
 };

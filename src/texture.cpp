@@ -12,38 +12,38 @@ bool Texture::Load(Renderer& renderer, const char* path)
 	if (surface == nullptr)
 		return false;
 
-	sdlTexture = SDL_CreateTextureFromSurface(
+	m_sdlTexture = SDL_CreateTextureFromSurface(
 		renderer.GetNativeRenderer(),
 		surface);
 
 	SDL_DestroySurface(surface);
 
-	if (!sdlTexture)
+	if (!m_sdlTexture)
 		return false;
 
 	float textureWidth = 0.0f;
 	float textureHeight = 0.0f;
-	if (!SDL_GetTextureSize(sdlTexture, &textureWidth, &textureHeight))
+	if (!SDL_GetTextureSize(m_sdlTexture, &textureWidth, &textureHeight))
 	{
-		SDL_DestroyTexture(sdlTexture);
-		sdlTexture = nullptr;
+		SDL_DestroyTexture(m_sdlTexture);
+		m_sdlTexture = nullptr;
 		return false;
 	}
-	width = static_cast<int>(textureWidth);
-	height = static_cast<int>(textureHeight);
+	m_width = static_cast<int>(textureWidth);
+	m_height = static_cast<int>(textureHeight);
 
 	return true;
 }
 
 Texture::~Texture()
 {
-	if (sdlTexture != nullptr)
+	if (m_sdlTexture != nullptr)
 	{
-		SDL_DestroyTexture(sdlTexture);
+		SDL_DestroyTexture(m_sdlTexture);
 	}
 }
 
 SDL_Texture* Texture::GetNativeTexture() const
 {
-	return sdlTexture;
+	return m_sdlTexture;
 }

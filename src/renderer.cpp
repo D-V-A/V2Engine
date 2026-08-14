@@ -3,25 +3,25 @@
 
 bool Renderer::Initialize(SDL_Window* window)
 {
-	sdlRenderer = SDL_CreateRenderer(window, nullptr);
-	if (sdlRenderer == nullptr)
+	m_sdlRenderer = SDL_CreateRenderer(window, nullptr);
+	if (m_sdlRenderer == nullptr)
 		return false;
 	return true;
 }
 
 Renderer::~Renderer()
 {
-	if (sdlRenderer != nullptr)
+	if (m_sdlRenderer != nullptr)
 	{
-		SDL_DestroyRenderer(sdlRenderer);
-		sdlRenderer = nullptr;
+		SDL_DestroyRenderer(m_sdlRenderer);
+		m_sdlRenderer = nullptr;
 	}
 }
 
 void Renderer::Clear()
 {
-	SDL_SetRenderDrawColor(sdlRenderer, 30, 30, 35, 255);
-	SDL_RenderClear(sdlRenderer);
+	SDL_SetRenderDrawColor(m_sdlRenderer, 30, 30, 35, 255);
+	SDL_RenderClear(m_sdlRenderer);
 }
 
 void Renderer::FillRect(const Rect& rect)
@@ -33,8 +33,8 @@ void Renderer::FillRect(const Rect& rect)
 		rect.size.y
 	};
 	// Цвет прямоугольника: оранжевый.
-	SDL_SetRenderDrawColor(sdlRenderer, 220, 120, 40, 255);
-	SDL_RenderFillRect(sdlRenderer, &sdlRectangle);
+	SDL_SetRenderDrawColor(m_sdlRenderer, 220, 120, 40, 255);
+	SDL_RenderFillRect(m_sdlRenderer, &sdlRectangle);
 }
 
 void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
@@ -47,7 +47,7 @@ void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
 	};
 
 	SDL_RenderTexture(
-		sdlRenderer,
+		m_sdlRenderer,
 		texture.GetNativeTexture(),
 		nullptr,
 		&dst);
@@ -56,5 +56,5 @@ void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
 void Renderer::Present()
 {
 	// Показываем готовый кадр на экране.
-	SDL_RenderPresent(sdlRenderer);
+	SDL_RenderPresent(m_sdlRenderer);
 }

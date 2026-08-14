@@ -4,6 +4,7 @@
 
 #include "texture.h"
 #include "world_object.h"
+
 #include "types/vector2f.h"
 
 class Renderer;
@@ -16,10 +17,10 @@ public:
 	void Render(Renderer& renderer) const;
 	void RenderObjects(Renderer& renderer) const;
 
-	float GetTileWidth() const { return tileWidth; }
-	float GetTileHeight() const { return tileHeight; }
-	Vector2f GetOrigin() const { return origin; }
-	Vector2f GetSize() const { return { static_cast<float>(width),static_cast<float>(height) }; }
+	float GetTileWidth() const { return m_tileWidth; }
+	float GetTileHeight() const { return m_tileHeight; }
+	Vector2f GetOrigin() const { return m_origin; }
+	Vector2f GetSize() const { return { static_cast<float>(m_width),static_cast<float>(m_height) }; }
 
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 
@@ -29,14 +30,14 @@ private:
 
 	void CreateObjects();
 
-	Texture floorTexture;
-	std::vector<WorldObject> objects;
+	Texture m_floorTexture;
+	std::vector<WorldObject> m_objects;
 
-	float tileWidth = 0.0f;
-	float tileHeight = 0.0f;
-	Vector2f origin;
-	const Vector2f pivot = { 0.5f, 0.0f };//middle, top //pivot - основание/база
+	float m_tileWidth = 0.0f;
+	float m_tileHeight = 0.0f;
+	Vector2f m_origin;
+	const Vector2f m_pivot = { 0.5f, 0.0f };//middle, top //pivot - основание/база
 
-	int width = 10;
-	int height = 10;
+	int m_width = 10;
+	int m_height = 10;
 };

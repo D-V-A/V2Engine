@@ -4,14 +4,14 @@
 
 void Input::Update()
 {
-	keyboardState = SDL_GetKeyboardState(nullptr);
+	m_keyboardState = SDL_GetKeyboardState(nullptr);
 
-	movementDirection.x = (int)keyboardState[SDL_SCANCODE_D] - (int)keyboardState[SDL_SCANCODE_A];
-	movementDirection.y = (int)keyboardState[SDL_SCANCODE_W] - (int)keyboardState[SDL_SCANCODE_S];
+	m_movementDirection.x = (int)m_keyboardState[SDL_SCANCODE_D] - (int)m_keyboardState[SDL_SCANCODE_A];
+	m_movementDirection.y = (int)m_keyboardState[SDL_SCANCODE_W] - (int)m_keyboardState[SDL_SCANCODE_S];
 	
 }
 
 Vector2i Input::GetDirection() const
 { 
-	return movementDirection; 
+	return m_movementDirection;
 };

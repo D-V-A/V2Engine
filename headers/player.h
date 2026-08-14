@@ -1,8 +1,10 @@
 #pragma once
 
+#include "texture.h"
+
 #include "types/vector2i.h"
 #include "types/rect.h"
-#include "texture.h"
+
 class Renderer;
 
 class Player
@@ -24,14 +26,14 @@ private:
 	Texture texture;
 
 	void CalculateRectSize();
-	Rect textureRectangle{
+	Rect m_textureRectangle{
 		{0.0f, 0.0f},
 		{0.0f, 0.0f} };
 
-	Vector2f position{ 3.5f, 3.5f };//in world coordinates
-	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
+	Vector2f m_position{ 3.5f, 3.5f };//in world coordinates
+	Vector2f m_pivot = { 0.5f, 1.0f };//middle, bottom
 
-	Rect collisionRect{
+	Rect m_collisionRect{
 		{ -0.25f, -0.25f },//relative to map position
 		{0.5f, 0.5f} };//collision size
 };

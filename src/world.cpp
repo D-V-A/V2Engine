@@ -8,18 +8,18 @@
 
 bool World::Initialize(Renderer& renderer)
 {
-	if (!floorTexture.Load(renderer, "assets/txt/grass_tile.bmp"))
+	if (!m_floorTexture.Load(renderer, "assets/txt/grass_tile.bmp"))
 		return false;
 
-	tileWidth = static_cast<float>(floorTexture.GetWidth());
+	m_tileWidth = static_cast<float>(m_floorTexture.GetWidth());
 
-	tileHeight = static_cast<float>(floorTexture.GetHeight());
+	m_tileHeight = static_cast<float>(m_floorTexture.GetHeight());
 
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
-	origin.x = windowWidth / 2;
-	origin.y = (windowHeight - height * tileHeight) / 2;
+	m_origin.x = windowWidth / 2;
+	m_origin.y = (windowHeight - m_height * m_tileHeight) / 2;
 
 	CreateObjects();
 
@@ -28,12 +28,12 @@ bool World::Initialize(Renderer& renderer)
 
 void World::CreateObjects() 
 {
-	objects.resize(1);
+	m_objects.resize(1);
 }
 
 bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
 {
-	for (WorldObject& object : objects)
+	for (WorldObject& object : m_objects)
 	{
 		if (!object.Initialize(renderer, texturePath))
 		{
@@ -45,7 +45,7 @@ bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
 
 void World::RenderObjects(Renderer& renderer) const
 {
-	for (const WorldObject& object : objects)
+	for (const WorldObject& object : m_objects)
 	{
 		Vector2f screenPosition = WorldToScreen(object.GetPosition(), { GetTileWidth(), GetTileHeight() }, GetOrigin());
 		object.Render(renderer, screenPosition);
@@ -55,20 +55,20 @@ void World::RenderObjects(Renderer& renderer) const
 void World::Render(Renderer& renderer) const
 {
 
-	for (int y = 0; y < height; ++y)
+	for (int y = 0; y < m_height; ++y)
 	{
-		for (int x = 0; x < width; ++x)
+		for (int x = 0; x < m_width; ++x)
 		{
 			Rect tileRect;
 
-			tileRect.size = { tileWidth, tileHeight };
+			tileRect.size = { m_tileWidth, m_tileHeight };
 
-			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, origin);
+			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, m_origin);
 
-			tileRect.position = GetTopLeft(tileCenter, tileRect.size, pivot);
+			tileRect.position = GetTopLeft(tileCenter, tileRect.size, m_pivot);
 
 			renderer.DrawTexture(
-				floorTexture,
+				m_floorTexture,
 				tileRect);
 		}
 	}
@@ -95,11 +95,11 @@ float World::ResolveMovementX(const Rect& collisionRect, const float& movement) 
 	{
 		const float right = collisionRect.position.x + collisionRect.size.x;
 
-		const float worldRight = static_cast<float>(width);
+		const float worldRight = static_cast<float>(m_width);
 		const float playerRight = collisionRect.position.x + collisionRect.size.x;
 		allowedMovement = std::min(allowedMovement, worldRight - playerRight);
 
-		for (const WorldObject& object : objects)
+		for (const WorldObject& object : m_objects)
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 
@@ -126,7 +126,7 @@ float World::ResolveMovementX(const Rect& collisionRect, const float& movement) 
 		const float playerLeft = collisionRect.position.x;
 		allowedMovement = -std::min(abs(allowedMovement), playerLeft);//worldLeft == 0
 
-		for (const WorldObject& object : objects)
+		for (const WorldObject& object : m_objects)
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 
@@ -158,11 +158,11 @@ float World::ResolveMovementY(const Rect& collisionRect, const float& movement) 
 	{
 		const float bottom = collisionRect.position.y + collisionRect.size.y;
 
-		const float worldBottom = static_cast<float>(height);
+		const float worldBottom = static_cast<float>(m_height);
 		const float playerBottom = collisionRect.position.y + collisionRect.size.y;
 		allowedMovement = std::min(allowedMovement, worldBottom - playerBottom);
 
-		for (const WorldObject& object : objects)
+		for (const WorldObject& object : m_objects)
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 
@@ -189,7 +189,7 @@ float World::ResolveMovementY(const Rect& collisionRect, const float& movement) 
 		const float playerTop = collisionRect.position.y;
 		allowedMovement = - std::min(abs(allowedMovement), playerTop);//worldTop == 0
 
-		for (const WorldObject& object : objects)
+		for (const WorldObject& object : m_objects)
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 

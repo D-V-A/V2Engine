@@ -11,16 +11,16 @@ Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction) c
 
 void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
 {
-	Rect renderRect = textureRectangle;
+	Rect renderRect = m_textureRectangle;
 
-	renderRect.position = GetTopLeft(screenPosition, renderRect.size, pivot);
+	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
 	renderer.DrawTexture(texture, renderRect);
 }
 
 bool Player::Initialize(Renderer& renderer)
 {
-	if(!texture.Load(renderer,"assets/txt/player.bmp"))
+	if(!m_texture.Load(renderer,"assets/txt/player.bmp"))
 		return false;
 
 	CalculateRectSize();
@@ -29,13 +29,13 @@ bool Player::Initialize(Renderer& renderer)
 
 void Player::CalculateRectSize()
 {
-	textureRectangle.size.x = static_cast<float>(texture.GetWidth());
-	textureRectangle.size.y = static_cast<float>(texture.GetHeight());
+	m_textureRectangle.size.x = static_cast<float>(m_texture.GetWidth());
+	m_textureRectangle.size.y = static_cast<float>(m_texture.GetHeight());
 }
 
 Rect Player::GetCollisionRectAt(const Vector2f& pos) const
 {
-	Rect result = collisionRect;
+	Rect result = m_collisionRect;
 	result.position.x += pos.x;
 	result.position.y += pos.y;
 
@@ -49,6 +49,6 @@ Rect Player::GetCollisionRect() const
 
 void Player::MovePlayer(const Vector2f& movement)
 {
-	position.x += movement.x;
-	position.y += movement.y;
+	m_position.x += movement.x;
+	m_position.y += movement.y;
 }

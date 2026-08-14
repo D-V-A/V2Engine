@@ -11,14 +11,14 @@ public:
 
 	bool Load(Renderer& renderer, const char* path);
 
-	int GetWidth() const { return width; }
-	int GetHeight() const { return height; }
+	int GetWidth() const { return m_width; }
+	int GetHeight() const { return m_height; }
 
 	SDL_Texture* GetNativeTexture() const;
 
 private:
-	SDL_Texture* sdlTexture = nullptr;
+	SDL_Texture* m_sdlTexture = nullptr;
 
-	int width = 0;
-	int height = 0;
+	int m_width = 0;
+	int m_height = 0;
 };

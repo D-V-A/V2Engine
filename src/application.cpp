@@ -1,14 +1,14 @@
+#include <iostream>
+
 #include "application.h"
 #include "isometric.h"
 
-#include <iostream>
-
 Application::~Application()
 {
-	if (window != nullptr)
+	if (m_window != nullptr)
 	{
-		SDL_DestroyWindow(window);
-		window = nullptr;
+		SDL_DestroyWindow(m_window);
+		m_window = nullptr;
 	}
 	SDL_Quit();
 }
@@ -23,14 +23,14 @@ bool Application::Initialize()
 		return false;
 	}
 
-	window = SDL_CreateWindow(
+	m_window = SDL_CreateWindow(
 		"V2Engine",
 		1280,
 		720,
 		0
 	);
 
-	if (window == nullptr)
+	if (m_window == nullptr)
 	{
 		std::cerr << "Failed to create window: "
 			<< SDL_GetError() << '\n';
@@ -38,7 +38,7 @@ bool Application::Initialize()
 		return false;
 	}
 	
-	if (!renderer.Initialize(window))
+	if (!m_renderer.Initialize(m_window))
 	{
 		std::cerr << "Failed to create renderer: "
 			<< SDL_GetError() << '\n';
@@ -46,7 +46,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!world.Initialize(renderer))
+	if (!m_world.Initialize(m_renderer))
 	{
 		std::cerr << "Failed to init world: "
 			<< SDL_GetError() << '\n';
@@ -54,7 +54,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!player.Initialize(renderer))
+	if (!m_player.Initialize(m_renderer))
 	{
 		std::cerr << "Failed to init player model: "
 			<< SDL_GetError() << '\n';
@@ -62,7 +62,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!world.InitializeObjects(renderer, "assets/txt/crate.bmp"))
+	if (!m_world.InitializeObjects(m_renderer, "assets/txt/crate.bmp"))
 	{
 		std::cerr << "Failed to init object model: "
 			<< SDL_GetError() << '\n';
@@ -79,12 +79,12 @@ int Application::Run()
 	if (!Initialize())
 		return 1;
 
-	isRunning = true;
+	m_isRunning = true;
 
 	constexpr Uint64 targetFrameTime = 1000 / 60;
 	Uint64 previousTime = SDL_GetTicks();
 
-	while (isRunning)
+	while (m_isRunning)
 	{
 		const Uint64 frameStart = SDL_GetTicks();
 		const float deltaTime =
@@ -115,33 +115,33 @@ void Application::ProcessEvents()
 	{
 		if (event.type == SDL_EVENT_QUIT)
 		{
-			isRunning = false;
+			m_isRunning = false;
 		}
 	}
 }
 
 void Application::Update(float deltaTime)
 {
-	input.Update();
-	Vector2i movementDirection = input.GetDirection();
+	m_input.Update();
+	Vector2i movementDirection = m_input.GetDirection();
 	if (movementDirection.x == 0 && movementDirection.y == 0) 
 	{
 		return;
 	}
-	Vector2f movement = player.CalculateMovement(deltaTime, input.GetDirection());
-	Rect collisionRect = player.GetCollisionRect();
-	movement = world.ResolveMovement(collisionRect, movement);
-	player.MovePlayer(movement);
+	Vector2f movement = m_player.CalculateMovement(deltaTime, movementDirection);
+	Rect collisionRect = m_player.GetCollisionRect();
+	movement = m_world.ResolveMovement(collisionRect, movement);
+	m_player.MovePlayer(movement);
 }
 
 void Application::Render()
 {
-	renderer.Clear();
+	m_renderer.Clear();
 
-	world.Render(renderer);
+	m_world.Render(m_renderer);
 
-	Vector2f screenPosition = WorldToScreen(player.GetPosition(), { world.GetTileWidth(),world.GetTileHeight() }, world.GetOrigin());
-	player.Render(renderer, screenPosition);
-	world.RenderObjects(renderer);
-	renderer.Present();
+	Vector2f screenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(),m_world.GetTileHeight() }, m_world.GetOrigin());
+	m_player.Render(m_renderer, screenPosition);
+	m_world.RenderObjects(m_renderer);
+	m_renderer.Present();
 }

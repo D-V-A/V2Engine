@@ -23,5 +23,5 @@ public:
 	void DrawTexture(const Texture& texture, const Rect& destination);
 
 private:
-	SDL_Renderer* sdlRenderer = nullptr;
+	SDL_Renderer* m_sdlRenderer = nullptr;
 };

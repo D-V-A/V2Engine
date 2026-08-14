@@ -13,21 +13,21 @@ public:
 	bool Initialize(Renderer& renderer, const char* texturePath);
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 
-	Vector2f GetPosition() const { return position; }
+	Vector2f GetPosition() const { return m_position; }
 	Rect GetCollisionRect() const;
 private:
 	void CalculateRectSize();
 
-	Texture texture;
+	Texture m_texture;
 
-	Rect textureRectangle{
+	Rect m_textureRectangle{
 	{0.0f, 0.0f},
 	{0.0f, 0.0f} };
 
-	Vector2f position{ 4.0f, 5.0f };//in world coordinates
-	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
+	Vector2f m_position{ 4.0f, 5.0f };//in world coordinates
+	Vector2f m_pivot = { 0.5f, 1.0f };//middle, bottom
 
-	Rect collisionRect{
+	Rect m_collisionRect{
 	{-1.0f, -1.0f},//relative to map position
 	{1.0f, 1.0f} };//collision size
 };
