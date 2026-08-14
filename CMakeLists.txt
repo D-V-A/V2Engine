@@ -35,7 +35,6 @@ add_executable(V2Engine
 	headers/world.h
 	headers/isometric.h
 	headers/world_object.h
-	headers/collision.h
 
 	headers/types/vector2i.h
 	headers/types/vector2f.h

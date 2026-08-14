@@ -21,10 +21,12 @@ public:
 	Vector2f GetOrigin() const { return origin; }
 	Vector2f GetSize() const { return { static_cast<float>(width),static_cast<float>(height) }; }
 
-	bool ValidatePlayerPos(Rect collisionRect) const;
+	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 
 private:
-	bool CheckMapBorders(Rect collisionRect) const;
+	float ResolveMovementX(const Rect& collisionRect, const float& movement) const;
+	float ResolveMovementY(const Rect& collisionRect, const float& movement) const;
+
 	void CreateObjects();
 
 	Texture floorTexture;

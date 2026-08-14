@@ -3,7 +3,6 @@
 #include "world.h"
 #include "renderer.h"
 #include "isometric.h"
-#include "collision.h"
 
 #include "types/rect.h"
 
@@ -75,31 +74,141 @@ void World::Render(Renderer& renderer) const
 	}
 }
 
-bool World::ValidatePlayerPos(Rect collisionRect) const
+Vector2f World::ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const
 {
-	if (!CheckMapBorders(collisionRect))
-	{
-		return false;
-	}
+	Vector2f result = movement;
+	Rect movedRect = collisionRect;
 
-	for (const WorldObject& object : objects)
+	result.x = ResolveMovementX(collisionRect, movement.x);
+	movedRect.position.x += result.x;
+
+	result.y = ResolveMovementY(movedRect, movement.y);
+
+	return result;
+}
+
+float World::ResolveMovementX(const Rect& collisionRect, const float& movement) const
+{
+	float allowedMovement = movement;
+
+	if (movement > 0.0f)
 	{
-		if (!IsOutside(collisionRect, object.GetCollisionRect()))
+		const float right = collisionRect.position.x + collisionRect.size.x;
+
+		const float worldRight = static_cast<float>(width);
+		const float playerRight = collisionRect.position.x + collisionRect.size.x;
+		allowedMovement = std::min(allowedMovement, worldRight - playerRight);
+
+		for (const WorldObject& object : objects)
 		{
-			return false;
+			const Rect& objectRect = object.GetCollisionRect();
+
+			const bool overlapsY =
+				collisionRect.position.y < objectRect.position.y + objectRect.size.y &&
+				collisionRect.position.y + collisionRect.size.y > objectRect.position.y;
+
+			if (!overlapsY)
+				continue;
+
+			if (right <= objectRect.position.x)
+			{
+				const float distance = objectRect.position.x - right;
+
+				if (distance < allowedMovement)
+					allowedMovement = distance;
+			}
+		}
+	}
+	else if (movement < 0.0f)
+	{
+		const float left = collisionRect.position.x;
+
+		const float playerLeft = collisionRect.position.x;
+		allowedMovement = -std::min(abs(allowedMovement), playerLeft);//worldLeft == 0
+
+		for (const WorldObject& object : objects)
+		{
+			const Rect& objectRect = object.GetCollisionRect();
+
+			const bool overlapsY =
+				collisionRect.position.y < objectRect.position.y + objectRect.size.y &&
+				collisionRect.position.y + collisionRect.size.y > objectRect.position.y;
+
+			if (!overlapsY)
+				continue;
+
+			if (left >= objectRect.position.x + objectRect.size.x)
+			{
+				const float distance = left - (objectRect.position.x + objectRect.size.x) ;
+
+				if (distance < abs(allowedMovement))
+					allowedMovement = -distance;
+			}
 		}
 	}
 
-	return true;
+	return allowedMovement;
 }
 
-bool World::CheckMapBorders(Rect collisionRect) const
+float World::ResolveMovementY(const Rect& collisionRect, const float& movement) const
 {
-	Vector2f world_size = GetSize();
+	float allowedMovement = movement;
 
-	if (!IsInside(collisionRect, { 0, 0, world_size }))
+	if (movement > 0.0f)
 	{
-		return false;
+		const float bottom = collisionRect.position.y + collisionRect.size.y;
+
+		const float worldBottom = static_cast<float>(height);
+		const float playerBottom = collisionRect.position.y + collisionRect.size.y;
+		allowedMovement = std::min(allowedMovement, worldBottom - playerBottom);
+
+		for (const WorldObject& object : objects)
+		{
+			const Rect& objectRect = object.GetCollisionRect();
+
+			const bool overlapsX =
+				collisionRect.position.x < objectRect.position.x + objectRect.size.x &&
+				collisionRect.position.x + collisionRect.size.x > objectRect.position.x;
+
+			if (!overlapsX)
+				continue;
+
+			if (bottom <= objectRect.position.y)
+			{
+				const float distance = objectRect.position.y - bottom;
+
+				if (distance < allowedMovement)
+					allowedMovement = distance;
+			}
+		}
 	}
-	return true;
+	else if (movement < 0.0f)
+	{
+		const float top = collisionRect.position.y;
+
+		const float playerTop = collisionRect.position.y;
+		allowedMovement = - std::min(abs(allowedMovement), playerTop);//worldTop == 0
+
+		for (const WorldObject& object : objects)
+		{
+			const Rect& objectRect = object.GetCollisionRect();
+
+			const bool overlapsX =
+				collisionRect.position.x < objectRect.position.x + objectRect.size.x &&
+				collisionRect.position.x + collisionRect.size.x > objectRect.position.x;
+
+			if (!overlapsX)
+				continue;
+
+			if (top >= objectRect.position.y + objectRect.size.y)
+			{
+				const float distance = top - (objectRect.position.y + objectRect.size.y);
+
+				if (distance < abs(allowedMovement))
+					allowedMovement = -distance;
+			}
+		}
+	}
+
+	return allowedMovement;
 }

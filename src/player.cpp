@@ -2,19 +2,11 @@
 #include "renderer.h"
 #include "isometric.h"
 
-Vector2f Player::CalculatePlayerMovement(float deltaTime, Vector2i direction) const
+Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction) const
 {
-	const float speed =
-		(direction.x != 0 && direction.y != 0)
-		? 1.4142136f
-		: 2.0f;
+	const float speed = (direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f;
 
-	Vector2f newPosition = position;
-
-	newPosition.x += speed * direction.x * deltaTime;
-	newPosition.y -= speed * direction.y * deltaTime;
-
-	return(newPosition);
+	return { speed * direction.x * deltaTime, -speed * direction.y * deltaTime };
 }
 
 void Player::Render(Renderer& renderer,	const Vector2f& screenPosition) const
@@ -48,4 +40,15 @@ Rect Player::GetCollisionRectAt(const Vector2f& pos) const
 	result.position.y += pos.y;
 
 	return result;
+}
+
+Rect Player::GetCollisionRect() const
+{
+	return GetCollisionRectAt(GetPosition());
+}
+
+void Player::MovePlayer(const Vector2f& movement)
+{
+	position.x += movement.x;
+	position.y += movement.y;
 }

@@ -128,9 +128,10 @@ void Application::Update(float deltaTime)
 	{
 		return;
 	}
-	Vector2f newPos = player.CalculatePlayerMovement(deltaTime, movementDirection);
-	if(world.ValidatePlayerPos(player.GetCollisionRectAt(newPos)))
-		player.SetPosition(newPos);
+	Vector2f movement = player.CalculateMovement(deltaTime, input.GetDirection());
+	Rect collisionRect = player.GetCollisionRect();
+	movement = world.ResolveMovement(collisionRect, movement);
+	player.MovePlayer(movement);
 }
 
 void Application::Render()

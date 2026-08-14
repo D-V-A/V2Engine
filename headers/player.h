@@ -10,12 +10,15 @@ class Player
 public:
 	bool Initialize(Renderer& renderer);
 
-	Vector2f CalculatePlayerMovement(float deltaTime, Vector2i direction) const;
+	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction) const;
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 
+	void MovePlayer(const Vector2f& movement);
 	void SetPosition(const Vector2f& newPosition) { position = newPosition; };
 	Vector2f GetPosition() const { return position;	}
+
 	Rect GetCollisionRectAt(const Vector2f& position) const;
+	Rect GetCollisionRect() const;
 
 private:
 	Texture texture;
