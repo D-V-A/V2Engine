@@ -1,8 +1,5 @@
 #include "world_object.h"
 
-#include "renderer.h"
-#include "isometric.h"
-
 WorldObject::WorldObject() : Entity({ 4.0f, 5.0f }, { 0.5f, 1.0f })
 {
 }

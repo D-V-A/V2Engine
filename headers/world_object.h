@@ -1,6 +1,6 @@
 #pragma once
 
-#include "world_entity.h"
+#include "entity.h"
 
 #include "types/vector2f.h"
 #include "types/rect.h"

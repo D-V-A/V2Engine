@@ -87,32 +87,31 @@ Vector2f World::ResolveMovement(const Rect& collisionRect, const Vector2f& movem
 	return result;
 }
 
-float World::ResolveMovementX(const Rect& collisionRect, const float& movement) const
+float World::ResolveMovementX(const Rect& collisionRect, float movement) const
 {
+	auto OverlapsY = [](const Rect& a, const Rect& b)
+		{
+			return a.position.y < b.position.y + b.size.y && a.position.y + a.size.y > b.position.y;
+		};
+
 	float allowedMovement = movement;
 
 	if (movement > 0.0f)
 	{
-		const float right = collisionRect.position.x + collisionRect.size.x;
-
 		const float worldRight = static_cast<float>(m_width);
 		const float playerRight = collisionRect.position.x + collisionRect.size.x;
 		allowedMovement = std::min(allowedMovement, worldRight - playerRight);
 
 		for (const WorldObject& object : m_objects)
 		{
-			const Rect& objectRect = object.GetCollisionRect();
+			const Rect objectRect = object.GetCollisionRect();
 
-			const bool overlapsY =
-				collisionRect.position.y < objectRect.position.y + objectRect.size.y &&
-				collisionRect.position.y + collisionRect.size.y > objectRect.position.y;
-
-			if (!overlapsY)
+			if (!OverlapsY(collisionRect, objectRect))
 				continue;
 
-			if (right <= objectRect.position.x)
+			if (playerRight <= objectRect.position.x)
 			{
-				const float distance = objectRect.position.x - right;
+				const float distance = objectRect.position.x - playerRight;
 
 				if (distance < allowedMovement)
 					allowedMovement = distance;
@@ -121,8 +120,6 @@ float World::ResolveMovementX(const Rect& collisionRect, const float& movement) 
 	}
 	else if (movement < 0.0f)
 	{
-		const float left = collisionRect.position.x;
-
 		const float playerLeft = collisionRect.position.x;
 		allowedMovement = -std::min(abs(allowedMovement), playerLeft);//worldLeft == 0
 
@@ -137,9 +134,9 @@ float World::ResolveMovementX(const Rect& collisionRect, const float& movement) 
 			if (!overlapsY)
 				continue;
 
-			if (left >= objectRect.position.x + objectRect.size.x)
+			if (playerLeft >= objectRect.position.x + objectRect.size.x)
 			{
-				const float distance = left - (objectRect.position.x + objectRect.size.x) ;
+				const float distance = playerLeft - (objectRect.position.x + objectRect.size.x) ;
 
 				if (distance < abs(allowedMovement))
 					allowedMovement = -distance;
@@ -150,14 +147,17 @@ float World::ResolveMovementX(const Rect& collisionRect, const float& movement) 
 	return allowedMovement;
 }
 
-float World::ResolveMovementY(const Rect& collisionRect, const float& movement) const
+float World::ResolveMovementY(const Rect& collisionRect, float movement) const
 {
+	auto OverlapsX = [](const Rect& a, const Rect& b)
+		{
+			return a.position.x < b.position.x + b.size.x && a.position.x + a.size.x > b.position.x;
+		};
+
 	float allowedMovement = movement;
 
 	if (movement > 0.0f)
 	{
-		const float bottom = collisionRect.position.y + collisionRect.size.y;
-
 		const float worldBottom = static_cast<float>(m_height);
 		const float playerBottom = collisionRect.position.y + collisionRect.size.y;
 		allowedMovement = std::min(allowedMovement, worldBottom - playerBottom);
@@ -166,16 +166,12 @@ float World::ResolveMovementY(const Rect& collisionRect, const float& movement) 
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 
-			const bool overlapsX =
-				collisionRect.position.x < objectRect.position.x + objectRect.size.x &&
-				collisionRect.position.x + collisionRect.size.x > objectRect.position.x;
-
-			if (!overlapsX)
+			if (!OverlapsX(collisionRect, objectRect))
 				continue;
 
-			if (bottom <= objectRect.position.y)
+			if (playerBottom <= objectRect.position.y)
 			{
-				const float distance = objectRect.position.y - bottom;
+				const float distance = objectRect.position.y - playerBottom;
 
 				if (distance < allowedMovement)
 					allowedMovement = distance;
@@ -184,8 +180,6 @@ float World::ResolveMovementY(const Rect& collisionRect, const float& movement) 
 	}
 	else if (movement < 0.0f)
 	{
-		const float top = collisionRect.position.y;
-
 		const float playerTop = collisionRect.position.y;
 		allowedMovement = - std::min(abs(allowedMovement), playerTop);//worldTop == 0
 
@@ -193,16 +187,12 @@ float World::ResolveMovementY(const Rect& collisionRect, const float& movement) 
 		{
 			const Rect& objectRect = object.GetCollisionRect();
 
-			const bool overlapsX =
-				collisionRect.position.x < objectRect.position.x + objectRect.size.x &&
-				collisionRect.position.x + collisionRect.size.x > objectRect.position.x;
-
-			if (!overlapsX)
+			if (!OverlapsX(collisionRect, objectRect))
 				continue;
 
-			if (top >= objectRect.position.y + objectRect.size.y)
+			if (playerTop >= objectRect.position.y + objectRect.size.y)
 			{
-				const float distance = top - (objectRect.position.y + objectRect.size.y);
+				const float distance = playerTop - (objectRect.position.y + objectRect.size.y);
 
 				if (distance < abs(allowedMovement))
 					allowedMovement = -distance;

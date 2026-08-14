@@ -1,5 +1,3 @@
-#include <iostream> 
-
 #include <SDL3/SDL_render.h>
 
 #include "texture.h"
@@ -46,4 +44,33 @@ Texture::~Texture()
 SDL_Texture* Texture::GetNativeTexture() const
 {
 	return m_sdlTexture;
+}
+
+Texture::Texture(Texture&& other) noexcept
+	: m_sdlTexture(other.m_sdlTexture),
+	m_width(other.m_width),
+	m_height(other.m_height)
+{
+	other.m_sdlTexture = nullptr;
+	other.m_width = 0;
+	other.m_height = 0;
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+	if (this == &other)
+		return *this;
+
+	if (m_sdlTexture != nullptr)
+		SDL_DestroyTexture(m_sdlTexture);
+
+	m_sdlTexture = other.m_sdlTexture;
+	m_width = other.m_width;
+	m_height = other.m_height;
+
+	other.m_sdlTexture = nullptr;
+	other.m_width = 0;
+	other.m_height = 0;
+
+	return *this;
 }

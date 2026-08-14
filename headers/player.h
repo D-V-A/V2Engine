@@ -1,12 +1,9 @@
 #pragma once
 
-#include "texture.h"
-#include "world_entity.h"
+#include "entity.h"
 
 #include "types/vector2i.h"
 #include "types/rect.h"
-
-class Renderer;
 
 class Player: public Entity
 {

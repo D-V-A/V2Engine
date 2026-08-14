@@ -1,4 +1,4 @@
-#include "world_entity.h"
+#include "entity.h"
 #include "isometric.h"
 #include "renderer.h"
 

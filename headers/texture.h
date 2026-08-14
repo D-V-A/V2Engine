@@ -7,8 +7,15 @@ class Texture
 {
 public:
 	Texture() = default;
-	~Texture();
+	~Texture(); 
 
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
+
+	Texture(Texture&& other) noexcept;
+	Texture& operator=(Texture&& other) noexcept;
+
+public:
 	bool Load(Renderer& renderer, const char* path);
 
 	int GetWidth() const { return m_width; }

@@ -25,8 +25,8 @@ public:
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 
 private:
-	float ResolveMovementX(const Rect& collisionRect, const float& movement) const;
-	float ResolveMovementY(const Rect& collisionRect, const float& movement) const;
+	float ResolveMovementX(const Rect& collisionRect, float movement) const;
+	float ResolveMovementY(const Rect& collisionRect, float movement) const;
 
 	void CreateObjects();
 

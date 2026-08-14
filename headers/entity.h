@@ -10,13 +10,19 @@ class Renderer;
 class Entity
 {
 public:
-	Entity() = default;
 	Entity(Vector2f pos);
 	Entity(Vector2f pos, Vector2f pivot);
 	virtual ~Entity() = default;
 
+	Entity(const Entity&) = delete;
+	Entity& operator=(const Entity&) = delete;
+
+	Entity(Entity&&) noexcept = default;
+	Entity& operator=(Entity&&) noexcept = default;
+
+public:
 	const Vector2f& GetPosition() const { return m_position; }
-	void SetPosition(const Vector2f& newPosition) { m_position = newPosition; };
+	void SetPosition(const Vector2f& newPosition) { m_position = newPosition; }
 
 	float GetDepth() const { return m_position.x + m_position.y; }
 
