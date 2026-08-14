@@ -27,7 +27,5 @@ private:
 	Vector2f position{ 0.5f, 0.5f };
 	Vector2f pivot = { 0.5f, 1.0f };//middle, bottom
 
-	float speed = 200.0f;
-
 	Texture texture;
 };

@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <stdlib.h>
 
 #include "player.h"
 #include "renderer.h"
