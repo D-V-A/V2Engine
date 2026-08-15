@@ -28,7 +28,13 @@ bool World::Initialize(Renderer& renderer)
 
 void World::CreateObjects() 
 {
-	m_objects.resize(1);
+	m_objects.resize(3);
+	float i = 2.0f;
+	for (auto it = m_objects.begin(); it != m_objects.end(); it++)
+	{
+		it->SetPosition({ i ,2 });
+		i += 2.0f;
+	}
 }
 
 bool World::InitializeObjects(Renderer& renderer, const char* texturePath)

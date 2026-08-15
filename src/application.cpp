@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "application.h"
 #include "isometric.h"
@@ -140,8 +141,22 @@ void Application::Render()
 
 	m_world.Render(m_renderer);
 
-	Vector2f screenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(),m_world.GetTileHeight() }, m_world.GetOrigin());
-	m_player.Render(m_renderer, screenPosition);
-	m_world.RenderObjects(m_renderer);
+	std::vector<Entity*> renderQueue;
+	renderQueue.push_back(&m_player);
+
+	for (WorldObject& object : m_world.GetObjectsList())
+	{
+		renderQueue.push_back(&object);
+	}
+
+	std::sort(renderQueue.begin(), renderQueue.end(), [](const Entity* a, const Entity* b)
+		{return a->GetDepth() < b->GetDepth(); });
+
+	for (Entity* entity : renderQueue)
+	{
+		const Vector2f screenPosition = WorldToScreen(entity->GetPosition(),{ m_world.GetTileWidth(),m_world.GetTileHeight() },	m_world.GetOrigin());
+
+		entity->Render(m_renderer, screenPosition);
+	}
 	m_renderer.Present();
 }
