@@ -6,7 +6,7 @@ Entity::Entity(Vector2f pos)
 {
 	m_position.x = pos.x;
 	m_position.y = pos.y;
-};
+}
 
 Entity::Entity(Vector2f pos, Vector2f pivot)
 {
@@ -15,7 +15,7 @@ Entity::Entity(Vector2f pos, Vector2f pivot)
 
 	m_pivot.x = pivot.x;
 	m_pivot.y = pivot.y;
-};
+}
 
 bool Entity::Initialize(Renderer& renderer, const char* texturePath)
 {

@@ -3,8 +3,6 @@
 #include "types/vector2f.h"
 #include "types/rect.h"
 
-class Entity;
-
 //returns base point on the map surface 
 Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& size /*tile size*/, const Vector2f& origin);
 

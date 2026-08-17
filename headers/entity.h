@@ -24,8 +24,6 @@ public:
 	const Vector2f& GetPosition() const { return m_position; }
 	void SetPosition(const Vector2f& newPosition) { m_position = newPosition; }
 
-	float GetDepth() const { return m_position.x + m_position.y; }
-
 	virtual bool Initialize(Renderer& renderer, const char* texturePath);
 	virtual void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 

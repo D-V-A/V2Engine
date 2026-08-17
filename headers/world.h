@@ -15,13 +15,14 @@ public:
 	bool Initialize(Renderer& renderer);
 	bool InitializeObjects(Renderer& renderer, const char* texturePath);
 	void Render(Renderer& renderer) const;
-	void RenderObjects(Renderer& renderer) const;
 
 	float GetTileWidth() const { return m_tileWidth; }
 	float GetTileHeight() const { return m_tileHeight; }
+
 	Vector2f GetOrigin() const { return m_origin; }
 	Vector2f GetSize() const { return { static_cast<float>(m_width),static_cast<float>(m_height) }; }
-	std::vector<WorldObject>& GetObjectsList() { return m_objects; };
+
+	const std::vector<WorldObject>& GetObjectsList() const { return m_objects; }
 
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 

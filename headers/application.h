@@ -22,7 +22,6 @@ private:
 	void Update(float deltaTime);
 
 	void Render();
-	std::vector<Entity*> GetRenderOrder(std::vector<Entity*>& objectQueue);
 
 	SDL_Window* m_window = nullptr;
 	Renderer m_renderer;
