@@ -16,34 +16,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL3)
 
-add_executable(V2Engine
-	src/main.cpp
-	src/application.cpp 
-	src/renderer.cpp 
-	src/player.cpp 
-	src/input.cpp 
-	src/texture.cpp
-	src/world.cpp
-	src/isometric.cpp
-	src/world_object.cpp
-	src/entity.cpp
-	src/render_order.cpp
+file(GLOB_RECURSE V2ENGINE_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/headers/types/*.h"
+)
 
-	headers/application.h
-	headers/renderer.h
-	headers/input.h
-	headers/player.h
-	headers/texture.h
-	headers/world.h
-	headers/isometric.h
-	headers/world_object.h
-	headers/entity.h
-	headers/render_order.h
-
-	headers/types/vector2i.h
-	headers/types/vector2f.h
-	headers/types/rect.h
- )
+add_executable(V2Engine ${V2ENGINE_SOURCES})
 
 target_include_directories(V2Engine PRIVATE
 	headers
