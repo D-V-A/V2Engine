@@ -1,5 +1,9 @@
 #include <iostream>
 #include <algorithm>
+#include <queue>
+#include <vector>
+#include <cassert>
+
 
 #include "application.h"
 #include "isometric.h"
@@ -141,22 +145,79 @@ void Application::Render()
 
 	m_world.Render(m_renderer);
 
-	std::vector<Entity*> renderQueue;
-	renderQueue.push_back(&m_player);
+	std::vector<Entity*> objectQueue;
+	objectQueue.push_back(&m_player);
 
 	for (WorldObject& object : m_world.GetObjectsList())
 	{
-		renderQueue.push_back(&object);
+		objectQueue.push_back(&object);
 	}
 
-	std::sort(renderQueue.begin(), renderQueue.end(), [](const Entity* a, const Entity* b)
-		{return a->GetDepth() < b->GetDepth(); });
+	const std::vector<Entity*> sortedQueue = GetRenderOrder(objectQueue);
 
-	for (Entity* entity : renderQueue)
+	for (const Entity* entity : sortedQueue)
 	{
 		const Vector2f screenPosition = WorldToScreen(entity->GetPosition(),{ m_world.GetTileWidth(),m_world.GetTileHeight() },	m_world.GetOrigin());
 
 		entity->Render(m_renderer, screenPosition);
 	}
 	m_renderer.Present();
+}
+
+std::vector<Entity*> Application::GetRenderOrder(std::vector<Entity*> &objectQueue)
+{
+	std::vector<std::vector<size_t>> edges(objectQueue.size());
+	std::vector<int> incomingEdges(objectQueue.size(), 0);
+
+	for (size_t i = 0; i < objectQueue.size(); ++i)
+	{
+		for (size_t j = i + 1; j < objectQueue.size(); ++j)
+		{
+			const Rect firstBounds = objectQueue[i]->GetRenderOrderBounds();
+			const Rect secondBounds = objectQueue[j]->GetRenderOrderBounds();
+
+			const bool firstBehindSecond = IsBehind(firstBounds, secondBounds);
+			const bool secondBehindFirst = IsBehind(secondBounds, firstBounds);
+
+			if (firstBehindSecond && !secondBehindFirst)
+			{
+				edges[i].push_back(j);
+				++incomingEdges[j];
+			}
+			else if (secondBehindFirst && !firstBehindSecond)
+			{
+				edges[j].push_back(i);
+				++incomingEdges[i];
+			}
+		}
+	}
+
+	std::queue<size_t> ready;
+
+	for (size_t i = 0; i < incomingEdges.size(); ++i)
+	{
+		if (incomingEdges[i] == 0)
+			ready.push(i);
+	}
+
+	std::vector<Entity*> sortedQueue;
+	sortedQueue.reserve(objectQueue.size());
+
+	while (!ready.empty())
+	{
+		const size_t current = ready.front();
+		ready.pop();
+
+		sortedQueue.push_back(objectQueue[current]);
+
+		for (size_t next : edges[current])
+		{
+			--incomingEdges[next];
+
+			if (incomingEdges[next] == 0)
+				ready.push(next);
+		}
+	}
+	assert(sortedQueue.size() == objectQueue.size());
+	return sortedQueue;
 }

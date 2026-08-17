@@ -30,3 +30,8 @@ void Player::MovePlayer(const Vector2f& movement)
 	m_position.x += movement.x;
 	m_position.y += movement.y;
 }
+
+Rect Player::GetRenderOrderBounds() const
+{
+	return GetCollisionRect();//temporal solution
+}

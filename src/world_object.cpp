@@ -12,3 +12,8 @@ Rect WorldObject::GetCollisionRect() const
 
 	return result;
 }
+
+Rect WorldObject::GetRenderOrderBounds() const
+{
+	return GetCollisionRect();//temporal solution
+}

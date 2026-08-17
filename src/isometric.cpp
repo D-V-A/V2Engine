@@ -11,3 +11,12 @@ Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f
 	return{	anchor.x - size.x * pivot.x,
 			anchor.y - size.y * pivot.y };
 }
+
+bool IsBehind(const Rect& first, const Rect& second)
+{
+	const float firstRight = first.position.x + first.size.x;
+	const float firstBottom = first.position.y + first.size.y;
+
+	return firstRight <= second.position.x ||
+		firstBottom <= second.position.y;
+}

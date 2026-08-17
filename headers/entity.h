@@ -29,6 +29,8 @@ public:
 	virtual bool Initialize(Renderer& renderer, const char* texturePath);
 	virtual void Render(Renderer& renderer, const Vector2f& screenPosition) const;
 
+	virtual Rect GetRenderOrderBounds() const = 0;
+
 protected:
 	Vector2f m_position{ -1.0f,-1.0f };//in world coordinates
 	Vector2f m_pivot{ 0.5f, 1.0f };
