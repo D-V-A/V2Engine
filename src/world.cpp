@@ -1,26 +1,37 @@
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 
 #include "world.h"
 #include "renderer.h"
 #include "isometric.h"
+#include "map_loader.h"
 
 #include "types/rect.h"
 
-bool World::Initialize(Renderer& renderer)
+bool World::Initialize(Renderer& renderer, const char* mapPath)
 {
-	if (!m_floorTexture.Load(renderer, "assets/txt/grass_tile.png"))
+	if (!MapLoader::Load(mapPath, m_mapData))
 		return false;
 
-	m_tileWidth = static_cast<float>(m_floorTexture.GetWidth());
+	if (!m_grassTexture.Load(renderer, "assets/txt/grass_tile.png"))
+		return false;
 
-	m_tileHeight = static_cast<float>(m_floorTexture.GetHeight());
+	if (!m_dirtTexture.Load(renderer, "assets/txt/dirt_tile.png"))
+		return false;
+
+	if (!m_waterTexture.Load(renderer, "assets/txt/water_tile.png"))
+		return false;
+
+	m_tileWidth = static_cast<float>(m_grassTexture.GetWidth());
+
+	m_tileHeight = static_cast<float>(m_grassTexture.GetHeight());
 
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
 	m_origin.x = windowWidth / 2;
-	m_origin.y = (windowHeight - m_height * m_tileHeight) / 2;
+	m_origin.y = (windowHeight - m_mapData.height * m_tileHeight) / 2;
 
 	CreateObjects();
 
@@ -30,12 +41,7 @@ bool World::Initialize(Renderer& renderer)
 void World::CreateObjects() 
 {
 	m_objects.resize(9);
-	//float i = 2.0f;
-	//for (auto it = m_objects.begin(); it != m_objects.end(); it++)
-	//{
-	//	it->SetPosition({ i ,2 });
-	//	i += 2.0f;
-	//}
+
 	m_objects[0].SetPosition({ 2 ,2 });
 	m_objects[1].SetPosition({ 4 ,2 });
 	m_objects[2].SetPosition({ 6 ,2 });
@@ -62,11 +68,15 @@ bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
 
 void World::Render(Renderer& renderer) const
 {
-
-	for (int y = 0; y < m_height; ++y)
+	for (int y = 0; y < m_mapData.height; ++y)
 	{
-		for (int x = 0; x < m_width; ++x)
+		for (int x = 0; x < m_mapData.width; ++x)
 		{
+			const size_t index = static_cast<size_t>(y * m_mapData.width + x);
+			const TileData& tile = m_mapData.tiles[index];
+
+			const Texture& texture = GetSurfaceTexture(tile.surface);
+			
 			Rect tileRect;
 
 			tileRect.size = { m_tileWidth, m_tileHeight };
@@ -76,7 +86,7 @@ void World::Render(Renderer& renderer) const
 			tileRect.position = GetTopLeft(tileCenter, tileRect.size, m_pivot);
 
 			renderer.DrawTexture(
-				m_floorTexture,
+				texture,
 				tileRect);
 		}
 	}
@@ -106,7 +116,7 @@ float World::ResolveMovementX(const Rect& collisionRect, float movement) const
 
 	if (movement > 0.0f)
 	{
-		const float worldRight = static_cast<float>(m_width);
+		const float worldRight = static_cast<float>(m_mapData.width);
 		const float playerRight = collisionRect.position.x + collisionRect.size.x;
 		allowedMovement = std::min(allowedMovement, worldRight - playerRight);
 
@@ -162,7 +172,7 @@ float World::ResolveMovementY(const Rect& collisionRect, float movement) const
 
 	if (movement > 0.0f)
 	{
-		const float worldBottom = static_cast<float>(m_height);
+		const float worldBottom = static_cast<float>(m_mapData.height);
 		const float playerBottom = collisionRect.position.y + collisionRect.size.y;
 		allowedMovement = std::min(allowedMovement, worldBottom - playerBottom);
 
@@ -205,4 +215,22 @@ float World::ResolveMovementY(const Rect& collisionRect, float movement) const
 	}
 
 	return allowedMovement;
+}
+
+const Texture& World::GetSurfaceTexture(SurfaceType surface) const
+{
+	switch (surface)
+	{
+	case SurfaceType::Grass:
+		return m_grassTexture;
+
+	case SurfaceType::Dirt:
+		return m_dirtTexture;
+
+	case SurfaceType::Water:
+		return m_waterTexture;
+	}
+
+	assert(false);
+	return m_grassTexture;
 }

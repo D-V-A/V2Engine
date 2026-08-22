@@ -50,7 +50,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_world.Initialize(m_renderer))
+	if (!m_world.Initialize(m_renderer, "assets/map/map.txt"))
 	{
 		std::cerr << "Failed to init world: "
 			<< SDL_GetError() << '\n';
