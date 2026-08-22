@@ -1,7 +1,5 @@
 #include <iostream>
-#include <queue>
 #include <vector>
-#include <cassert>
 
 #include "application.h"
 #include "isometric.h"

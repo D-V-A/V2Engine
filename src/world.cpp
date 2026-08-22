@@ -6,6 +6,7 @@
 #include "renderer.h"
 #include "isometric.h"
 #include "map_loader.h"
+#include "assets.h"
 
 #include "types/rect.h"
 
@@ -14,13 +15,16 @@ bool World::Initialize(Renderer& renderer, const char* mapPath)
 	if (!MapLoader::Load(mapPath, m_mapData))
 		return false;
 
-	if (!m_grassTexture.Load(renderer, "assets/txt/grass_tile.png"))
+	auto assetPath = GetAssetPath("txt/grass_tile.png");
+	if (!m_grassTexture.Load(renderer, assetPath.string().c_str()))
 		return false;
 
-	if (!m_dirtTexture.Load(renderer, "assets/txt/dirt_tile.png"))
+	assetPath = GetAssetPath("txt/dirt_tile.png");
+	if (!m_dirtTexture.Load(renderer, assetPath.string().c_str()))
 		return false;
 
-	if (!m_waterTexture.Load(renderer, "assets/txt/water_tile.png"))
+	assetPath = GetAssetPath("txt/water_tile.png");
+	if (!m_waterTexture.Load(renderer, assetPath.string().c_str()))
 		return false;
 
 	m_tileWidth = static_cast<float>(m_grassTexture.GetWidth());

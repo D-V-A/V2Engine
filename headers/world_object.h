@@ -2,11 +2,6 @@
 
 #include "entity.h"
 
-#include "types/vector2f.h"
-#include "types/rect.h"
-
-class Renderer;
-
 class WorldObject: public Entity
 {
 public:

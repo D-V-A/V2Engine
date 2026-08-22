@@ -124,6 +124,7 @@ add_custom_command(TARGET V2Engine POST_BUILD
 		$<TARGET_FILE_DIR:V2Engine>
 )
 
+#There are 2 copies of assets. Decide later
 add_custom_command(TARGET V2Engine POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/assets

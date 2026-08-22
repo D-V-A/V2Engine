@@ -3,7 +3,6 @@
 #include "entity.h"
 
 #include "types/vector2i.h"
-#include "types/rect.h"
 
 class Player: public Entity
 {
