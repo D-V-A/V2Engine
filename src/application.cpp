@@ -58,7 +58,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_player.Initialize(m_renderer, "assets/txt/player.bmp"))
+	if (!m_player.Initialize(m_renderer, "assets/txt/player.png"))
 	{
 		std::cerr << "Failed to init player model: "
 			<< SDL_GetError() << '\n';
@@ -66,7 +66,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_world.InitializeObjects(m_renderer, "assets/txt/crate.bmp"))
+	if (!m_world.InitializeObjects(m_renderer, "assets/txt/crate.png"))
 	{
 		std::cerr << "Failed to init object model: "
 			<< SDL_GetError() << '\n';

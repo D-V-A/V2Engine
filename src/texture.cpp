@@ -1,11 +1,12 @@
-#include <SDL3/SDL_render.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 #include "texture.h"
 #include "renderer.h"
 
 bool Texture::Load(Renderer& renderer, const char* path)
 {
-	SDL_Surface* surface = SDL_LoadBMP(path);
+	SDL_Surface* surface = IMG_Load(path);
 
 	if (surface == nullptr)
 		return false;
