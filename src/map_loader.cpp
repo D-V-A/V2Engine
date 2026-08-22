@@ -1,4 +1,4 @@
-#include <fstream>
+
 #include <string>
 #include <utility>
 
@@ -28,6 +28,27 @@ namespace
 			return false;
 		}
 	}
+
+	bool CharToObjectType(char symbol, ObjectType& surfaceType)
+	{
+		switch (symbol)
+		{
+		case 'C':
+			surfaceType = ObjectType::Crate;
+			return true;
+
+		case 'T':
+			surfaceType = ObjectType::Tree;
+			return true;
+
+		case 'R':
+			surfaceType = ObjectType::Rock;
+			return true;
+
+		default:
+			return false;
+		}
+	}
 }
 
 bool MapLoader::Load(const char* path, MapData& mapData)
@@ -37,6 +58,17 @@ bool MapLoader::Load(const char* path, MapData& mapData)
 	if (!file.is_open())
 		return false;
 
+	if(!LoadMap(file, mapData))
+		return false;
+
+	if (!LoadObjects(file, mapData))
+		return false;
+
+	return true;
+}
+
+bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
+{
 	int width = 0;
 	int height = 0;
 
@@ -73,6 +105,40 @@ bool MapLoader::Load(const char* path, MapData& mapData)
 	}
 
 	mapData = std::move(loadedMap);
+	return true;
+}
 
+bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
+{
+	std::string objectsHeader;
+	int objectCount = 0;
+
+	if (!(file >> objectsHeader >> objectCount))
+		return false;
+
+	if (objectsHeader != "OBJECTS" || objectCount < 0)
+		return false;
+
+	mapData.objects.reserve(objectCount);
+
+	bool sucessful = true;
+	for (int i = 0; i < objectCount; i++)
+	{
+		char type;
+		ObjectData obj;
+		if (!(file >> type >> obj.position.x >> obj.position.y >> obj.renderFootprintSize.x >> obj.renderFootprintSize.y) ||
+			!CharToObjectType(type, obj.type))
+		{
+			sucessful = false;
+			continue;
+		}
+
+		mapData.objects.push_back(obj);
+	}
+	if (!sucessful)
+	{
+		mapData.objects.shrink_to_fit();
+		return false;
+	}
 	return true;
 }

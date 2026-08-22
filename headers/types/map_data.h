@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "types/Vector2f.h"
+
 enum class SurfaceType
 {
 	Grass,
@@ -9,9 +11,23 @@ enum class SurfaceType
 	Water
 };
 
+enum class ObjectType
+{
+	Crate,
+	Tree,
+	Rock
+};
+
 struct TileData
 {
 	SurfaceType surface = SurfaceType::Grass;
+};
+
+struct ObjectData
+{
+	ObjectType type;
+	Vector2f position;
+	Vector2f renderFootprintSize;
 };
 
 struct MapData
@@ -20,4 +36,5 @@ struct MapData
 	int height = 0;
 
 	std::vector<TileData> tiles;
+	std::vector<ObjectData> objects;
 };

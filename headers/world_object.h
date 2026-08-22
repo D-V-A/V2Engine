@@ -5,7 +5,7 @@
 class WorldObject: public Entity
 {
 public:
-	WorldObject();
+	WorldObject(Vector2f pos, Vector2f collision_size);
 
 public:
 	Rect GetCollisionRect() const;

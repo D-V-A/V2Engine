@@ -1,7 +1,8 @@
 #include "world_object.h"
 
-WorldObject::WorldObject() : Entity({ 4.0f, 5.0f }, { 0.5f, 1.0f })
+WorldObject::WorldObject(Vector2f pos, Vector2f collision_size) : Entity(pos, {0.5f, 1.0f})
 {
+	m_collisionRect.size = collision_size;
 }
 
 Rect WorldObject::GetCollisionRect() const

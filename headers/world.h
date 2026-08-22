@@ -32,8 +32,6 @@ private:
 	float ResolveMovementX(const Rect& collisionRect, float movement) const;
 	float ResolveMovementY(const Rect& collisionRect, float movement) const;
 
-	void CreateObjects();
-
 	MapData m_mapData;
 
 	Texture m_grassTexture;
