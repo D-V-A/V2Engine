@@ -109,6 +109,10 @@ file(GLOB_RECURSE V2ENGINE_SOURCES CONFIGURE_DEPENDS
 
 add_executable(V2Engine ${V2ENGINE_SOURCES})
 
+target_compile_definitions(V2Engine PRIVATE
+	V2ENGINE_ASSET_ROOT="${CMAKE_SOURCE_DIR}/assets"
+)
+
 target_include_directories(V2Engine PRIVATE
 	headers
 )

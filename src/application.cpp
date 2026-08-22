@@ -6,6 +6,7 @@
 #include "application.h"
 #include "isometric.h"
 #include "render_order.h"
+#include "assets.h"
 
 Application::~Application()
 {
@@ -50,7 +51,8 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_world.Initialize(m_renderer, "assets/map/map.txt"))
+	std::filesystem::path asset_path = GetAssetPath("map/map.txt");
+	if (!m_world.Initialize(m_renderer, asset_path.string().c_str()))
 	{
 		std::cerr << "Failed to init world: "
 			<< SDL_GetError() << '\n';
@@ -58,7 +60,8 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_player.Initialize(m_renderer, "assets/txt/player.png"))
+	asset_path = GetAssetPath("txt/player.png");
+	if (!m_player.Initialize(m_renderer, asset_path.string().c_str()))
 	{
 		std::cerr << "Failed to init player model: "
 			<< SDL_GetError() << '\n';
@@ -66,7 +69,8 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_world.InitializeObjects(m_renderer, "assets/txt/crate.png"))
+	asset_path = GetAssetPath("txt/crate.png");
+	if (!m_world.InitializeObjects(m_renderer, asset_path.string().c_str()))
 	{
 		std::cerr << "Failed to init object model: "
 			<< SDL_GetError() << '\n';

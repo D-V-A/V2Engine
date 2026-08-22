@@ -45,12 +45,12 @@ void World::CreateObjects()
 	m_objects[0].SetPosition({ 2 ,2 });
 	m_objects[1].SetPosition({ 4 ,2 });
 	m_objects[2].SetPosition({ 6 ,2 });
-	m_objects[3].SetPosition({ 2 ,5 });
-	m_objects[4].SetPosition({ 3 ,5 });
-	m_objects[5].SetPosition({ 4 ,5 });
-	m_objects[6].SetPosition({ 6 ,7 });
-	m_objects[7].SetPosition({ 7 ,8 });
-	m_objects[8].SetPosition({ 8 ,9 });
+	//m_objects[3].SetPosition({ 2 ,5 });
+	//m_objects[4].SetPosition({ 3 ,5 });
+	//m_objects[5].SetPosition({ 4 ,5 });
+	//m_objects[6].SetPosition({ 6 ,7 });
+	//m_objects[7].SetPosition({ 7 ,8 });
+	//m_objects[8].SetPosition({ 8 ,9 });
 
 }
 
