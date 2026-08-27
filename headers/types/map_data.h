@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <optional>
 
 #include "types/Vector2f.h"
@@ -26,14 +27,16 @@ struct TileData
 	SurfaceType surface = SurfaceType::Grass;
 };
 
-struct ObjectData
+struct ObjectTypeData
+{
+	Vector2f renderFootprintSize;
+	std::optional<Rect> collision;
+};
+
+struct ObjectInstanceData
 {
 	ObjectType type;
-	Vector2f position; //world coordinates
-
-	Vector2f renderFootprintSize;
-
-	std::optional<Rect> collision;
+	Vector2f position;
 };
 
 struct MapData
@@ -42,5 +45,7 @@ struct MapData
 	int height = 0;
 
 	std::vector<TileData> tiles;
-	std::vector<ObjectData> objects;
+
+	std::map<ObjectType, ObjectTypeData> objectTypes;
+	std::vector<ObjectInstanceData> objects;
 };

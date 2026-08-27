@@ -6,7 +6,6 @@
 #include "types/map_data.h"
 #include "types/rect.h"
 
-
 namespace
 {
 	bool CharToSurfaceType(char symbol, SurfaceType& surfaceType)
@@ -115,13 +114,32 @@ bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
 
 bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 {
-	std::string objectsHeader;
-	int objectCount = 0;
+	std::string header;
+	int typesCount = 0;
 
-	if (!(file >> objectsHeader >> objectCount))
+	if (!(file >> header >> typesCount))
 		return false;
 
-	if (objectsHeader != "OBJECTS" || objectCount < 0)
+	if (header != "OBJECT_TYPES" || typesCount < 0)
+		return false;
+
+	for (int i = 0; i < typesCount; i++)
+	{
+		ObjectType type;
+		ObjectTypeData typeData;
+
+		if(!LoadObjectType(file, type, typeData))
+			return false;
+
+		mapData.objectTypes.insert(std::make_pair(type, typeData));
+	}
+
+	int objectCount = 0;
+
+	if (!(file >> header >> objectCount))
+		return false;
+
+	if (header != "OBJECTS" || objectCount < 0)
 		return false;
 
 	mapData.objects.reserve(objectCount);
@@ -129,7 +147,7 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 	bool sucessful = true;
 	for (int i = 0; i < objectCount; i++)
 	{
-		ObjectData obj;
+		ObjectInstanceData obj;
 		
 		if (!LoadObject(file, obj))
 		{
@@ -146,15 +164,14 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 	return true;
 }
 
-
-bool MapLoader::LoadObject(std::ifstream& file, ObjectData& objectData)
+bool MapLoader::LoadObjectType(std::ifstream& file, ObjectType& type, ObjectTypeData& data)
 {
-	char type;
+	char typeSymbol;
 
-	if (!(file >> type >> objectData.position.x >> objectData.position.y >> objectData.renderFootprintSize.x >> objectData.renderFootprintSize.y))
+	if (!(file >> typeSymbol >> data.renderFootprintSize.x >> data.renderFootprintSize.y))
 		return false;
 
-	if (!CharToObjectType(type, objectData.type))
+	if (!CharToObjectType(typeSymbol, type))
 		return false;
 
 	std::string collisionType;
@@ -164,7 +181,7 @@ bool MapLoader::LoadObject(std::ifstream& file, ObjectData& objectData)
 
 	if (collisionType == "NO_COLLISION")
 	{
-		objectData.collision = std::nullopt;
+		data.collision = std::nullopt;
 		return true;
 	}
 
@@ -179,7 +196,20 @@ bool MapLoader::LoadObject(std::ifstream& file, ObjectData& objectData)
 	if (collision.width() <= 0.0f || collision.height() <= 0.0f)
 		return false;
 
-	objectData.collision = collision;
+	data.collision = collision;
+
+	return true;
+}
+
+bool MapLoader::LoadObject(std::ifstream& file, ObjectInstanceData& objectData)
+{
+	char type;
+
+	if (!(file >> type >> objectData.position.x >> objectData.position.y))
+		return false;
+
+	if (!CharToObjectType(type, objectData.type))
+		return false;
 
 	return true;
 }

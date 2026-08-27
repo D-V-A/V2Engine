@@ -3,7 +3,9 @@
 #include <fstream>
 
 class MapData;
-class ObjectData;
+class ObjectInstanceData;
+class ObjectTypeData;
+enum class ObjectType;
 
 class MapLoader
 {
@@ -13,5 +15,6 @@ private:
 	static bool LoadMap(std::ifstream& file, MapData& mapData);
 
 	static bool LoadObjects(std::ifstream& file, MapData& mapData);
-	static bool LoadObject(std::ifstream& file, ObjectData& objectData);
+	static bool LoadObjectType(std::ifstream& file, ObjectType& type, ObjectTypeData& data);
+	static bool LoadObject(std::ifstream& file, ObjectInstanceData& objectData);
 };

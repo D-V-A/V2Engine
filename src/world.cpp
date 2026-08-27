@@ -48,13 +48,15 @@ bool World::InitializeObjects(Renderer& renderer)
 	m_objects.clear();
 	m_objects.reserve(m_mapData.objects.size());
 
-	for (const ObjectData& objectData : m_mapData.objects)
+	for (const ObjectInstanceData& objectInstance : m_mapData.objects)
 	{
-		WorldObject object(objectData.position, objectData.renderFootprintSize, objectData.collision);
+		WorldObject object(objectInstance.position, 
+			m_mapData.objectTypes.at(objectInstance.type).renderFootprintSize, 
+			m_mapData.objectTypes.at(objectInstance.type).collision);
 
 		std::filesystem::path texturePath;
 
-		switch (objectData.type)
+		switch (objectInstance.type)
 		{
 		case ObjectType::Crate:
 			texturePath = GetAssetPath("txt/crate.png");
