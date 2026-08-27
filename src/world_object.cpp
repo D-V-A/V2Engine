@@ -1,18 +1,23 @@
 #include "world_object.h"
 
-WorldObject::WorldObject(Vector2f pos, Vector2f renderFootprintSize) : Entity(pos, {0.5f, 1.0f})
+WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect)
+	: Entity(position, renderFootprintSize)
 {
-	m_renderOrderBounds.position = { -renderFootprintSize.x, -renderFootprintSize.y };
-	m_renderOrderBounds.size = renderFootprintSize;
-
-	m_collisionRect = m_renderOrderBounds;
+	if (collisionRect.has_value())
+		m_collisionRect = collisionRect;
 }
 
 Rect WorldObject::GetCollisionRect() const
 {
-	Rect result = m_collisionRect;
+	Rect result = *m_collisionRect;
+
 	result.x() += m_position.x;
 	result.y() += m_position.y;
 
 	return result;
+}
+
+bool WorldObject::HasCollision() const
+{
+	return m_collisionRect.has_value();
 }

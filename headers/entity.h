@@ -11,7 +11,7 @@ class Entity
 {
 public:
 	Entity(Vector2f pos);
-	Entity(Vector2f pos, Vector2f pivot);
+	Entity(Vector2f pos, Vector2f renderFootprintSize);
 	virtual ~Entity() = default;
 
 	Entity(const Entity&) = delete;

@@ -6,8 +6,10 @@ Entity::Entity(Vector2f pos) : m_position(pos)
 {
 }
 
-Entity::Entity(Vector2f pos, Vector2f pivot): m_position(pos), m_pivot(pivot)
+Entity::Entity(Vector2f pos, Vector2f renderFootprintSize) : m_position(pos)
 {
+	m_renderOrderBounds.position = { -renderFootprintSize.x, -renderFootprintSize.y };
+	m_renderOrderBounds.size = renderFootprintSize;
 }
 
 bool Entity::Initialize(Renderer& renderer, const char* texturePath)

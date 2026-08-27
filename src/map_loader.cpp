@@ -4,6 +4,7 @@
 
 #include "map_loader.h"
 #include "types/map_data.h"
+#include "types/rect.h"
 
 
 namespace
@@ -43,6 +44,10 @@ namespace
 
 		case 'R':
 			objectType = ObjectType::Rock;
+			return true;
+
+		case 'B':
+			objectType = ObjectType::Bush;
 			return true;
 
 		default:
@@ -124,15 +129,13 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 	bool sucessful = true;
 	for (int i = 0; i < objectCount; i++)
 	{
-		char type;
 		ObjectData obj;
-		if (!(file >> type >> obj.position.x >> obj.position.y >> obj.renderFootprintSize.x >> obj.renderFootprintSize.y) ||
-			!CharToObjectType(type, obj.type))
+		
+		if (!LoadObject(file, obj))
 		{
 			sucessful = false;
 			continue;
 		}
-
 		mapData.objects.push_back(obj);
 	}
 	if (!sucessful)
@@ -140,5 +143,43 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 		mapData.objects.shrink_to_fit();
 		return false;
 	}
+	return true;
+}
+
+
+bool MapLoader::LoadObject(std::ifstream& file, ObjectData& objectData)
+{
+	char type;
+
+	if (!(file >> type >> objectData.position.x >> objectData.position.y >> objectData.renderFootprintSize.x >> objectData.renderFootprintSize.y))
+		return false;
+
+	if (!CharToObjectType(type, objectData.type))
+		return false;
+
+	std::string collisionType;
+
+	if (!(file >> collisionType))
+		return false;
+
+	if (collisionType == "NO_COLLISION")
+	{
+		objectData.collision = std::nullopt;
+		return true;
+	}
+
+	if (collisionType != "COLLISION")
+		return false;
+
+	Rect collision;
+
+	if (!(file >> collision.x() >> collision.y() >> collision.width() >> collision.height()))
+		return false;
+
+	if (collision.width() <= 0.0f || collision.height() <= 0.0f)
+		return false;
+
+	objectData.collision = collision;
+
 	return true;
 }

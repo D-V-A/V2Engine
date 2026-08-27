@@ -1,17 +1,19 @@
 #pragma once
 
+#include <optional>
+
 #include "entity.h"
 
 class WorldObject: public Entity
 {
 public:
-	WorldObject(Vector2f pos, Vector2f collision_size);
+	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect);
 
 public:
 	Rect GetCollisionRect() const;
 
+	bool HasCollision() const;
+
 private:
-	Rect m_collisionRect{
-	{-1.0f, -1.0f},//relative to map position
-	{1.0f, 1.0f} };//collision size
+	std::optional<Rect> m_collisionRect;
 };

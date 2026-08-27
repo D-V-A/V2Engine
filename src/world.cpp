@@ -50,7 +50,7 @@ bool World::InitializeObjects(Renderer& renderer)
 
 	for (const ObjectData& objectData : m_mapData.objects)
 	{
-		WorldObject object(objectData.position, objectData.renderFootprintSize);
+		WorldObject object(objectData.position, objectData.renderFootprintSize, objectData.collision);
 
 		std::filesystem::path texturePath;
 
@@ -66,6 +66,10 @@ bool World::InitializeObjects(Renderer& renderer)
 
 		case ObjectType::Rock:
 			texturePath = GetAssetPath("txt/rock.png");
+			break;
+
+		case ObjectType::Bush:
+			texturePath = GetAssetPath("txt/bush.png");
 			break;
 		}
 		
@@ -134,6 +138,9 @@ float World::ResolveMovementX(const Rect& collisionRect, float movement) const
 
 		for (const WorldObject& object : m_objects)
 		{
+			if (!object.HasCollision())
+				continue;
+
 			const Rect objectRect = object.GetCollisionRect();
 
 			if (!OverlapsY(collisionRect, objectRect))
@@ -155,6 +162,9 @@ float World::ResolveMovementX(const Rect& collisionRect, float movement) const
 
 		for (const WorldObject& object : m_objects)
 		{
+			if (!object.HasCollision())
+				continue;
+
 			const Rect objectRect = object.GetCollisionRect();
 
 			if (!OverlapsY(collisionRect, objectRect))
@@ -190,6 +200,9 @@ float World::ResolveMovementY(const Rect& collisionRect, float movement) const
 
 		for (const WorldObject& object : m_objects)
 		{
+			if (!object.HasCollision())
+				continue;
+
 			const Rect objectRect = object.GetCollisionRect();
 
 			if (!OverlapsX(collisionRect, objectRect))
@@ -211,6 +224,9 @@ float World::ResolveMovementY(const Rect& collisionRect, float movement) const
 
 		for (const WorldObject& object : m_objects)
 		{
+			if (!object.HasCollision())
+				continue;
+
 			const Rect objectRect = object.GetCollisionRect();
 
 			if (!OverlapsX(collisionRect, objectRect))

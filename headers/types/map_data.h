@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 
 #include "types/Vector2f.h"
+#include "types/rect.h"
 
 enum class SurfaceType
 {
@@ -15,7 +17,8 @@ enum class ObjectType
 {
 	Crate,
 	Tree,
-	Rock
+	Rock,
+	Bush
 };
 
 struct TileData
@@ -26,8 +29,11 @@ struct TileData
 struct ObjectData
 {
 	ObjectType type;
-	Vector2f position;
+	Vector2f position; //world coordinates
+
 	Vector2f renderFootprintSize;
+
+	std::optional<Rect> collision;
 };
 
 struct MapData
