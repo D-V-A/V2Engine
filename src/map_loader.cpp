@@ -131,7 +131,10 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 		if(!LoadObjectType(file, type, typeData))
 			return false;
 
-		mapData.objectTypes.insert(std::make_pair(type, typeData));
+		const auto [it, inserted] = mapData.objectTypes.emplace(type, std::move(typeData));
+
+		if (!inserted)
+			return false;
 	}
 
 	int objectCount = 0;
@@ -149,11 +152,12 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 	{
 		ObjectInstanceData obj;
 		
-		if (!LoadObject(file, obj))
+		if (!LoadObject(file, obj) || !mapData.objectTypes.contains(obj.type))
 		{
 			sucessful = false;
 			continue;
 		}
+
 		mapData.objects.push_back(obj);
 	}
 	if (!sucessful)

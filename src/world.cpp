@@ -50,9 +50,12 @@ bool World::InitializeObjects(Renderer& renderer)
 
 	for (const ObjectInstanceData& objectInstance : m_mapData.objects)
 	{
-		WorldObject object(objectInstance.position, 
-			m_mapData.objectTypes.at(objectInstance.type).renderFootprintSize, 
-			m_mapData.objectTypes.at(objectInstance.type).collision);
+		const ObjectTypeData& typeData = m_mapData.objectTypes.at(objectInstance.type);
+
+		WorldObject object(
+			objectInstance.position,
+			typeData.renderFootprintSize,
+			typeData.collision);
 
 		std::filesystem::path texturePath;
 
