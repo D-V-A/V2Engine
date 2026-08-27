@@ -2,6 +2,7 @@
 
 Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 {	
+	m_renderOrderBounds = m_collisionRect;
 }
 
 Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction) const
@@ -14,8 +15,8 @@ Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction) c
 Rect Player::GetCollisionRectAt(const Vector2f& pos) const
 {
 	Rect result = m_collisionRect;
-	result.position.x += pos.x;
-	result.position.y += pos.y;
+	result.x() += pos.x;
+	result.y() += pos.y;
 
 	return result;
 }
@@ -29,9 +30,4 @@ void Player::MovePlayer(const Vector2f& movement)
 {
 	m_position.x += movement.x;
 	m_position.y += movement.y;
-}
-
-Rect Player::GetRenderOrderBounds() const
-{
-	return GetCollisionRect();//temporal solution
 }

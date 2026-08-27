@@ -14,9 +14,9 @@ Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f
 
 bool IsBehind(const Rect& first, const Rect& second)
 {
-	const float firstRight = first.position.x + first.size.x;
-	const float firstBottom = first.position.y + first.size.y;
+	const float firstRight = first.x() + first.width();
+	const float firstBottom = first.y() + first.height();
 
-	return firstRight <= second.position.x ||
-		firstBottom <= second.position.y;
+	return firstRight <= second.x() ||
+		firstBottom <= second.y();
 }

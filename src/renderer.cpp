@@ -27,10 +27,10 @@ void Renderer::Clear()
 void Renderer::FillRect(const Rect& rect)
 {
 	const SDL_FRect sdlRectangle{
-		rect.position.x,
-		rect.position.y,
-		rect.size.x,
-		rect.size.y
+		rect.x(),
+		rect.y(),
+		rect.width(),
+		rect.height()
 	};
 	// Цвет прямоугольника: оранжевый.
 	SDL_SetRenderDrawColor(m_sdlRenderer, 220, 120, 40, 255);
@@ -40,10 +40,10 @@ void Renderer::FillRect(const Rect& rect)
 void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
 {
 	const SDL_FRect dst{
-		destination.position.x,
-		destination.position.y,
-		destination.size.x,
-		destination.size.y
+		destination.x(),
+		destination.y(),
+		destination.width(),
+		destination.height()
 	};
 
 	SDL_RenderTexture(

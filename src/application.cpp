@@ -56,7 +56,7 @@ bool Application::Initialize()
 		switch (world_init_res)
 		{
 		case(InitializationResults::InfoLoadFail):
-			std::cerr << "Failed to load map info: " << SDL_GetError() << '\n';
+			std::cerr << "Failed to load map info: " << asset_path << '\n';
 			break;
 		case(InitializationResults::MapTxtFail):
 			std::cerr << "Failed to load map texture: " << SDL_GetError() << '\n';

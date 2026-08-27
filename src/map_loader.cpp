@@ -29,20 +29,20 @@ namespace
 		}
 	}
 
-	bool CharToObjectType(char symbol, ObjectType& surfaceType)
+	bool CharToObjectType(char symbol, ObjectType& objectType) 
 	{
 		switch (symbol)
 		{
 		case 'C':
-			surfaceType = ObjectType::Crate;
+			objectType = ObjectType::Crate;
 			return true;
 
 		case 'T':
-			surfaceType = ObjectType::Tree;
+			objectType = ObjectType::Tree;
 			return true;
 
 		case 'R':
-			surfaceType = ObjectType::Rock;
+			objectType = ObjectType::Rock;
 			return true;
 
 		default:

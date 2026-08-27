@@ -17,8 +17,6 @@ public:
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
 
-	Rect GetRenderOrderBounds() const;
-
 private:
 
 	Rect m_collisionRect{
