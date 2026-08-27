@@ -10,11 +10,19 @@
 
 class Renderer;
 
+enum InitializationResults
+{
+	Success,
+	InfoLoadFail,
+	MapTxtFail,
+	ObjTxtFail
+};
+
 class World
 {
 public:
-	bool Initialize(Renderer& renderer, const char* mapPath);
-	bool InitializeObjects(Renderer& renderer, const char* texturePath);
+	InitializationResults Initialize(Renderer& renderer, const char* mapPath);
+	bool InitializeObjects(Renderer& renderer);
 	void Render(Renderer& renderer) const;
 
 	float GetTileWidth() const { return m_tileWidth; }

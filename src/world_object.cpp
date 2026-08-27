@@ -3,6 +3,8 @@
 WorldObject::WorldObject(Vector2f pos, Vector2f collision_size) : Entity(pos, {0.5f, 1.0f})
 {
 	m_collisionRect.size = collision_size;
+	m_collisionRect.position.x = -collision_size.x;
+	m_collisionRect.position.y = -collision_size.y;
 }
 
 Rect WorldObject::GetCollisionRect() const

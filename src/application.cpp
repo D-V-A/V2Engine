@@ -50,10 +50,21 @@ bool Application::Initialize()
 	}
 
 	std::filesystem::path asset_path = GetAssetPath("map/map.txt");
-	if (!m_world.Initialize(m_renderer, asset_path.string().c_str()))
+	InitializationResults world_init_res = m_world.Initialize(m_renderer, asset_path.string().c_str());
+	if (world_init_res != InitializationResults::Success)
 	{
-		std::cerr << "Failed to init world: "
-			<< SDL_GetError() << '\n';
+		switch (world_init_res)
+		{
+		case(InitializationResults::InfoLoadFail):
+			std::cerr << "Failed to load map info: " << SDL_GetError() << '\n';
+			break;
+		case(InitializationResults::MapTxtFail):
+			std::cerr << "Failed to load map texture: " << SDL_GetError() << '\n';
+			break;
+		case(InitializationResults::ObjTxtFail):
+			std::cerr << "Failed to init object model: " << SDL_GetError() << '\n';
+			break;
+		}
 
 		return false;
 	}
@@ -62,15 +73,6 @@ bool Application::Initialize()
 	if (!m_player.Initialize(m_renderer, asset_path.string().c_str()))
 	{
 		std::cerr << "Failed to init player model: "
-			<< SDL_GetError() << '\n';
-
-		return false;
-	}
-
-	asset_path = GetAssetPath("txt/crate.png");
-	if (!m_world.InitializeObjects(m_renderer, asset_path.string().c_str()))
-	{
-		std::cerr << "Failed to init object model: "
 			<< SDL_GetError() << '\n';
 
 		return false;

@@ -10,22 +10,22 @@
 
 #include "types/rect.h"
 
-bool World::Initialize(Renderer& renderer, const char* mapPath)
+InitializationResults World::Initialize(Renderer& renderer, const char* mapPath)
 {
 	if (!MapLoader::Load(mapPath, m_mapData))
-		return false;
+		return InitializationResults::InfoLoadFail;
 
 	auto assetPath = GetAssetPath("txt/grass_tile.png");
 	if (!m_grassTexture.Load(renderer, assetPath.string().c_str()))
-		return false;
+		return InitializationResults::MapTxtFail;
 
 	assetPath = GetAssetPath("txt/dirt_tile.png");
 	if (!m_dirtTexture.Load(renderer, assetPath.string().c_str()))
-		return false;
+		return InitializationResults::MapTxtFail;
 
 	assetPath = GetAssetPath("txt/water_tile.png");
 	if (!m_waterTexture.Load(renderer, assetPath.string().c_str()))
-		return false;
+		return InitializationResults::MapTxtFail;
 
 	m_tileWidth = static_cast<float>(m_grassTexture.GetWidth());
 
@@ -37,10 +37,13 @@ bool World::Initialize(Renderer& renderer, const char* mapPath)
 	m_origin.x = windowWidth / 2;
 	m_origin.y = (windowHeight - m_mapData.height * m_tileHeight) / 2;
 
-	return true;
+	if (!InitializeObjects(renderer))
+		return InitializationResults::ObjTxtFail;
+
+	return InitializationResults::Success;
 }
 
-bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
+bool World::InitializeObjects(Renderer& renderer)
 {
 	m_objects.clear();
 	m_objects.reserve(m_mapData.objects.size());
@@ -49,7 +52,24 @@ bool World::InitializeObjects(Renderer& renderer, const char* texturePath)
 	{
 		WorldObject object(objectData.position, objectData.renderFootprintSize);
 
-		if (!object.Initialize(renderer, texturePath))
+		std::filesystem::path texturePath;
+
+		switch (objectData.type)
+		{
+		case ObjectType::Crate:
+			texturePath = GetAssetPath("txt/crate.png");
+			break;
+
+		case ObjectType::Tree:
+			texturePath = GetAssetPath("txt/tree.png");
+			break;
+
+		case ObjectType::Rock:
+			texturePath = GetAssetPath("txt/rock.png");
+			break;
+		}
+		
+		if (!object.Initialize(renderer, texturePath.string().c_str()))
 			return false;
 
 		m_objects.push_back(std::move(object));
