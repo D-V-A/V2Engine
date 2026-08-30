@@ -212,6 +212,29 @@ World::SweepHit World::FindFirstCollision(const Rect& collisionRect, const Vecto
 {
 	SweepHit nearestHit;
 
+	const Rect worldBounds[] = {
+		Rect //leftBound
+		{{ -1.0f, -1.0f },
+		{ 1.0f, static_cast<float>(m_height) + 2.0f }},
+		Rect //rightBound
+		{{ static_cast<float>(m_width), -1.0f },
+		{ 1.0f, static_cast<float>(m_height) + 2.0f }},
+		Rect //topBound
+		{{ -1.0f, -1.0f },
+		{ static_cast<float>(m_width) + 2.0f, 1.0f }},
+		Rect //bottomBound
+		{{ -1.0f, static_cast<float>(m_height) },
+		{ static_cast<float>(m_width) + 2.0f, 1.0f }}
+	};
+
+	for (const Rect& bound : worldBounds)
+	{
+		const SweepHit hit = SweepRect(collisionRect, movement, bound);
+
+		if (hit.hit && hit.time < nearestHit.time)
+			nearestHit = hit;
+	}
+
 	constexpr float epsilon = 0.0001f;
 
 	// --------------------------------
