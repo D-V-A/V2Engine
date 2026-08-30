@@ -12,6 +12,7 @@
 enum class SurfaceType
 {
 	Void,
+	Road,
 	Grass,
 	Dirt,
 	Water

@@ -10,7 +10,7 @@ public:
 	Player();
 
 public:
-	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction) const;
+	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction, const float modifier) const;
 
 	void MovePlayer(const Vector2f& movement);
 

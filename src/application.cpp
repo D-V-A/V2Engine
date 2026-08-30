@@ -131,13 +131,18 @@ void Application::ProcessEvents()
 void Application::Update(float deltaTime)
 {
 	m_input.Update();
-	Vector2i movementDirection = m_input.GetDirection();
-	if (movementDirection.x == 0 && movementDirection.y == 0) 
-	{
+
+	const Vector2i movementDirection = m_input.GetDirection();
+
+	if (movementDirection.x == 0 && movementDirection.y == 0)
 		return;
-	}
-	Vector2f movement = m_player.CalculateMovement(deltaTime, movementDirection);
+
+	const float speedModifier =	m_world.GetSpeedModifierAt(m_player.GetPosition());
+
+	Vector2f movement = m_player.CalculateMovement(deltaTime, movementDirection, speedModifier);
+
 	Rect collisionRect = m_player.GetCollisionRect();
+
 	movement = m_world.ResolveMovement(collisionRect, movement);
 	m_player.MovePlayer(movement);
 }

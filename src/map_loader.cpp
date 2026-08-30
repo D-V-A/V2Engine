@@ -12,6 +12,10 @@ namespace
 	{
 		switch (symbol)
 		{
+		case 'R':
+			surfaceType = SurfaceType::Road;
+			return true;
+
 		case 'G':
 			surfaceType = SurfaceType::Grass;
 			return true;
@@ -155,15 +159,18 @@ bool MapLoader::LoadSurfaceType(std::ifstream& file, SurfaceType& type, SurfaceI
 		data.walkable = false;
 		data.speedModificator = std::nullopt;
 	}
-	else
+	else if(walkable == "WALKABLE")
 	{
 		float modificator;
-		if (walkable == "WALKABLE")
-			if (!(file >> modificator))
-				return false;
 		
+		if (!(file >> modificator) || modificator <= 0.0f)
+			return false;
+		
+		data.walkable = true;
 		data.speedModificator = modificator;
 	}
+	else
+		return false;
 
 	std::string txt_path;
 	if (!(file >> txt_path))

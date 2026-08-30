@@ -32,16 +32,27 @@ public:
 
 	const std::vector<WorldObject>& GetObjectsList() const { return m_objects; }
 
+	float GetSpeedModifierAt(const Vector2f& position) const;
+
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 
 private:
 	bool InitializeMap(Renderer& renderer, const MapData& mapInfo);
 
 	bool InitializeObjects(Renderer& renderer, const MapData& mapInfo);
-	const Texture& GetSurfaceTexture(SurfaceType surface) const;
+	
+	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_SurfTextures.at(surface); };
 
-	float ResolveMovementX(const Rect& collisionRect, float movement) const;
-	float ResolveMovementY(const Rect& collisionRect, float movement) const;
+	struct SweepHit
+	{
+		bool hit = false;
+		float time = 1.0f;
+		Vector2f normal{};
+	};
+
+	SweepHit SweepRect(const Rect& movingRect, const Vector2f& movement, const Rect& obstacle) const;
+
+	SweepHit FindFirstCollision(const Rect& collisionRect, const Vector2f& movement) const;
 
 	int m_width = 0;//map width in tiles
 	int m_height = 0;//map height in tiles

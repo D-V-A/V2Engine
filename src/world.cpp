@@ -1,6 +1,7 @@
 #include <algorithm>
-#include <cmath>
 #include <cassert>
+#include <limits>
+#include <cmath>
 
 #include "world.h"
 #include "renderer.h"
@@ -132,144 +133,233 @@ void World::Render(Renderer& renderer) const
 	}
 }
 
+float World::GetSpeedModifierAt(const Vector2f& position) const
+{
+	const int x = static_cast<int>(std::floor(position.x));
+	const int y = static_cast<int>(std::floor(position.y));
+
+	if (x < 0 || x >= m_width ||
+		y < 0 || y >= m_height)
+	{
+		return 1.0f;
+	}
+
+	const size_t index =
+		static_cast<size_t>(y * m_width + x);
+
+	const SurfaceType surface = m_tiles[index].surface;
+	const SurfaceInfo& info = m_surfaceTypes.at(surface);
+
+	return info.speedModificator.value_or(1.0f);
+}
+
 Vector2f World::ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const
 {
-	Vector2f result = movement;
-	Rect movedRect = collisionRect;
+	Vector2f result{};
+	Vector2f remainingMovement = movement;
 
-	result.x = ResolveMovementX(collisionRect, movement.x);
-	movedRect.x() += result.x;
+	Rect currentRect = collisionRect;
 
-	result.y = ResolveMovementY(movedRect, movement.y);
+	constexpr int maxCollisions = 2;
+
+	for (int i = 0; i < maxCollisions; ++i)
+	{
+		if (remainingMovement.x == 0.0f
+			&& remainingMovement.y == 0.0f)
+		{
+			break;
+		}
+
+		const SweepHit hit =
+			FindFirstCollision(currentRect, remainingMovement);
+
+		if (!hit.hit)
+		{
+			result.x += remainingMovement.x;
+			result.y += remainingMovement.y;
+
+			break;
+		}
+
+		const Vector2f allowedMovement{
+			remainingMovement.x * hit.time,
+			remainingMovement.y * hit.time
+		};
+
+		result.x += allowedMovement.x;
+		result.y += allowedMovement.y;
+
+		currentRect.x() += allowedMovement.x;
+		currentRect.y() += allowedMovement.y;
+
+		remainingMovement.x *= 1.0f - hit.time;
+		remainingMovement.y *= 1.0f - hit.time;
+
+		// Убираем компонент движения,
+		// направленный в сторону столкновения.
+
+		if (hit.normal.x != 0.0f)
+			remainingMovement.x = 0.0f;
+
+		if (hit.normal.y != 0.0f)
+			remainingMovement.y = 0.0f;
+	}
 
 	return result;
 }
 
-float World::ResolveMovementX(const Rect& collisionRect, float movement) const
+World::SweepHit World::FindFirstCollision(const Rect& collisionRect, const Vector2f& movement) const
 {
-	auto OverlapsY = [](const Rect& a, const Rect& b)
-		{
-			return a.y() < b.y() + b.height() && a.y() + a.height() > b.y();
-		};
+	SweepHit nearestHit;
 
-	float allowedMovement = movement;
+	constexpr float epsilon = 0.0001f;
 
-	if (movement > 0.0f)
+	// --------------------------------
+	// Terrain
+	// --------------------------------
+
+	const float endX = collisionRect.x() + movement.x;
+	const float endY = collisionRect.y() + movement.y;
+
+	const float minX = std::min(collisionRect.x(), endX);
+	const float minY = std::min(collisionRect.y(), endY);
+
+	const float maxX = std::max(collisionRect.x() + collisionRect.width(), endX + collisionRect.width());
+
+	const float maxY = std::max(collisionRect.y() + collisionRect.height(), endY + collisionRect.height());
+
+	const int minTileX = std::max(0, static_cast<int>(std::floor(minX)));
+
+	const int minTileY = std::max(0, static_cast<int>(std::floor(minY)));
+
+	const int maxTileX = std::min(m_width - 1, static_cast<int>(std::floor(maxX - epsilon)));
+
+	const int maxTileY = std::min(m_height - 1, static_cast<int>(std::floor(maxY - epsilon)));
+
+	for (int y = minTileY; y <= maxTileY; ++y)
 	{
-		const float worldRight = static_cast<float>(m_width);
-		const float playerRight = collisionRect.x() + collisionRect.width();
-		allowedMovement = std::min(allowedMovement, worldRight - playerRight);
-
-		for (const WorldObject& object : m_objects)
+		for (int x = minTileX; x <= maxTileX; ++x)
 		{
-			if (!object.HasCollision())
+			const size_t index =
+				static_cast<size_t>(y * m_width + x);
+
+			const TileData& tile = m_tiles[index];
+
+			const SurfaceInfo& surface =
+				m_surfaceTypes.at(tile.surface);
+
+			if (surface.walkable)
 				continue;
 
-			const Rect objectRect = object.GetCollisionRect();
+			Rect tileRect{
+				{static_cast<float>(x),	static_cast<float>(y)},
+				{ 1.0f, 1.0f }
+			};
 
-			if (!OverlapsY(collisionRect, objectRect))
-				continue;
+			const SweepHit hit =
+				SweepRect(collisionRect, movement, tileRect);
 
-			if (playerRight <= objectRect.x())
-			{
-				const float distance = objectRect.x() - playerRight;
-
-				if (distance < allowedMovement)
-					allowedMovement = distance;
-			}
-		}
-	}
-	else if (movement < 0.0f)
-	{
-		const float playerLeft = collisionRect.x();
-		allowedMovement = -std::min(std::abs(allowedMovement), playerLeft);//worldLeft == 0
-
-		for (const WorldObject& object : m_objects)
-		{
-			if (!object.HasCollision())
-				continue;
-
-			const Rect objectRect = object.GetCollisionRect();
-
-			if (!OverlapsY(collisionRect, objectRect))
-				continue;
-
-			if (playerLeft >= objectRect.x() + objectRect.width())
-			{
-				const float distance = playerLeft - (objectRect.x() + objectRect.width()) ;
-
-				if (distance < std::abs(allowedMovement))
-					allowedMovement = -distance;
-			}
+			if (hit.hit && hit.time < nearestHit.time)
+				nearestHit = hit;
 		}
 	}
 
-	return allowedMovement;
+	// --------------------------------
+	// Objects
+	// --------------------------------
+
+	for (const WorldObject& object : m_objects)
+	{
+		if (!object.HasCollision())
+			continue;
+
+		const SweepHit hit = SweepRect(collisionRect, movement, object.GetCollisionRect());
+
+		if (hit.hit && hit.time < nearestHit.time)
+			nearestHit = hit;
+	}
+
+	return nearestHit;
 }
 
-float World::ResolveMovementY(const Rect& collisionRect, float movement) const
+World::SweepHit World::SweepRect(const Rect& movingRect, const Vector2f& movement, const Rect& obstacle) const
 {
-	auto OverlapsX = [](const Rect& a, const Rect& b)
-		{
-			return a.x() < b.x() + b.width() && a.x() + a.width() > b.x();
-		};
+	SweepHit result;
 
-	float allowedMovement = movement;
+	float xEntry;
+	float xExit;
+	float yEntry;
+	float yExit;
 
-	if (movement > 0.0f)
+	if (movement.x > 0.0f)
 	{
-		const float worldBottom = static_cast<float>(m_height);
-		const float playerBottom = collisionRect.y() + collisionRect.height();
-		allowedMovement = std::min(allowedMovement, worldBottom - playerBottom);
+		xEntry = (obstacle.x() - (movingRect.x() + movingRect.width())) / movement.x;
 
-		for (const WorldObject& object : m_objects)
-		{
-			if (!object.HasCollision())
-				continue;
-
-			const Rect objectRect = object.GetCollisionRect();
-
-			if (!OverlapsX(collisionRect, objectRect))
-				continue;
-
-			if (playerBottom <= objectRect.y())
-			{
-				const float distance = objectRect.y() - playerBottom;
-
-				if (distance < allowedMovement)
-					allowedMovement = distance;
-			}
-		}
+		xExit = ((obstacle.x() + obstacle.width()) - movingRect.x()) / movement.x;
 	}
-	else if (movement < 0.0f)
+	else if (movement.x < 0.0f)
 	{
-		const float playerTop = collisionRect.y();
-		allowedMovement = - std::min(std::abs(allowedMovement), playerTop);//worldTop == 0
+		xEntry = ((obstacle.x() + obstacle.width()) - movingRect.x()) / movement.x;
 
-		for (const WorldObject& object : m_objects)
+		xExit = (obstacle.x() - (movingRect.x() + movingRect.width())) / movement.x;
+	}
+	else
+	{
+		if (movingRect.x() + movingRect.width() <= obstacle.x()	
+			|| movingRect.x() >= obstacle.x() + obstacle.width())
 		{
-			if (!object.HasCollision())
-				continue;
-
-			const Rect objectRect = object.GetCollisionRect();
-
-			if (!OverlapsX(collisionRect, objectRect))
-				continue;
-
-			if (playerTop >= objectRect.y() + objectRect.height())
-			{
-				const float distance = playerTop - (objectRect.y() + objectRect.height());
-
-				if (distance < std::abs(allowedMovement))
-					allowedMovement = -distance;
-			}
+			return result;
 		}
+
+		xEntry = -std::numeric_limits<float>::infinity();
+		xExit = std::numeric_limits<float>::infinity();
 	}
 
-	return allowedMovement;
-}
+	if (movement.y > 0.0f)
+	{
+		yEntry = (obstacle.y() - (movingRect.y() + movingRect.height())) / movement.y;
 
-const Texture& World::GetSurfaceTexture(SurfaceType surface) const
-{
-	return m_SurfTextures.at(surface);
+		yExit = ((obstacle.y() + obstacle.height()) - movingRect.y()) / movement.y;
+	}
+	else if (movement.y < 0.0f)
+	{
+		yEntry = ((obstacle.y() + obstacle.height()) - movingRect.y()) / movement.y;
+
+		yExit = (obstacle.y() - (movingRect.y() + movingRect.height())) / movement.y;
+	}
+	else
+	{
+		if (movingRect.y() + movingRect.height() <= obstacle.y() 
+			|| movingRect.y() >= obstacle.y() + obstacle.height())
+		{
+			return result;
+		}
+
+		yEntry = -std::numeric_limits<float>::infinity();
+		yExit = std::numeric_limits<float>::infinity();
+	}
+
+	const float entryTime = std::max(xEntry, yEntry);
+	const float exitTime = std::min(xExit, yExit);
+
+	if (entryTime > exitTime
+		|| entryTime < 0.0f
+		|| entryTime > 1.0f)
+	{
+		return result;
+	}
+
+	result.hit = true;
+	result.time = entryTime;
+
+	if (xEntry > yEntry)
+	{
+		result.normal.x = movement.x > 0.0f ? -1.0f : 1.0f;
+	}
+	else
+	{
+		result.normal.y = movement.y > 0.0f ? -1.0f : 1.0f;
+	}
+
+	return result;
 }
