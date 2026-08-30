@@ -49,7 +49,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	std::filesystem::path asset_path = GetAssetPath("map/map.txt");
+	std::filesystem::path asset_path = GetAssetPath("map/map_20_30.txt");
 	InitializationResults world_init_res = m_world.Initialize(m_renderer, asset_path.string().c_str());
 	if (world_init_res != InitializationResults::Success)
 	{
