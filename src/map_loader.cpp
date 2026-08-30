@@ -62,11 +62,15 @@ bool MapLoader::Load(const char* path, MapData& mapData)
 	if (!file.is_open())
 		return false;
 
-	if(!LoadMap(file, mapData))
+	MapData loadedMap;
+
+	if(!LoadMap(file, loadedMap))
 		return false;
 
-	if (!LoadObjects(file, mapData))
+	if (!LoadObjects(file, loadedMap))
 		return false;
+
+	mapData = std::move(loadedMap);
 
 	return true;
 }
@@ -82,10 +86,9 @@ bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
 	if (width <= 0 || height <= 0)
 		return false;
 
-	MapData loadedMap;
-	loadedMap.width = width;
-	loadedMap.height = height;
-	loadedMap.tiles.reserve(static_cast<size_t>(width) * height);
+	mapData.width = width;
+	mapData.height = height;
+	mapData.tiles.reserve(static_cast<size_t>(width) * height);
 
 	std::string row;
 
@@ -104,11 +107,10 @@ bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
 			if (!CharToSurfaceType(symbol, surfaceType))
 				return false;
 
-			loadedMap.tiles.push_back({ surfaceType });
+			mapData.tiles.push_back({ surfaceType });
 		}
 	}
 
-	mapData = std::move(loadedMap);
 	return true;
 }
 
@@ -147,23 +149,14 @@ bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
 
 	mapData.objects.reserve(objectCount);
 
-	bool sucessful = true;
 	for (int i = 0; i < objectCount; i++)
 	{
 		ObjectInstanceData obj;
 		
 		if (!LoadObject(file, obj) || !mapData.objectTypes.contains(obj.type))
-		{
-			sucessful = false;
-			continue;
-		}
+			return false;
 
 		mapData.objects.push_back(obj);
-	}
-	if (!sucessful)
-	{
-		mapData.objects.shrink_to_fit();
-		return false;
 	}
 	return true;
 }

@@ -4,7 +4,7 @@
 #include <map>
 #include <optional>
 
-#include "types/Vector2f.h"
+#include "types/vector2f.h"
 #include "types/rect.h"
 
 enum class SurfaceType
