@@ -1,3 +1,8 @@
+SURFACE_TYPES 3
+G WALKABLE 1 txt/grass_tile.png
+D WALKABLE 0.8 txt/dirt_tile.png
+W NOT_WALKABLE txt/water_tile.png
+
 10 10
 
 GGGGGGGGGG

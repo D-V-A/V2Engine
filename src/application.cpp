@@ -58,8 +58,8 @@ bool Application::Initialize()
 		case(InitializationResults::InfoLoadFail):
 			std::cerr << "Failed to load map info: " << asset_path << '\n';
 			break;
-		case(InitializationResults::MapTxtFail):
-			std::cerr << "Failed to load map texture: " << SDL_GetError() << '\n';
+		case(InitializationResults::MapInitFail):
+			std::cerr << "Failed to init map: " << SDL_GetError() << '\n';
 			break;
 		case(InitializationResults::ObjTxtFail):
 			std::cerr << "Failed to init object model: " << SDL_GetError() << '\n';
