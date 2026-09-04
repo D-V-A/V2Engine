@@ -1,9 +1,10 @@
 #include "renderer.h"
 #include "texture.h"
+#include "window.h"
 
-bool Renderer::Initialize(SDL_Window* window)
+bool Renderer::Initialize(Window &window)
 {
-	m_sdlRenderer = SDL_CreateRenderer(window, nullptr);
+	m_sdlRenderer = SDL_CreateRenderer(window.GetNativeHandle(), nullptr);
 	if (m_sdlRenderer == nullptr)
 		return false;
 	return true;

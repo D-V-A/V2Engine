@@ -8,11 +8,6 @@
 
 Application::~Application()
 {
-	if (m_window != nullptr)
-	{
-		SDL_DestroyWindow(m_window);
-		m_window = nullptr;
-	}
 	SDL_Quit();
 }
 
@@ -26,14 +21,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	m_window = SDL_CreateWindow(
-		"V2Engine",
-		1280,
-		720,
-		0
-	);
-
-	if (m_window == nullptr)
+	if (!m_window.Initialize("V2Engine", 1280, 720))
 	{
 		std::cerr << "Failed to create window: "
 			<< SDL_GetError() << '\n';
@@ -156,7 +144,7 @@ void Application::Render()
 	const Vector2f cameraOrigin = GetCameraOrigin(
 		m_camera.GetPosition(),
 		{ m_world.GetTileWidth(), m_world.GetTileHeight() },
-		{ 640.0f, 360.0f }
+		m_window.GetCenter()
 	);
 
 	m_world.Render(m_renderer, cameraOrigin);

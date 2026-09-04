@@ -4,6 +4,7 @@
 #include "types/rect.h"
 
 class Texture;
+class Window;
 
 class Renderer
 {
@@ -12,7 +13,7 @@ public:
 	~Renderer();
 
 public:
-	bool Initialize(SDL_Window* window);
+	bool Initialize(Window &window);
 
 	void Clear();
 	void FillRect(const Rect& rect);
