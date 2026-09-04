@@ -20,3 +20,13 @@ bool IsBehind(const Rect& first, const Rect& second)
 	return firstRight <= second.x() ||
 		firstBottom <= second.y();
 }
+
+Vector2f GetCameraOrigin(const Vector2f& cameraPosition, const Vector2f& tileSize, const Vector2f& screenCenter)
+{
+	const Vector2f projected = WorldToScreen(cameraPosition, tileSize, {});
+
+	return {
+		screenCenter.x - projected.x,
+		screenCenter.y - projected.y
+	};
+}

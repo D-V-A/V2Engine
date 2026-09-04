@@ -22,12 +22,11 @@ class World
 {
 public:
 	InitializationResults Initialize(Renderer& renderer, const char* mapPath);
-	void Render(Renderer& renderer) const;
+	void Render(Renderer& renderer, const Vector2f& origin) const;
 
 	float GetTileWidth() const { return m_tileWidth; }
 	float GetTileHeight() const { return m_tileHeight; }
 
-	Vector2f GetOrigin() const { return m_origin; }
 	Vector2f GetSize() const { return { static_cast<float>(m_width),static_cast<float>(m_height) }; }
 
 	const std::vector<WorldObject>& GetObjectsList() const { return m_objects; }
@@ -59,7 +58,6 @@ private:
 
 	float m_tileWidth = 0.0f;//in pixels
 	float m_tileHeight = 0.0f;//in pixels
-	Vector2f m_origin;//point of (0,0) tile on screen
 	const Vector2f m_tile_pivot = { 0.5f, 0.0f };//middle, top //pivot - основание/база
 
 	std::vector<TileData> m_tiles;

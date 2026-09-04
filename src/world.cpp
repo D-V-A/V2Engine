@@ -57,9 +57,6 @@ bool World::InitializeMap(Renderer& renderer, const MapData& mapInfo)
 	constexpr float windowWidth = 1280.0f;//todo: delete const
 	constexpr float windowHeight = 720.0f;
 
-	m_origin.x = windowWidth / 2;
-	m_origin.y = (windowHeight - mapInfo.height * m_tileHeight) / 2;
-
 	return true;
 }
 
@@ -107,7 +104,7 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 	return true;
 }
 
-void World::Render(Renderer& renderer) const
+void World::Render(Renderer& renderer, const Vector2f& origin) const
 {
 	for (int y = 0; y < m_height; ++y)
 	{
@@ -122,7 +119,7 @@ void World::Render(Renderer& renderer) const
 
 			tileRect.size = { m_tileWidth, m_tileHeight };
 
-			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, m_origin);
+			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, origin);
 
 			tileRect.position = GetTopLeft(tileCenter, tileRect.size, m_tile_pivot);
 

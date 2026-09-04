@@ -11,3 +11,5 @@ Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f
 
 //checks if one entity is located behind another
 bool IsBehind(const Rect& firstBounds, const Rect& secondBounds);
+
+Vector2f GetCameraOrigin(const Vector2f& cameraPosition, const Vector2f& tileSize, const Vector2f& screenCenter);

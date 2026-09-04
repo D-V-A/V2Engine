@@ -6,6 +6,7 @@
 #include "world.h"
 #include "player.h"
 #include "input.h"
+#include "camera.h"
 
 class Application
 {
@@ -28,6 +29,7 @@ private:
 	World m_world;
 	Player m_player;
 	Input m_input;
+	Camera m_camera;
 
 	bool m_isRunning = false;
 };

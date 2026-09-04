@@ -151,7 +151,15 @@ void Application::Render()
 {
 	m_renderer.Clear();
 
-	m_world.Render(m_renderer);
+	m_camera.SetPosition(m_player.GetPosition());
+
+	const Vector2f cameraOrigin = GetCameraOrigin(
+		m_camera.GetPosition(),
+		{ m_world.GetTileWidth(), m_world.GetTileHeight() },
+		{ 640.0f, 360.0f }
+	);
+
+	m_world.Render(m_renderer, cameraOrigin);
 
 	std::vector<const Entity*> objectQueue;
 	objectQueue.reserve(m_world.GetObjectsList().size() + 1);
@@ -161,12 +169,11 @@ void Application::Render()
 	{
 		objectQueue.push_back(&object);
 	}
-
 	const std::vector<const Entity*> sortedQueue = BuildRenderOrder(objectQueue);
 
 	for (const Entity* entity : sortedQueue)
 	{
-		const Vector2f screenPosition = WorldToScreen(entity->GetPosition(),{ m_world.GetTileWidth(),m_world.GetTileHeight() },	m_world.GetOrigin());
+		const Vector2f screenPosition = WorldToScreen(entity->GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, cameraOrigin);
 
 		entity->Render(m_renderer, screenPosition);
 	}
