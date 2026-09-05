@@ -36,11 +36,11 @@ public:
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 
 private:
-	bool InitializeMap(Renderer& renderer, const MapData& mapInfo);
+	bool InitializeMap(Renderer& renderer, MapData& mapInfo);
 
 	bool InitializeObjects(Renderer& renderer, const MapData& mapInfo);
 	
-	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_SurfTextures.at(surface); };
+	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_surfaceTextures.at(surface); };
 
 	struct SweepHit
 	{
@@ -58,11 +58,11 @@ private:
 
 	float m_tileWidth = 0.0f;//in pixels
 	float m_tileHeight = 0.0f;//in pixels
-	const Vector2f m_tile_pivot = { 0.5f, 0.0f };//middle, top //pivot - основание/база
+	const Vector2f m_tilePivot = { 0.5f, 0.0f };//middle, top //pivot - основание/база
 
 	std::vector<TileData> m_tiles;
 	std::map<SurfaceType, SurfaceInfo> m_surfaceTypes;
-	std::map<SurfaceType, Texture> m_SurfTextures;
+	std::map<SurfaceType, Texture> m_surfaceTextures;
 
 	std::vector<WorldObject> m_objects;
 };

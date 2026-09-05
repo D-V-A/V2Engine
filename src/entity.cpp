@@ -14,10 +14,7 @@ Entity::Entity(Vector2f pos, Vector2f renderFootprintSize) : m_position(pos)
 
 bool Entity::InitializeTexture(Renderer& renderer, Texture& texture, const char* texturePath)
 {
-	if (!texture.Load(renderer, texturePath))
-		return false;
-
-	return true;
+	return texture.Load(renderer, texturePath);
 }
 
 void Entity::Render(Renderer& renderer, const Vector2f& screenPosition) const

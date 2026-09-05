@@ -12,6 +12,9 @@ public:
 	Renderer() = default;
 	~Renderer();
 
+	Renderer(const Renderer&) = delete;
+	Renderer& operator=(const Renderer&) = delete;
+
 public:
 	bool Initialize(Window &window);
 

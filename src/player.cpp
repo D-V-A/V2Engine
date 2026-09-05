@@ -14,60 +14,61 @@ Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 
 bool Player::Initialize(Renderer& renderer)
 {
-	for(int state_count = 0; state_count < (int)PlayerState::Count; state_count++)
+	for(int statesCount = 0; statesCount < static_cast<int>(PlayerState::Count); statesCount++)
 	{
-		for (int dir_count = 0; dir_count < (int)Direction::Count; dir_count++)
+		for (int directionsCount = 0; directionsCount < static_cast<int>(Direction::Count); directionsCount++)
 		{
-			std::string str_path = "txt/player/";
-			switch ((PlayerState)state_count)
+			std::string strPath = "txt/player/";
+			switch (static_cast<PlayerState>(statesCount))
 			{
 			case (PlayerState::Idle):
-				str_path += "idle/";
+				strPath += "idle/";
 				break;
 			case (PlayerState::Walking):
-				str_path += "walk/";
+				strPath += "walk/";
 				break;
 			default:
 				return false;
 			}
 
-			switch ((Direction)dir_count)
+			switch (static_cast<Direction>(directionsCount))
 			{
 			case (Direction::North):
-				str_path += "N";
+				strPath += "N";
 				break;
 			case (Direction::NorthEast):
-				str_path += "NE";
+				strPath += "NE";
 				break;
 			case (Direction::East):
-				str_path += "E";
+				strPath += "E";
 				break;
 			case (Direction::SouthEast):
-				str_path += "SE";
+				strPath += "SE";
 				break;
 			case (Direction::South):
-				str_path += "S";
+				strPath += "S";
 				break;
 			case (Direction::SouthWest):
-				str_path += "SW";
+				strPath += "SW";
 				break;
 			case (Direction::West):
-				str_path += "W";
+				strPath += "W";
 				break;
 			case (Direction::NorthWest):
-				str_path += "NW";
+				strPath += "NW";
 				break;
 			default:
 				return false;
 			}
 
-			str_path += ".png";
-			std::filesystem::path asset_path = GetAssetPath(str_path);
+			strPath += ".png";
+			std::filesystem::path assetPath = GetAssetPath(strPath);
 
-			if (!InitializeTexture(renderer, m_textures[state_count][dir_count], asset_path.string().c_str()))
+			if (!InitializeTexture(renderer, m_textures[statesCount][directionsCount], assetPath.string().c_str()))
 				return false;
 		}		
 	}
+	return true;
 }
 
 Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float modifier) const
@@ -113,6 +114,9 @@ void Player::MovePlayer(const Vector2f& movement)
 			 (67.5;112.5)*/
 void Player::SetViewDirection(const Vector2f& viewVector)
 {
+	if (viewVector.x == 0.0f && viewVector.y == 0.0f)
+		return;
+
 	constexpr Direction directions[] = {
 	Direction::East,
 	Direction::SouthEast,

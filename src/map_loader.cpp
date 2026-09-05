@@ -87,17 +87,17 @@ bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
 	if (!(file >> header >> typesCount))
 		return false;
 
-	if (header != "SURFACE_TYPES" || typesCount < 0)
+	if (header != "SURFACE_TYPES" || typesCount <= 0)
 		return false;
 
 	for (int i = 0; i < typesCount; i++)
 	{
-		SurfaceType type;
+		SurfaceType surfaceType;
 		SurfaceInfo surfData;
-		if (!LoadSurfaceType(file, type, surfData))
+		if (!LoadSurfaceType(file, surfaceType, surfData))
 			return false;
 
-		const auto [it, inserted] = mapData.surfaceTypes.emplace(type, std::move(surfData));
+		const auto [it, inserted] = mapData.surfaceTypes.emplace(surfaceType, std::move(surfData));
 
 		if (!inserted)
 			return false;
@@ -130,7 +130,7 @@ bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
 		{
 			SurfaceType surfaceType;
 
-			if (!CharToSurfaceType(symbol, surfaceType))
+			if (!CharToSurfaceType(symbol, surfaceType) || !mapData.surfaceTypes.contains(surfaceType))
 				return false;
 
 			mapData.tiles.push_back({ surfaceType });
@@ -157,7 +157,7 @@ bool MapLoader::LoadSurfaceType(std::ifstream& file, SurfaceType& type, SurfaceI
 	if (walkable == "NOT_WALKABLE")
 	{
 		data.walkable = false;
-		data.speedModificator = std::nullopt;
+		data.speedModifier = std::nullopt;
 	}
 	else if(walkable == "WALKABLE")
 	{
@@ -167,7 +167,7 @@ bool MapLoader::LoadSurfaceType(std::ifstream& file, SurfaceType& type, SurfaceI
 			return false;
 		
 		data.walkable = true;
-		data.speedModificator = modificator;
+		data.speedModifier = modificator;
 	}
 	else
 		return false;

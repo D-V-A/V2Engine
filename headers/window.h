@@ -7,7 +7,11 @@
 class Window
 {
 public:
+	Window() = default;
 	~Window();
+
+	Window(const Window&) = delete;
+	Window& operator=(const Window&) = delete;
 
 	bool Initialize(const char* title, int width, int height);
 

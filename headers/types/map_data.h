@@ -26,7 +26,7 @@ struct TileData
 struct SurfaceInfo
 {
 	bool walkable = true;
-	std::optional<float> speedModificator;
+	std::optional<float> speedModifier;
 	std::string texture;
 };
 

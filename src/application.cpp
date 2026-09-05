@@ -6,17 +6,11 @@
 #include "render_order.h"
 #include "assets.h"
 
-Application::~Application()
-{
-	SDL_Quit();
-}
-
 bool Application::Initialize()
 {
-	if (!SDL_Init(SDL_INIT_VIDEO))
+	if (!m_sdl.Initialize())
 	{
 		std::cerr << "Failed to initialize SDL: " << SDL_GetError() << '\n';
-
 		return false;
 	}
 
@@ -34,14 +28,14 @@ bool Application::Initialize()
 		return false;
 	}
 
-	std::filesystem::path asset_path = GetAssetPath("map/map_20_30.txt");
-	InitializationResults world_init_res = m_world.Initialize(m_renderer, asset_path.string().c_str());
-	if (world_init_res != InitializationResults::Success)
+	std::filesystem::path assetPath = GetAssetPath("map/map_20_30.txt");
+	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
+	if (worldInitRes != InitializationResults::Success)
 	{
-		switch (world_init_res)
+		switch (worldInitRes)
 		{
 		case(InitializationResults::InfoLoadFail):
-			std::cerr << "Failed to load map info: " << asset_path << '\n';
+			std::cerr << "Failed to load map info: " << assetPath << '\n';
 			break;
 		case(InitializationResults::MapInitFail):
 			std::cerr << "Failed to init map: " << SDL_GetError() << '\n';
@@ -115,23 +109,26 @@ void Application::Update(float deltaTime)
 {
 	m_input.Update();
 
-	//Player's look direction
-	const Vector2f mousePosition = m_input.GetMousePosition();
-	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
-	const Vector2f playerScreenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, cameraOrigin);
-	const Vector2f lookDirection{ mousePosition.x - playerScreenPosition.x, mousePosition.y - playerScreenPosition.y };
-	m_player.SetViewDirection(lookDirection);
+	MovePlayer(deltaTime);
 
+	m_camera.SetPosition(m_player.GetPosition());
+
+	UpdatePlayerViewDirectrion();
+}
+
+inline void Application::MovePlayer(float deltaTime)
+{
 	const Vector2i movementDirection = m_input.GetDirection();
 
 	if (movementDirection.x == 0 && movementDirection.y == 0)
 	{
 		m_player.SetState(PlayerState::Idle);
+		UpdatePlayerViewDirectrion();
 		return;
 	}
 
 	//Player's movement
-	const float speedModifier =	m_world.GetSpeedModifierAt(m_player.GetPosition());
+	const float speedModifier = m_world.GetSpeedModifierAt(m_player.GetPosition());
 	Vector2f movement = m_player.CalculateMovement(deltaTime, movementDirection, speedModifier);
 	Rect collisionRect = m_player.GetCollisionRect();
 	movement = m_world.ResolveMovement(collisionRect, movement);
@@ -141,12 +138,19 @@ void Application::Update(float deltaTime)
 	m_player.MovePlayer(movement);
 }
 
+inline void Application::UpdatePlayerViewDirectrion()
+{
+	//Player's look direction
+	const Vector2f mousePosition = m_input.GetMousePosition();
+	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
+	const Vector2f playerScreenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, cameraOrigin);
+	const Vector2f lookDirection{ mousePosition.x - playerScreenPosition.x, mousePosition.y - playerScreenPosition.y };
+	m_player.SetViewDirection(lookDirection);
+}
+
 void Application::Render()
 {
 	m_renderer.Clear();
-
-	m_camera.SetPosition(m_player.GetPosition());
-
 	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
 
 	m_world.Render(m_renderer, cameraOrigin);

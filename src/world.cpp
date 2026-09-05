@@ -28,9 +28,8 @@ InitializationResults World::Initialize(Renderer& renderer, const char* mapPath)
 	return InitializationResults::Success;
 }
 
-bool World::InitializeMap(Renderer& renderer, const MapData& mapInfo)
+bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)
 {
-	//TO DO: Do somexting with textures initialization
 	for (auto it = mapInfo.surfaceTypes.cbegin(); it != mapInfo.surfaceTypes.cend(); it++)
 	{
 		Texture txt;
@@ -39,23 +38,20 @@ bool World::InitializeMap(Renderer& renderer, const MapData& mapInfo)
 		if (!txt.Load(renderer, assetPath.string().c_str()))
 			return false;
 		
-		const auto [iter, inserted] = m_SurfTextures.emplace(it->first, std::move(txt));
+		const auto [iter, inserted] = m_surfaceTextures.emplace(it->first, std::move(txt));
 
 		if (!inserted)
 			return false;
 	}
 
-	m_tileWidth = static_cast<float>(m_SurfTextures.begin()->second.GetWidth());
-	m_tileHeight = static_cast<float>(m_SurfTextures.begin()->second.GetHeight());
+	m_tileWidth = static_cast<float>(m_surfaceTextures.begin()->second.GetWidth());
+	m_tileHeight = static_cast<float>(m_surfaceTextures.begin()->second.GetHeight());
 
 	m_width = mapInfo.width;
 	m_height = mapInfo.height;
 
 	m_tiles = std::move(mapInfo.tiles);
 	m_surfaceTypes = std::move(mapInfo.surfaceTypes);
-
-	constexpr float windowWidth = 1280.0f;//todo: delete const
-	constexpr float windowHeight = 720.0f;
 
 	return true;
 }
@@ -121,7 +117,7 @@ void World::Render(Renderer& renderer, const Vector2f& origin) const
 
 			const Vector2f tileCenter =	WorldToScreen( { static_cast<float>(x), static_cast<float>(y) }, tileRect.size, origin);
 
-			tileRect.position = GetTopLeft(tileCenter, tileRect.size, m_tile_pivot);
+			tileRect.position = GetTopLeft(tileCenter, tileRect.size, m_tilePivot);
 
 			renderer.DrawTexture(
 				texture,
@@ -147,7 +143,7 @@ float World::GetSpeedModifierAt(const Vector2f& position) const
 	const SurfaceType surface = m_tiles[index].surface;
 	const SurfaceInfo& info = m_surfaceTypes.at(surface);
 
-	return info.speedModificator.value_or(1.0f);
+	return info.speedModifier.value_or(1.0f);
 }
 
 Vector2f World::ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const

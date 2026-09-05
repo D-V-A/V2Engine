@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "sdl_context.h"
 #include "renderer.h"
 #include "player.h"
 #include "camera.h"
@@ -13,9 +14,6 @@
 class Application
 {
 public:
-	Application() = default;
-	~Application();
-
 	int Run();
 
 private:
@@ -23,9 +21,12 @@ private:
 
 	void ProcessEvents();
 	void Update(float deltaTime);
+	inline void MovePlayer(float deltaTime);
+	inline void UpdatePlayerViewDirectrion();
 
 	void Render();
 
+	SDLContext m_sdl;
 	Window m_window;
 	Renderer m_renderer;
 	World m_world;
