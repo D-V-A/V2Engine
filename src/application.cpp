@@ -15,24 +15,21 @@ bool Application::Initialize()
 {
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
-		std::cerr << "Failed to initialize SDL: "
-			<< SDL_GetError() << '\n';
+		std::cerr << "Failed to initialize SDL: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 
 	if (!m_window.Initialize("V2Engine", 1280, 720))
 	{
-		std::cerr << "Failed to create window: "
-			<< SDL_GetError() << '\n';
+		std::cerr << "Failed to create window: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 	
 	if (!m_renderer.Initialize(m_window))
 	{
-		std::cerr << "Failed to create renderer: "
-			<< SDL_GetError() << '\n';
+		std::cerr << "Failed to create renderer: " << SDL_GetError() << '\n';
 
 		return false;
 	}
@@ -57,11 +54,9 @@ bool Application::Initialize()
 		return false;
 	}
 
-	asset_path = GetAssetPath("txt/player.png");
-	if (!m_player.Initialize(m_renderer, asset_path.string().c_str()))
+	if (!m_player.Initialize(m_renderer))
 	{
-		std::cerr << "Failed to init player model: "
-			<< SDL_GetError() << '\n';
+		std::cerr << "Failed to init player model: " << SDL_GetError() << '\n';
 
 		return false;
 	}
@@ -120,18 +115,29 @@ void Application::Update(float deltaTime)
 {
 	m_input.Update();
 
+	//Player's look direction
+	const Vector2f mousePosition = m_input.GetMousePosition();
+	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
+	const Vector2f playerScreenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, cameraOrigin);
+	const Vector2f lookDirection{ mousePosition.x - playerScreenPosition.x, mousePosition.y - playerScreenPosition.y };
+	m_player.SetViewDirection(lookDirection);
+
 	const Vector2i movementDirection = m_input.GetDirection();
 
 	if (movementDirection.x == 0 && movementDirection.y == 0)
+	{
+		m_player.SetState(PlayerState::Idle);
 		return;
+	}
 
+	//Player's movement
 	const float speedModifier =	m_world.GetSpeedModifierAt(m_player.GetPosition());
-
 	Vector2f movement = m_player.CalculateMovement(deltaTime, movementDirection, speedModifier);
-
 	Rect collisionRect = m_player.GetCollisionRect();
-
 	movement = m_world.ResolveMovement(collisionRect, movement);
+
+	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? PlayerState::Idle : PlayerState::Walking);
+
 	m_player.MovePlayer(movement);
 }
 
@@ -141,11 +147,7 @@ void Application::Render()
 
 	m_camera.SetPosition(m_player.GetPosition());
 
-	const Vector2f cameraOrigin = GetCameraOrigin(
-		m_camera.GetPosition(),
-		{ m_world.GetTileWidth(), m_world.GetTileHeight() },
-		m_window.GetCenter()
-	);
+	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
 
 	m_world.Render(m_renderer, cameraOrigin);
 

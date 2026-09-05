@@ -23,3 +23,8 @@ bool WorldObject::HasCollision() const
 {
 	return m_collisionRect.has_value();
 }
+
+bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
+{
+	return InitializeTexture(renderer, m_texture, texturePath);
+}
