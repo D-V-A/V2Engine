@@ -161,22 +161,22 @@ bool MapLoader::LoadSurfaceType(std::ifstream& file, SurfaceType& type, SurfaceI
 	}
 	else if(walkable == "WALKABLE")
 	{
-		float modificator;
+		float modifier;
 		
-		if (!(file >> modificator) || modificator <= 0.0f)
+		if (!(file >> modifier) || modifier <= 0.0f)
 			return false;
 		
 		data.walkable = true;
-		data.speedModifier = modificator;
+		data.speedModifier = modifier;
 	}
 	else
 		return false;
 
-	std::string txt_path;
-	if (!(file >> txt_path))
+	std::string texturePath;
+	if (!(file >> texturePath))
 		return false;
 
-	data.texture = std::move(txt_path);
+	data.texture = std::move(texturePath);
 
 	return true;
 }

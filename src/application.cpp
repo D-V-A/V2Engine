@@ -113,17 +113,16 @@ void Application::Update(float deltaTime)
 
 	m_camera.SetPosition(m_player.GetPosition());
 
-	UpdatePlayerViewDirectrion();
+	UpdatePlayerViewDirection();
 }
 
-inline void Application::MovePlayer(float deltaTime)
+void Application::MovePlayer(float deltaTime)
 {
 	const Vector2i movementDirection = m_input.GetDirection();
 
 	if (movementDirection.x == 0 && movementDirection.y == 0)
 	{
 		m_player.SetState(PlayerState::Idle);
-		UpdatePlayerViewDirectrion();
 		return;
 	}
 
@@ -138,7 +137,7 @@ inline void Application::MovePlayer(float deltaTime)
 	m_player.MovePlayer(movement);
 }
 
-inline void Application::UpdatePlayerViewDirectrion()
+ void Application::UpdatePlayerViewDirection()
 {
 	//Player's look direction
 	const Vector2f mousePosition = m_input.GetMousePosition();

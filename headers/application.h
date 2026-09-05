@@ -21,8 +21,8 @@ private:
 
 	void ProcessEvents();
 	void Update(float deltaTime);
-	inline void MovePlayer(float deltaTime);
-	inline void UpdatePlayerViewDirectrion();
+	void MovePlayer(float deltaTime);
+	void UpdatePlayerViewDirection();
 
 	void Render();
 
