@@ -48,8 +48,9 @@ public:
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
 
-	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
-	const Texture& GetCurrentTexture(Rect& frame) const;
+	void Render(Renderer& renderer, const Vector2f& screenPosition) const override;
+	const Texture& GetCurrentTexture() const override;
+	Rect GetCurrentFrame() const;
 
 private:
 
@@ -57,7 +58,7 @@ private:
 		{ -0.10f, -0.10f },//top left corner, relative to map position
 		{0.2f, 0.4f} };//collision size
 
-	Vector2f m_visualAnchor{ 67.0f, 84.0f };//center of mass relative to top left corner
+	Vector2f m_feetPositionInFrame{ 67.0f, 84.0f };//relative to the top-left corner of the frame
 
 	PlayerState m_state = PlayerState::Idle;
 	Direction m_viewDirection = Direction::South;
@@ -65,6 +66,9 @@ private:
 	float m_walkDistance = 0.0f;
 	float m_animationTime = 0.0f;
 	int m_currentFrame = 0;
+
+	static constexpr float frameSize = 128.0f;
+	static constexpr int frameCount = 14;
 
 	std::array<Texture, static_cast<size_t>(PlayerState::Count)> m_textures;
 };

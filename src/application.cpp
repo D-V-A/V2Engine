@@ -139,7 +139,7 @@ void Application::MovePlayer(float deltaTime)
 	m_player.MovePlayer(movement);
 }
 
- void Application::UpdatePlayerViewDirection()
+void Application::UpdatePlayerViewDirection()
 {
 	//Player's look direction
 	const Vector2f mousePosition = m_input.GetMousePosition();
