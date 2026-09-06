@@ -39,9 +39,11 @@ public:
 
 	void MovePlayer(const Vector2f& movement);
 
+	void UpdateAnimation(float deltaTime);
+
 	void SetViewDirection(Direction viewDirection) { m_viewDirection = viewDirection; };
 	void SetViewDirection(const Vector2f& direction);
-	void SetState(PlayerState state) { m_state = state; };
+	void SetState(PlayerState state);
 
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
@@ -52,11 +54,17 @@ public:
 private:
 
 	Rect m_collisionRect{
-		{ -0.20f, -0.20f },//top left corner, relative to map position
-		{0.4f, 0.4f} };//collision size
+		{ -0.10f, -0.10f },//top left corner, relative to map position
+		{0.2f, 0.4f} };//collision size
+
+	Vector2f m_visualAnchor{ 67.0f, 84.0f };//center of mass relative to top left corner
 
 	PlayerState m_state = PlayerState::Idle;
 	Direction m_viewDirection = Direction::South;
+
+	float m_walkDistance = 0.0f;
+	float m_animationTime = 0.0f;
+	int m_currentFrame = 0;
 
 	std::array<Texture, static_cast<size_t>(PlayerState::Count)> m_textures;
 };

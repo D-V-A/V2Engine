@@ -114,6 +114,8 @@ void Application::Update(float deltaTime)
 	m_camera.SetPosition(m_player.GetPosition());
 
 	UpdatePlayerViewDirection();
+
+	m_player.UpdateAnimation(deltaTime);
 }
 
 void Application::MovePlayer(float deltaTime)

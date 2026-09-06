@@ -1,11 +1,11 @@
-#include <cmath>
 #include <filesystem>
 #include <numbers>
+#include <cassert>
+#include <cmath>
 
+#include "renderer.h"
 #include "player.h"
 #include "assets.h"
-#include "renderer.h"
-#include "isometric.h"
 
 #include "types/vector2i.h"
 
@@ -18,26 +18,23 @@ bool Player::Initialize(Renderer& renderer)
 {
 	for(int statesCount = 0; statesCount < static_cast<int>(PlayerState::Count); statesCount++)
 	{
-		for (int directionsCount = 0; directionsCount < static_cast<int>(Direction::Count); directionsCount++)
+		std::string strPath = "txt/player/";
+		switch (static_cast<PlayerState>(statesCount))
 		{
-			std::string strPath = "txt/player/";
-			switch (static_cast<PlayerState>(statesCount))
-			{
-			case (PlayerState::Idle):
-				strPath += "Idle.png";
-				break;
-			case (PlayerState::Walking):
-				strPath += "Walk.png";
-				break;
-			default:
-				return false;
-			}
+		case (PlayerState::Idle):
+			strPath += "Idle.png";
+			break;
+		case (PlayerState::Walking):
+			strPath += "Walk.png";
+			break;
+		default:
+			return false;
+		}
+		
+		std::filesystem::path assetPath = GetAssetPath(strPath);
 
-			std::filesystem::path assetPath = GetAssetPath(strPath);
-
-			if (!InitializeTexture(renderer, m_textures[statesCount], assetPath.string().c_str()))
-				return false;
-		}		
+		if (!InitializeTexture(renderer, m_textures[statesCount], assetPath.string().c_str()))
+			return false;
 	}
 	return true;
 }
@@ -67,6 +64,53 @@ void Player::MovePlayer(const Vector2f& movement)
 {
 	m_position.x += movement.x;
 	m_position.y += movement.y;
+
+	if (m_state == PlayerState::Walking)
+	{
+		m_walkDistance += std::sqrt(movement.x * movement.x + movement.y * movement.y);
+	}
+}
+
+void Player::UpdateAnimation(float deltaTime)
+{
+	constexpr float frameDuration = 0.08f;
+	constexpr float distancePerFrame = 0.142857f;
+
+	switch (m_state)
+	{
+	case PlayerState::Idle:
+	
+		m_animationTime += deltaTime;
+
+		while (m_animationTime >= frameDuration)
+		{
+			m_animationTime -= frameDuration;
+			m_currentFrame = (m_currentFrame + 1) % 14;
+		}
+		return;
+	case PlayerState::Walking:
+		while (m_walkDistance >= distancePerFrame)
+		{
+			m_walkDistance -= distancePerFrame;
+			m_currentFrame = (m_currentFrame + 1) % 14;
+		}
+		return;
+	default:
+		assert(false);
+		return;
+	}	
+}
+
+void Player::SetState(PlayerState state)
+{
+	if (m_state == state)
+		return;
+
+	m_state = state;
+
+	m_walkDistance = 0.0f;
+	m_animationTime = 0.0f;
+	m_currentFrame = 0;
 }
 
 /*				  N
@@ -111,9 +155,8 @@ void Player::SetViewDirection(const Vector2f& viewVector)
 
 const Texture& Player::GetCurrentTexture(Rect& frame) const
 { 
-
 	Rect source{
-	{ /*frame_num*/1 * 128.0f, static_cast<int>(m_viewDirection) * 128.0f },
+	{ m_currentFrame * 128.0f, static_cast<int>(m_viewDirection) * 128.0f },//[frame,direction]
 	{ 128.0f, 128.0f }
 	};
 
@@ -122,7 +165,6 @@ const Texture& Player::GetCurrentTexture(Rect& frame) const
 	return m_textures[static_cast<size_t>(m_state)]; 
 };
 
-
 void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
 	Rect sourceFrame;
@@ -130,15 +172,11 @@ void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 	const Texture& texture = GetCurrentTexture(sourceFrame);
 	
 	Rect renderRect;
+	renderRect.position = {
+	screenPosition.x - m_visualAnchor.x,
+	screenPosition.y - m_visualAnchor.y
+	};
 	renderRect.size = { 128.0f,128.0f };
-
-	//Rect renderRect;
-	//renderRect.size = {
-	//	static_cast<float>(texture.GetWidth()),
-	//	static_cast<float>(texture.GetHeight())
-	//};
-
-	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
 	renderer.DrawTexture(texture, sourceFrame, renderRect);
 }
