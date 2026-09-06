@@ -74,7 +74,7 @@ void Player::MovePlayer(const Vector2f& movement)
 void Player::UpdateAnimation(float deltaTime)
 {
 	constexpr float frameDuration = 0.08f;
-	constexpr float distancePerFrame = 0.142857f;
+	constexpr float distancePerFrame = 0.14142136f;
 
 	switch (m_state)
 	{
@@ -85,14 +85,14 @@ void Player::UpdateAnimation(float deltaTime)
 		while (m_animationTime >= frameDuration)
 		{
 			m_animationTime -= frameDuration;
-			m_currentFrame = (m_currentFrame + 1) % 14;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
 	case PlayerState::Walking:
 		while (m_walkDistance >= distancePerFrame)
 		{
 			m_walkDistance -= distancePerFrame;
-			m_currentFrame = (m_currentFrame + 1) % 14;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
 	default:
@@ -153,30 +153,30 @@ void Player::SetViewDirection(const Vector2f& viewVector)
 	/* Shift the angle by half a sector, divide the circle into 45-degree sectors, take the sector index, and wrap sector 8 back to sector 0.*/
 }
 
-const Texture& Player::GetCurrentTexture(Rect& frame) const
+const Texture& Player::GetCurrentTexture() const
 { 
-	Rect source{
-	{ m_currentFrame * 128.0f, static_cast<int>(m_viewDirection) * 128.0f },//[frame,direction]
-	{ 128.0f, 128.0f }
-	};
-
-	frame = source;
-
 	return m_textures[static_cast<size_t>(m_state)]; 
 };
 
+Rect Player::GetCurrentFrame() const
+{
+	Rect source{
+		{ m_currentFrame * frameSize, static_cast<int>(m_viewDirection) * frameSize },//[frame,direction]
+		{ frameSize, frameSize } 
+	};
+
+	return source;
+}
+
 void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	Rect sourceFrame;
+	const Texture& texture = GetCurrentTexture();
+	const Rect sourceFrame = GetCurrentFrame();
 
-	const Texture& texture = GetCurrentTexture(sourceFrame);
-	
-	Rect renderRect;
-	renderRect.position = {
-	screenPosition.x - m_visualAnchor.x,
-	screenPosition.y - m_visualAnchor.y
+	const Rect renderRect{
+		{screenPosition.x - m_feetPositionInFrame.x,	screenPosition.y - m_feetPositionInFrame.y},
+		{ frameSize,frameSize } 
 	};
-	renderRect.size = { 128.0f,128.0f };
 
 	renderer.DrawTexture(texture, sourceFrame, renderRect);
 }
