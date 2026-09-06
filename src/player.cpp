@@ -4,6 +4,8 @@
 
 #include "player.h"
 #include "assets.h"
+#include "renderer.h"
+#include "isometric.h"
 
 #include "types/vector2i.h"
 
@@ -22,49 +24,18 @@ bool Player::Initialize(Renderer& renderer)
 			switch (static_cast<PlayerState>(statesCount))
 			{
 			case (PlayerState::Idle):
-				strPath += "idle/";
+				strPath += "Idle.png";
 				break;
 			case (PlayerState::Walking):
-				strPath += "walk/";
+				strPath += "Walk.png";
 				break;
 			default:
 				return false;
 			}
 
-			switch (static_cast<Direction>(directionsCount))
-			{
-			case (Direction::North):
-				strPath += "N";
-				break;
-			case (Direction::NorthEast):
-				strPath += "NE";
-				break;
-			case (Direction::East):
-				strPath += "E";
-				break;
-			case (Direction::SouthEast):
-				strPath += "SE";
-				break;
-			case (Direction::South):
-				strPath += "S";
-				break;
-			case (Direction::SouthWest):
-				strPath += "SW";
-				break;
-			case (Direction::West):
-				strPath += "W";
-				break;
-			case (Direction::NorthWest):
-				strPath += "NW";
-				break;
-			default:
-				return false;
-			}
-
-			strPath += ".png";
 			std::filesystem::path assetPath = GetAssetPath(strPath);
 
-			if (!InitializeTexture(renderer, m_textures[statesCount][directionsCount], assetPath.string().c_str()))
+			if (!InitializeTexture(renderer, m_textures[statesCount], assetPath.string().c_str()))
 				return false;
 		}		
 	}
@@ -136,4 +107,38 @@ void Player::SetViewDirection(const Vector2f& viewVector)
 
 	SetViewDirection(directions[static_cast<int>((angleDegrees + 22.5f) / 45.0f) % 8]);
 	/* Shift the angle by half a sector, divide the circle into 45-degree sectors, take the sector index, and wrap sector 8 back to sector 0.*/
+}
+
+const Texture& Player::GetCurrentTexture(Rect& frame) const
+{ 
+
+	Rect source{
+	{ /*frame_num*/1 * 128.0f, static_cast<int>(m_viewDirection) * 128.0f },
+	{ 128.0f, 128.0f }
+	};
+
+	frame = source;
+
+	return m_textures[static_cast<size_t>(m_state)]; 
+};
+
+
+void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
+{
+	Rect sourceFrame;
+
+	const Texture& texture = GetCurrentTexture(sourceFrame);
+	
+	Rect renderRect;
+	renderRect.size = { 128.0f,128.0f };
+
+	//Rect renderRect;
+	//renderRect.size = {
+	//	static_cast<float>(texture.GetWidth()),
+	//	static_cast<float>(texture.GetHeight())
+	//};
+
+	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
+
+	renderer.DrawTexture(texture, sourceFrame, renderRect);
 }

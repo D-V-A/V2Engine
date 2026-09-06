@@ -25,6 +25,7 @@ public:
 	SDL_Renderer* GetNativeRenderer() const{ return m_sdlRenderer; }
 
 	void DrawTexture(const Texture& texture, const Rect& destination);
+	void DrawTexture(const Texture& texture, const Rect& source, const Rect& destination);
 
 private:
 	SDL_Renderer* m_sdlRenderer = nullptr;

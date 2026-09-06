@@ -14,14 +14,14 @@ enum class PlayerState
 
 enum class Direction
 {
-	North,
-	NorthEast,
 	East,
 	SouthEast,
 	South,
 	SouthWest,
 	West,
 	NorthWest,
+	North,
+	NorthEast,
 	Count
 };
 
@@ -45,7 +45,9 @@ public:
 
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
-	const Texture& GetCurrentTexture() const override { return m_textures[static_cast<size_t>(m_state)][static_cast<size_t>(m_viewDirection)]; };
+
+	void Render(Renderer& renderer, const Vector2f& screenPosition) const;
+	const Texture& GetCurrentTexture(Rect& frame) const;
 
 private:
 
@@ -56,6 +58,5 @@ private:
 	PlayerState m_state = PlayerState::Idle;
 	Direction m_viewDirection = Direction::South;
 
-	//m_textures[states_count][directions_count]
-	std::array<std::array<Texture, static_cast<size_t>(Direction::Count)>, static_cast<size_t>(PlayerState::Count)> m_textures;
+	std::array<Texture, static_cast<size_t>(PlayerState::Count)> m_textures;
 };

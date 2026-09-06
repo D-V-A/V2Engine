@@ -54,6 +54,25 @@ void Renderer::DrawTexture(const Texture& texture, const Rect& destination)
 		&dst);
 }
 
+void Renderer::DrawTexture(const Texture& texture, const Rect& source, const Rect& destination)
+{
+	const SDL_FRect src{
+		source.x(),
+		source.y(),
+		source.width(),
+		source.height()
+	};
+
+	const SDL_FRect dst{
+		destination.x(),
+		destination.y(),
+		destination.width(),
+		destination.height()
+	};
+
+	SDL_RenderTexture(m_sdlRenderer, texture.GetNativeTexture(), &src, &dst);
+}
+
 void Renderer::Present()
 {
 	// Показываем готовый кадр на экране.
