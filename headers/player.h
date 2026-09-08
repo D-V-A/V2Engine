@@ -66,7 +66,7 @@ private:
 	PlayerState m_state = PlayerState::Idle;
 	Direction m_viewDirection = Direction::South;
 
-	float m_walkDistance = 0.0f;
+	float m_moveDistance = 0.0f;
 	float m_animationTime = 0.0f;
 	int m_currentFrame = 0;
 

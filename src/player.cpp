@@ -86,14 +86,14 @@ void Player::MovePlayer(const Vector2f& movement)
 
 	if (m_state == PlayerState::Walking || m_state == PlayerState::Running)
 	{
-		m_walkDistance += std::sqrt(movement.x * movement.x + movement.y * movement.y);
+		m_moveDistance += std::sqrt(movement.x * movement.x + movement.y * movement.y);
 	}
 }
 
 void Player::UpdateAnimation(float deltaTime)
 {
 	constexpr float frameDuration = 0.08f;
-	constexpr float distancePerFrame = 0.14142136f;
+	constexpr float moveDistancePerFrame = 0.14142136f;
 
 	switch (m_state)
 	{
@@ -108,16 +108,16 @@ void Player::UpdateAnimation(float deltaTime)
 		}
 		return;
 	case PlayerState::Walking:
-		while (m_walkDistance >= distancePerFrame)
+		while (m_moveDistance >= moveDistancePerFrame)
 		{
-			m_walkDistance -= distancePerFrame;
+			m_moveDistance -= moveDistancePerFrame;
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
 	case PlayerState::Running:
-		while (m_walkDistance >= distancePerFrame)
+		while (m_moveDistance >= moveDistancePerFrame)
 		{
-			m_walkDistance -= distancePerFrame;
+			m_moveDistance -= moveDistancePerFrame;
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
@@ -138,7 +138,7 @@ void Player::SetState(PlayerState state)
 
 	m_state = state;
 
-	m_walkDistance = 0.0f;
+	m_moveDistance = 0.0f;
 	m_animationTime = 0.0f;
 
 	if (!locomotionToLocomotion)
