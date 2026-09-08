@@ -37,21 +37,20 @@ bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charN
 void CharacterAnimator::ResetAnimation(bool fullReset)
 {
 	m_animationTime = 0.0f;
+	m_moveDistance = 0.0f;
+
 	if (fullReset)
-	{
-		m_moveDistance = 0.0f;
 		m_currentFrame = 0;
-	}
 }
 
-void CharacterAnimator::UpdateAnimation(CharacterState state)
+void CharacterAnimator::UpdateAnimation(CharacterAnimation state)
 {
 	constexpr float frameDuration = 0.08f;
 	constexpr float moveDistancePerFrame = 0.14142136f;
 
 	switch (state)
 	{
-	case CharacterState::Idle:
+	case CharacterAnimation::Idle:
 
 		while (m_animationTime >= frameDuration)
 		{
@@ -59,14 +58,14 @@ void CharacterAnimator::UpdateAnimation(CharacterState state)
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
-	case CharacterState::Walking:
+	case CharacterAnimation::WalkForward:
 		while (m_moveDistance >= moveDistancePerFrame)
 		{
 			m_moveDistance -= moveDistancePerFrame;
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
-	case CharacterState::Running:
+	case CharacterAnimation::RunForward:
 		while (m_moveDistance >= moveDistancePerFrame)
 		{
 			m_moveDistance -= moveDistancePerFrame;
@@ -88,12 +87,12 @@ CharacterAnimation CharacterAnimator::SelectAnimation(CharacterState state, Dire
 
 	if (state == CharacterState::Walking)
 	{
-		// WalkForward / WalkBackward / Strafe...
+		return CharacterAnimation::WalkForward;
 	}
 
 	if (state == CharacterState::Running)
 	{
-		// RunForward / RunBackward / ...
+		return CharacterAnimation::RunForward;
 	}
 }
 

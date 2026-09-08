@@ -13,7 +13,7 @@ Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 
 bool Player::Initialize(Renderer& renderer)
 {	
-	return InitializeTextures(renderer, "player");
+	return m_animator.InitializeTextures(renderer, "player");
 }
 
 float Player::GetStateSpeedModifier() const
@@ -58,7 +58,7 @@ void Player::MovePlayer(const Vector2f& movement)
 	m_position.x += movement.x;
 	m_position.y += movement.y;
 
-	AddMovement(std::sqrt(movement.x * movement.x + movement.y * movement.y));
+	m_animator.AddMovement(std::sqrt(movement.x * movement.x + movement.y * movement.y));
 }
 
 void Player::SetState(CharacterState state)
@@ -72,20 +72,21 @@ void Player::SetState(CharacterState state)
 
 	m_state = state;
 
-	ResetAnimation(motionToMotion);
+	m_animator.ResetAnimation(!motionToMotion);
 }
 
 void Player::UpdateAnimation(float deltaTime)
 {
-	AddTime(deltaTime);
-	SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
+	m_animator.AddTime(deltaTime);
+	CharacterAnimation anim = m_animator.SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
+	m_animator.UpdateAnimation(anim);
 }
 
 void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	const Texture& texture = GetCurrentTexture(m_state);
-	const Rect sourceFrame = GetCurrentFrame(m_viewDirection);
-	const float frameSize = GetFrameSize();
+	const Texture& texture = m_animator.GetCurrentTexture(m_state);
+	const Rect sourceFrame = m_animator.GetCurrentFrame(m_viewDirection);
+	const float frameSize = m_animator.GetFrameSize();
 
 	const Rect renderRect{
 		{screenPosition.x - m_feetPositionInFrame.x,	screenPosition.y - m_feetPositionInFrame.y},

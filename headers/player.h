@@ -10,7 +10,7 @@
 
 class Vector2i;
 
-class Player: public Entity, public CharacterAnimator
+class Player: public Entity
 {
 public:
 	Player();
@@ -34,6 +34,7 @@ public:
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const override;
 
 private:
+	CharacterAnimator m_animator;
 
 	float GetStateSpeedModifier() const;
 

@@ -30,7 +30,7 @@ public:
 
 	void ResetAnimation(bool fullReset = true);
 
-	void UpdateAnimation(CharacterState state);
+	void UpdateAnimation(CharacterAnimation state);
 	CharacterAnimation SelectAnimation(CharacterState state, const Direction movementDirection, const Direction viewDirection);
 
 	const Texture& GetCurrentTexture(CharacterState state) const;
