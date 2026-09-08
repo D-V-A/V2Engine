@@ -78,13 +78,13 @@ void Player::SetState(CharacterState state)
 void Player::UpdateAnimation(float deltaTime)
 {
 	m_animator.AddTime(deltaTime);
-	CharacterAnimation anim = m_animator.SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
-	m_animator.UpdateAnimation(anim);
+	m_animator.SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
+	m_animator.UpdateAnimation();
 }
 
 void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	const Texture& texture = m_animator.GetCurrentTexture(m_state);
+	const Texture& texture = m_animator.GetCurrentTexture();
 	const Rect sourceFrame = m_animator.GetCurrentFrame(m_viewDirection);
 	const float frameSize = m_animator.GetFrameSize();
 

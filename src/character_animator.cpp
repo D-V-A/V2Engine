@@ -8,18 +8,18 @@
 
 bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charName)
 {
-	for (int statesCount = 0; statesCount < static_cast<int>(CharacterState::Count); statesCount++)
+	for (int statesCount = 0; statesCount < static_cast<int>(CharacterAnimation::Count); statesCount++)
 	{		
 		std::string strPath = "txt/" + charName + "/";
-		switch (static_cast<CharacterState>(statesCount))
+		switch (static_cast<CharacterAnimation>(statesCount))
 		{
-		case (CharacterState::Idle):
+		case (CharacterAnimation::Idle):
 			strPath += "Idle.png";
 			break;
-		case (CharacterState::Walking):
+		case (CharacterAnimation::WalkForward):
 			strPath += "Walk.png";
 			break;
-		case (CharacterState::Running):
+		case (CharacterAnimation::RunForward):
 			strPath += "Run.png";
 			break;
 		default:
@@ -43,12 +43,12 @@ void CharacterAnimator::ResetAnimation(bool fullReset)
 		m_currentFrame = 0;
 }
 
-void CharacterAnimator::UpdateAnimation(CharacterAnimation state)
+void CharacterAnimator::UpdateAnimation()
 {
 	constexpr float frameDuration = 0.08f;
 	constexpr float moveDistancePerFrame = 0.14142136f;
 
-	switch (state)
+	switch (m_animation)
 	{
 	case CharacterAnimation::Idle:
 
@@ -78,27 +78,29 @@ void CharacterAnimator::UpdateAnimation(CharacterAnimation state)
 	}
 }
 
-CharacterAnimation CharacterAnimator::SelectAnimation(CharacterState state, Direction movementDirection, Direction viewDirection)
+void CharacterAnimator::SelectAnimation(CharacterState state, Direction movementDirection, Direction viewDirection)
 {
-	if (state == CharacterState::Idle)
-		return CharacterAnimation::Idle;
-
-	// compare movement direction with view direction
-
-	if (state == CharacterState::Walking)
+	switch (state)
 	{
-		return CharacterAnimation::WalkForward;
-	}
-
-	if (state == CharacterState::Running)
-	{
-		return CharacterAnimation::RunForward;
+	case(CharacterState::Idle):
+		m_animation = CharacterAnimation::Idle;
+		return;
+	case(CharacterState::Walking):
+		m_animation = CharacterAnimation::WalkForward;
+		return;
+	case(CharacterState::Running):
+		m_animation = CharacterAnimation::RunForward;
+		return;
+	default:
+		assert(false);
+		m_animation = CharacterAnimation::Idle;
+		return;
 	}
 }
 
-const Texture& CharacterAnimator::GetCurrentTexture(CharacterState state) const
+const Texture& CharacterAnimator::GetCurrentTexture() const
 {
-	return m_textures[static_cast<size_t>(state)];
+	return m_textures[static_cast<size_t>(m_animation)];
 };
 
 Rect CharacterAnimator::GetCurrentFrame(Direction viewDirection) const

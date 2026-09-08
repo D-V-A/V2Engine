@@ -30,10 +30,10 @@ public:
 
 	void ResetAnimation(bool fullReset = true);
 
-	void UpdateAnimation(CharacterAnimation state);
-	CharacterAnimation SelectAnimation(CharacterState state, const Direction movementDirection, const Direction viewDirection);
+	void UpdateAnimation();
+	void SelectAnimation(CharacterState state, const Direction movementDirection, const Direction viewDirection);
 
-	const Texture& GetCurrentTexture(CharacterState state) const;
+	const Texture& GetCurrentTexture() const;
 	Rect GetCurrentFrame(Direction viewDirection) const;
 	float GetFrameSize() const { return frameSize; };
 
