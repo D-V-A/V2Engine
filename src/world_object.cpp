@@ -28,17 +28,12 @@ bool WorldObject::HasCollision() const
 
 bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
 {
-	return InitializeTexture(renderer, m_texture, texturePath);
-}
-
-bool WorldObject::InitializeTexture(Renderer& renderer, Texture& texture, const char* texturePath)
-{
-	return texture.Load(renderer, texturePath);
+	return m_texture.Load(renderer, texturePath);
 }
 
 void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	const Texture& texture = GetCurrentTexture();
+	const Texture& texture = m_texture;
 
 	Rect renderRect;
 	renderRect.size = {

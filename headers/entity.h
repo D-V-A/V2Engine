@@ -1,7 +1,5 @@
 #pragma once
 
-#include "texture.h"
-
 #include "types/vector2f.h"
 #include "types/rect.h"
 
