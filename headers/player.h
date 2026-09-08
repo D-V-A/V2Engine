@@ -37,6 +37,7 @@ private:
 	CharacterAnimator m_animator;
 
 	float GetStateSpeedModifier() const;
+	float GetViewDirectionModifier() const;
 
 	Rect m_collisionRect{
 		{ -0.10f, -0.10f },//top left corner, relative to map position

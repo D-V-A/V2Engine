@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include "character_animator.h"
+#include "isometric.h"
 #include "renderer.h"
 #include "assets.h"
 
@@ -21,6 +22,15 @@ bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charN
 			break;
 		case (CharacterAnimation::RunForward):
 			strPath += "Run.png";
+			break;
+		case (CharacterAnimation::StrafeLeft):
+			strPath += "StrafeLeft.png";
+			break;
+		case (CharacterAnimation::StrafeRight):
+			strPath += "StrafeRight.png";
+			break;
+		case (CharacterAnimation::MoveBackwards):
+			strPath += "MoveBackwards.png";
 			break;
 		default:
 			return false;
@@ -72,6 +82,28 @@ void CharacterAnimator::UpdateAnimation()
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
+	case CharacterAnimation::StrafeLeft:
+
+		while (m_moveDistance >= moveDistancePerFrame)
+		{
+			m_moveDistance -= moveDistancePerFrame;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
+		}
+		return;
+	case CharacterAnimation::StrafeRight:
+		while (m_moveDistance >= moveDistancePerFrame)
+		{
+			m_moveDistance -= moveDistancePerFrame;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
+		}
+		return;
+	case CharacterAnimation::MoveBackwards:
+		while (m_moveDistance >= moveDistancePerFrame)
+		{
+			m_moveDistance -= moveDistancePerFrame;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
+		}
+		return;
 	default:
 		assert(false);
 		return;
@@ -80,17 +112,41 @@ void CharacterAnimator::UpdateAnimation()
 
 void CharacterAnimator::SelectAnimation(CharacterState state, Direction movementDirection, Direction viewDirection)
 {
+	const int difference = GetDirectionDifference(movementDirection, viewDirection);
 
 	switch (state)
 	{
 	case(CharacterState::Idle):
 		m_animation = CharacterAnimation::Idle;
 		return;
-	case(CharacterState::Walking):
-		m_animation = CharacterAnimation::WalkForward;
-		return;
 	case(CharacterState::Running):
-		m_animation = CharacterAnimation::RunForward;
+		if (difference == 0) 
+		{
+			m_animation = CharacterAnimation::RunForward;
+			return;
+		}
+	case(CharacterState::Walking):
+		switch (difference)
+		{
+		case 0:
+			m_animation = CharacterAnimation::WalkForward;
+			break;
+		case 1:
+		case 2: 
+		case 3:
+			m_animation = CharacterAnimation::StrafeLeft;
+			break;
+		case 4:
+			m_animation = CharacterAnimation::MoveBackwards;
+			break;
+		case 5:
+		case 6:
+		case 7:
+			m_animation = CharacterAnimation::StrafeRight;
+			break;
+		default:
+			assert(false);
+		}
 		return;
 	default:
 		assert(false);

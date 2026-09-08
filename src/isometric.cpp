@@ -81,3 +81,21 @@ Direction GetDirectionFromVector(const Vector2f& viewVector)
 		return directions[static_cast<int>((angleDegrees + 22.5f) / 45.0f) % 8];
 		/* Shift the angle by half a sector, divide the circle into 45-degree sectors, take the sector index, and wrap sector 8 back to sector 0.*/
 }
+
+
+
+/*
+		0
+
+	1		7
+		/\
+2		||		6
+		||
+	3		5
+
+		4
+*/
+int GetDirectionDifference(Direction movementDirection, Direction viewDirection)
+{
+	return (static_cast<int>(movementDirection) - static_cast<int>(viewDirection) + static_cast<int>(Direction::Count)) % static_cast<int>(Direction::Count);
+}

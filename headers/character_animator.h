@@ -11,11 +11,10 @@ enum class CharacterAnimation
 {
 	Idle,
 	WalkForward,
-	//WalkBackward,
-	//StrafeLeft,
-	//StrafeRight,
+	StrafeLeft,
+	StrafeRight,
 	RunForward,
-	//MoveBackwards,
+	MoveBackwards,
 	Count
 };
 

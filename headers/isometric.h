@@ -6,7 +6,7 @@
 
 //returns base point on the map surface 
 Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& size /*tile size*/, const Vector2f& origin);
-Vector2f WorldVectorToScreen(const Vector2f& worldPosition, const Vector2f& size /*tile size*/);
+Vector2f WorldVectorToScreen(const Vector2f& worldVector, const Vector2f& tileSize);
 
 //returns top left point to start drawing
 Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f& pivot);
@@ -17,3 +17,4 @@ bool IsBehind(const Rect& firstBounds, const Rect& secondBounds);
 Vector2f GetCameraOrigin(const Vector2f& cameraPosition, const Vector2f& tileSize, const Vector2f& screenCenter);
 
 Direction GetDirectionFromVector(const Vector2f& viewVector);
+int GetDirectionDifference(Direction movementDirection, Direction viewDirection);

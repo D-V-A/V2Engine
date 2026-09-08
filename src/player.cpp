@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 
+#include "isometric.h"
 #include "renderer.h"
 #include "player.h"
 
@@ -14,6 +15,36 @@ Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 bool Player::Initialize(Renderer& renderer)
 {	
 	return m_animator.InitializeTextures(renderer, "player");
+}
+
+float Player::GetViewDirectionModifier() const
+{
+	const int difference = GetDirectionDifference(m_moveDirection, m_viewDirection);
+
+	switch (difference)
+	{
+	case 0:
+		return 1.0f;
+
+	case 1:
+	case 7:
+		return 0.95f;
+
+	case 2:
+	case 6:
+		return 0.85f;
+
+	case 3:
+	case 5:
+		return 0.75f;
+
+	case 4:
+		return 0.65f;
+
+	default:
+		assert(false);
+		return 1.0f;
+	}
 }
 
 float Player::GetStateSpeedModifier() const
@@ -34,7 +65,11 @@ float Player::GetStateSpeedModifier() const
 
 Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const
 {
-	const float speed = ((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) * surfaceTypeModifier * GetStateSpeedModifier();
+	const float speed = 
+		((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) * 
+		surfaceTypeModifier * 
+		GetStateSpeedModifier() * 
+		GetViewDirectionModifier();
 
 	return { speed * direction.x * deltaTime, -speed * direction.y * deltaTime };
 }
@@ -66,9 +101,7 @@ void Player::SetState(CharacterState state)
 	if (m_state == state)
 		return;
 
-	const bool motionToMotion =
-		(m_state == CharacterState::Walking || m_state == CharacterState::Running) &&
-		(state == CharacterState::Walking || state == CharacterState::Running);
+	const bool motionToMotion = (m_state != CharacterState::Idle && state != CharacterState::Idle);
 
 	m_state = state;
 
