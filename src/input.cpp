@@ -7,8 +7,8 @@ void Input::Update()
 {
 	m_keyboardState = SDL_GetKeyboardState(nullptr);
 
-	m_movementDirection.x = (int)m_keyboardState[SDL_SCANCODE_D] - (int)m_keyboardState[SDL_SCANCODE_A];
-	m_movementDirection.y = (int)m_keyboardState[SDL_SCANCODE_W] - (int)m_keyboardState[SDL_SCANCODE_S];
+	m_movementDirection.x = static_cast<int>(m_keyboardState[SDL_SCANCODE_D]) - static_cast<int>(m_keyboardState[SDL_SCANCODE_A]);
+	m_movementDirection.y = static_cast<int>(m_keyboardState[SDL_SCANCODE_W]) - static_cast<int>(m_keyboardState[SDL_SCANCODE_S]);
 	
 	float mouseX = 0.0f;
 	float mouseY = 0.0f;
@@ -16,4 +16,6 @@ void Input::Update()
 	SDL_GetMouseState(&mouseX, &mouseY);
 
 	m_mousePosition = { mouseX, mouseY };
+
+	m_shiftState = static_cast<bool>(m_keyboardState[SDL_SCANCODE_LSHIFT]) || static_cast<bool>(m_keyboardState[SDL_SCANCODE_RSHIFT]);
 }

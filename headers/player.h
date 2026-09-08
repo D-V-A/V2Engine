@@ -8,8 +8,9 @@ enum class PlayerState
 {
 	Idle,
 	Walking,
+	Running,
 	Count
-	// TODO: add Running
+	// TODO: add Strafing
 };
 
 enum class Direction
@@ -35,7 +36,7 @@ public:
 public:	
 	bool Initialize(Renderer& renderer);
 
-	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction, const float modifier) const;
+	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const;
 
 	void MovePlayer(const Vector2f& movement);
 
@@ -53,6 +54,8 @@ public:
 	Rect GetCurrentFrame() const;
 
 private:
+
+	float GetStateSpeedModifier() const;
 
 	Rect m_collisionRect{
 		{ -0.10f, -0.10f },//top left corner, relative to map position

@@ -27,6 +27,9 @@ bool Player::Initialize(Renderer& renderer)
 		case (PlayerState::Walking):
 			strPath += "Walk.png";
 			break;
+		case (PlayerState::Running):
+			strPath += "Run.png";
+			break;
 		default:
 			return false;
 		}
@@ -39,9 +42,25 @@ bool Player::Initialize(Renderer& renderer)
 	return true;
 }
 
-Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float modifier) const
+float Player::GetStateSpeedModifier() const
 {
-	const float speed = ((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) * modifier;
+	switch (m_state)
+	{
+	case PlayerState::Idle:
+		return 1.0f;
+	case PlayerState::Walking:
+		return 1.0f;
+	case PlayerState::Running:
+		return 1.6f;
+	default:
+		assert(false);
+		return 0.0f;
+	}
+}
+
+Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const
+{
+	const float speed = ((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) * surfaceTypeModifier * GetStateSpeedModifier();
 
 	return { speed * direction.x * deltaTime, -speed * direction.y * deltaTime };
 }
@@ -65,7 +84,7 @@ void Player::MovePlayer(const Vector2f& movement)
 	m_position.x += movement.x;
 	m_position.y += movement.y;
 
-	if (m_state == PlayerState::Walking)
+	if (m_state == PlayerState::Walking || m_state == PlayerState::Running)
 	{
 		m_walkDistance += std::sqrt(movement.x * movement.x + movement.y * movement.y);
 	}
@@ -95,6 +114,13 @@ void Player::UpdateAnimation(float deltaTime)
 			m_currentFrame = (m_currentFrame + 1) % frameCount;
 		}
 		return;
+	case PlayerState::Running:
+		while (m_walkDistance >= distancePerFrame)
+		{
+			m_walkDistance -= distancePerFrame;
+			m_currentFrame = (m_currentFrame + 1) % frameCount;
+		}
+		return;
 	default:
 		assert(false);
 		return;
@@ -106,11 +132,17 @@ void Player::SetState(PlayerState state)
 	if (m_state == state)
 		return;
 
+	const bool locomotionToLocomotion =
+		(m_state == PlayerState::Walking || m_state == PlayerState::Running) &&
+		(state == PlayerState::Walking || state == PlayerState::Running);
+
 	m_state = state;
 
 	m_walkDistance = 0.0f;
 	m_animationTime = 0.0f;
-	m_currentFrame = 0;
+
+	if (!locomotionToLocomotion)
+		m_currentFrame = 0;
 }
 
 /*				  N

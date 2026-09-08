@@ -121,6 +121,7 @@ void Application::Update(float deltaTime)
 void Application::MovePlayer(float deltaTime)
 {
 	const Vector2i movementDirection = m_input.GetDirection();
+	const bool running = m_input.GetShiftState();
 
 	if (movementDirection.x == 0 && movementDirection.y == 0)
 	{
@@ -134,7 +135,7 @@ void Application::MovePlayer(float deltaTime)
 	Rect collisionRect = m_player.GetCollisionRect();
 	movement = m_world.ResolveMovement(collisionRect, movement);
 
-	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? PlayerState::Idle : PlayerState::Walking);
+	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? PlayerState::Idle : !running ? PlayerState::Walking : PlayerState::Running);
 
 	m_player.MovePlayer(movement);
 }
