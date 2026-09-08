@@ -9,6 +9,14 @@ Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& size /*til
 			origin.y + (worldPosition.x + worldPosition.y) * size.y / 2.0f };
 }
 
+Vector2f WorldVectorToScreen(const Vector2f& worldVector, const Vector2f& tileSize)
+{
+	return {
+		(worldVector.x - worldVector.y) * tileSize.x / 2.0f,
+		(worldVector.x + worldVector.y) * tileSize.y / 2.0f
+	};
+}
+
 Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f& pivot)
 {
 	return{	anchor.x - size.x * pivot.x,

@@ -136,7 +136,9 @@ void Application::MovePlayer(float deltaTime)
 	movement = m_world.ResolveMovement(collisionRect, movement);
 
 	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? CharacterState::Idle : !running ? CharacterState::Walking : CharacterState::Running);
-	m_player.SetMoveDirection(GetDirectionFromVector(movement));
+
+	const Vector2f screenMovement = WorldVectorToScreen(movement, { m_world.GetTileWidth(), m_world.GetTileHeight() });
+	m_player.SetMoveDirection(GetDirectionFromVector(screenMovement));
 
 	m_player.MovePlayer(movement);
 }

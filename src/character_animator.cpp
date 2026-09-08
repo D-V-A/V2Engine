@@ -8,10 +8,10 @@
 
 bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charName)
 {
-	for (int statesCount = 0; statesCount < static_cast<int>(CharacterAnimation::Count); statesCount++)
+	for (int animationsCount = 0; animationsCount < static_cast<int>(CharacterAnimation::Count); animationsCount++)
 	{		
 		std::string strPath = "txt/" + charName + "/";
-		switch (static_cast<CharacterAnimation>(statesCount))
+		switch (static_cast<CharacterAnimation>(animationsCount))
 		{
 		case (CharacterAnimation::Idle):
 			strPath += "Idle.png";
@@ -28,7 +28,7 @@ bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charN
 
 		std::filesystem::path assetPath = GetAssetPath(strPath);
 
-		if (!m_textures[statesCount].Load(renderer, assetPath.string().c_str()))
+		if (!m_textures[animationsCount].Load(renderer, assetPath.string().c_str()))
 			return false;
 	}
 	return true;
@@ -80,6 +80,7 @@ void CharacterAnimator::UpdateAnimation()
 
 void CharacterAnimator::SelectAnimation(CharacterState state, Direction movementDirection, Direction viewDirection)
 {
+
 	switch (state)
 	{
 	case(CharacterState::Idle):
