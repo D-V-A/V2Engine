@@ -17,7 +17,7 @@ bool Player::Initialize(Renderer& renderer)
 	return m_animator.InitializeTextures(renderer, "player");
 }
 
-float Player::GetViewDirectionModifier() const
+float Player::GetViewDirectionPenalty() const
 {
 	const int difference = GetDirectionDifference(m_moveDirection, m_viewDirection);
 
@@ -28,18 +28,18 @@ float Player::GetViewDirectionModifier() const
 
 	case 1:
 	case 7:
-		return 0.95f;
+		return 1.1f;
 
 	case 2:
 	case 6:
-		return 0.85f;
+		return 1.2f;
 
 	case 3:
 	case 5:
-		return 0.75f;
+		return 1.35f;
 
 	case 4:
-		return 0.65f;
+		return 1.5f;
 
 	default:
 		assert(false);
@@ -66,10 +66,10 @@ float Player::GetStateSpeedModifier() const
 Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const
 {
 	const float speed = 
-		((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) * 
-		surfaceTypeModifier * 
-		GetStateSpeedModifier() * 
-		GetViewDirectionModifier();
+		(((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) 
+		* surfaceTypeModifier
+		* GetStateSpeedModifier())
+		/ GetViewDirectionPenalty();
 
 	return { speed * direction.x * deltaTime, -speed * direction.y * deltaTime };
 }
