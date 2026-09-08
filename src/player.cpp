@@ -1,11 +1,8 @@
-#include <filesystem>
-#include <numbers>
 #include <cassert>
 #include <cmath>
 
 #include "renderer.h"
 #include "player.h"
-#include "assets.h"
 
 #include "types/vector2i.h"
 
@@ -15,42 +12,19 @@ Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 }
 
 bool Player::Initialize(Renderer& renderer)
-{
-	for(int statesCount = 0; statesCount < static_cast<int>(PlayerState::Count); statesCount++)
-	{
-		std::string strPath = "txt/player/";
-		switch (static_cast<PlayerState>(statesCount))
-		{
-		case (PlayerState::Idle):
-			strPath += "Idle.png";
-			break;
-		case (PlayerState::Walking):
-			strPath += "Walk.png";
-			break;
-		case (PlayerState::Running):
-			strPath += "Run.png";
-			break;
-		default:
-			return false;
-		}
-		
-		std::filesystem::path assetPath = GetAssetPath(strPath);
-
-		if (!InitializeTexture(renderer, m_textures[statesCount], assetPath.string().c_str()))
-			return false;
-	}
-	return true;
+{	
+	return InitializeTextures(renderer, "player");
 }
 
 float Player::GetStateSpeedModifier() const
 {
 	switch (m_state)
 	{
-	case PlayerState::Idle:
+	case CharacterState::Idle:
 		return 1.0f;
-	case PlayerState::Walking:
+	case CharacterState::Walking:
 		return 1.0f;
-	case PlayerState::Running:
+	case CharacterState::Running:
 		return 1.6f;
 	default:
 		assert(false);
@@ -84,126 +58,34 @@ void Player::MovePlayer(const Vector2f& movement)
 	m_position.x += movement.x;
 	m_position.y += movement.y;
 
-	if (m_state == PlayerState::Walking || m_state == PlayerState::Running)
-	{
-		m_moveDistance += std::sqrt(movement.x * movement.x + movement.y * movement.y);
-	}
+	AddMovement(std::sqrt(movement.x * movement.x + movement.y * movement.y));
 }
 
-void Player::UpdateAnimation(float deltaTime)
-{
-	constexpr float frameDuration = 0.08f;
-	constexpr float moveDistancePerFrame = 0.14142136f;
-
-	switch (m_state)
-	{
-	case PlayerState::Idle:
-	
-		m_animationTime += deltaTime;
-
-		while (m_animationTime >= frameDuration)
-		{
-			m_animationTime -= frameDuration;
-			m_currentFrame = (m_currentFrame + 1) % frameCount;
-		}
-		return;
-	case PlayerState::Walking:
-		while (m_moveDistance >= moveDistancePerFrame)
-		{
-			m_moveDistance -= moveDistancePerFrame;
-			m_currentFrame = (m_currentFrame + 1) % frameCount;
-		}
-		return;
-	case PlayerState::Running:
-		while (m_moveDistance >= moveDistancePerFrame)
-		{
-			m_moveDistance -= moveDistancePerFrame;
-			m_currentFrame = (m_currentFrame + 1) % frameCount;
-		}
-		return;
-	default:
-		assert(false);
-		return;
-	}	
-}
-
-void Player::SetState(PlayerState state)
+void Player::SetState(CharacterState state)
 {
 	if (m_state == state)
 		return;
 
-	const bool locomotionToLocomotion =
-		(m_state == PlayerState::Walking || m_state == PlayerState::Running) &&
-		(state == PlayerState::Walking || state == PlayerState::Running);
+	const bool motionToMotion =
+		(m_state == CharacterState::Walking || m_state == CharacterState::Running) &&
+		(state == CharacterState::Walking || state == CharacterState::Running);
 
 	m_state = state;
 
-	m_moveDistance = 0.0f;
-	m_animationTime = 0.0f;
-
-	if (!locomotionToLocomotion)
-		m_currentFrame = 0;
+	ResetAnimation(motionToMotion);
 }
 
-/*				  N
-			(-112.5; -67.5)
-
-			NW			  NE
-	(-157.5;-112.5) (-67.5; -22.5)
-
-	   W						 E
-(-157.5;-180)(180;157.5)  (- 22.5;22.5)
-
-		 SW					SE
-	(112.5;157.5)		(22.5;67.5)
-
-				  S
-			 (67.5;112.5)*/
-void Player::SetViewDirection(const Vector2f& viewVector)
+void Player::UpdateAnimation(float deltaTime)
 {
-	if (viewVector.x == 0.0f && viewVector.y == 0.0f)
-		return;
-
-	constexpr Direction directions[] = {
-	Direction::East,
-	Direction::SouthEast,
-	Direction::South,
-	Direction::SouthWest,
-	Direction::West,
-	Direction::NorthWest,
-	Direction::North,
-	Direction::NorthEast
-	};
-
-	//that's some brainblowing algorythm
-	const float angle = std::atan2(viewVector.y, viewVector.x);//radians [-Pi;Pi]
-	float angleDegrees = angle * 180.0f / std::numbers::pi_v<float> ;//degreed [-180;180]
-	if (angleDegrees < 0.0f)
-		angleDegrees += 360.0f;
-
-	SetViewDirection(directions[static_cast<int>((angleDegrees + 22.5f) / 45.0f) % 8]);
-	/* Shift the angle by half a sector, divide the circle into 45-degree sectors, take the sector index, and wrap sector 8 back to sector 0.*/
-}
-
-const Texture& Player::GetCurrentTexture() const
-{ 
-	return m_textures[static_cast<size_t>(m_state)]; 
-};
-
-Rect Player::GetCurrentFrame() const
-{
-	Rect source{
-		{ m_currentFrame * frameSize, static_cast<int>(m_viewDirection) * frameSize },//[frame,direction]
-		{ frameSize, frameSize } 
-	};
-
-	return source;
+	AddTime(deltaTime);
+	SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
 }
 
 void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	const Texture& texture = GetCurrentTexture();
-	const Rect sourceFrame = GetCurrentFrame();
+	const Texture& texture = GetCurrentTexture(m_state);
+	const Rect sourceFrame = GetCurrentFrame(m_viewDirection);
+	const float frameSize = GetFrameSize();
 
 	const Rect renderRect{
 		{screenPosition.x - m_feetPositionInFrame.x,	screenPosition.y - m_feetPositionInFrame.y},

@@ -125,7 +125,7 @@ void Application::MovePlayer(float deltaTime)
 
 	if (movementDirection.x == 0 && movementDirection.y == 0)
 	{
-		m_player.SetState(PlayerState::Idle);
+		m_player.SetState(CharacterState::Idle);
 		return;
 	}
 
@@ -135,7 +135,8 @@ void Application::MovePlayer(float deltaTime)
 	Rect collisionRect = m_player.GetCollisionRect();
 	movement = m_world.ResolveMovement(collisionRect, movement);
 
-	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? PlayerState::Idle : !running ? PlayerState::Walking : PlayerState::Running);
+	m_player.SetState((movement.x == 0.0f && movement.y == 0.0f) ? CharacterState::Idle : !running ? CharacterState::Walking : CharacterState::Running);
+	m_player.SetMoveDirection(GetDirectionFromVector(movement));
 
 	m_player.MovePlayer(movement);
 }
@@ -146,8 +147,8 @@ void Application::UpdatePlayerViewDirection()
 	const Vector2f mousePosition = m_input.GetMousePosition();
 	const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, m_window.GetCenter());
 	const Vector2f playerScreenPosition = WorldToScreen(m_player.GetPosition(), { m_world.GetTileWidth(), m_world.GetTileHeight() }, cameraOrigin);
-	const Vector2f lookDirection{ mousePosition.x - playerScreenPosition.x, mousePosition.y - playerScreenPosition.y };
-	m_player.SetViewDirection(lookDirection);
+	const Vector2f sightVector{ mousePosition.x - playerScreenPosition.x, mousePosition.y - playerScreenPosition.y };
+	m_player.SetViewDirection(GetDirectionFromVector(sightVector));
 }
 
 void Application::Render()

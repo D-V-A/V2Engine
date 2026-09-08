@@ -1,5 +1,8 @@
 #include "isometric.h"
 
+#include <numbers>
+#include <cmath>
+
 Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& size /*tile size*/, const Vector2f& origin)
 {
 	return{	origin.x + (worldPosition.x - worldPosition.y) * size.x / 2.0f,
@@ -29,4 +32,44 @@ Vector2f GetCameraOrigin(const Vector2f& cameraPosition, const Vector2f& tileSiz
 		screenCenter.x - projected.x,
 		screenCenter.y - projected.y
 	};
+}
+
+/*				  N
+			(-112.5; -67.5)
+
+			NW			  NE
+	(-157.5;-112.5) (-67.5; -22.5)
+
+	   W						 E
+(-157.5;-180)(180;157.5)  (- 22.5;22.5)
+
+		 SW					SE
+	(112.5;157.5)		(22.5;67.5)
+
+				  S
+			 (67.5;112.5)*/
+Direction GetDirectionFromVector(const Vector2f& viewVector)
+{
+		if (viewVector.x == 0.0f && viewVector.y == 0.0f)
+			return Direction::South;
+
+		constexpr Direction directions[] = {
+		Direction::East,
+		Direction::SouthEast,
+		Direction::South,
+		Direction::SouthWest,
+		Direction::West,
+		Direction::NorthWest,
+		Direction::North,
+		Direction::NorthEast
+		};
+
+		//that's some brainblowing algorythm
+		const float angle = std::atan2(viewVector.y, viewVector.x);//radians [-Pi;Pi]
+		float angleDegrees = angle * 180.0f / std::numbers::pi_v<float>;//degreed [-180;180]
+		if (angleDegrees < 0.0f)
+			angleDegrees += 360.0f;
+
+		return directions[static_cast<int>((angleDegrees + 22.5f) / 45.0f) % 8];
+		/* Shift the angle by half a sector, divide the circle into 45-degree sectors, take the sector index, and wrap sector 8 back to sector 0.*/
 }

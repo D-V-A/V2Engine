@@ -24,18 +24,13 @@ public:
 	const Vector2f& GetPosition() const { return m_position; }
 	void SetPosition(const Vector2f& newPosition) { m_position = newPosition; }
 
-	virtual void Render(Renderer& renderer, const Vector2f& screenPosition) const;
-
 	Rect GetRenderOrderBounds() const;
 
-protected:
-	bool InitializeTexture(Renderer& renderer, Texture& texture, const char* texturePath);
-	virtual const Texture& GetCurrentTexture() const { return m_texture; }
+	virtual void Render(Renderer& renderer, const Vector2f& screenPosition) const = 0;
 
+protected:
 	Vector2f m_position{ -1.0f,-1.0f };//in world coordinates
 	Vector2f m_pivot{ 0.5f, 1.0f };
 
 	Rect m_renderOrderBounds;
-
-	Texture m_texture;
 };

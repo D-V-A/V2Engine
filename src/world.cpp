@@ -3,14 +3,14 @@
 #include <limits>
 #include <cmath>
 
-#include "world.h"
-#include "renderer.h"
-#include "isometric.h"
 #include "map_loader.h"
+#include "isometric.h"
+#include "renderer.h"
 #include "assets.h"
+#include "world.h"
 
-#include "types/rect.h"
 #include "types/map_data.h"
+#include "types/rect.h"
 
 InitializationResults World::Initialize(Renderer& renderer, const char* mapPath)
 {

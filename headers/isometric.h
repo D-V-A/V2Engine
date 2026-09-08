@@ -1,5 +1,6 @@
 #pragma once
 
+#include "types/character_info.h"
 #include "types/vector2f.h"
 #include "types/rect.h"
 
@@ -13,3 +14,5 @@ Vector2f GetTopLeft(const Vector2f& anchor, const Vector2f& size, const Vector2f
 bool IsBehind(const Rect& firstBounds, const Rect& secondBounds);
 
 Vector2f GetCameraOrigin(const Vector2f& cameraPosition, const Vector2f& tileSize, const Vector2f& screenCenter);
+
+Direction GetDirectionFromVector(const Vector2f& viewVector);
