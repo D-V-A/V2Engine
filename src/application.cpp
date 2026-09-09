@@ -28,7 +28,22 @@ bool Application::Initialize()
 		return false;
 	}
 
-	std::filesystem::path assetPath = GetAssetPath("map/map_20_30.txt");
+	if (!m_ttf.Initialize())
+	{
+		std::cerr << "Failed to create font context: " << SDL_GetError() << '\n';
+
+		return false;
+	}
+
+	std::filesystem::path assetPath = GetAssetPath("fnt/PTSans-Regular.ttf");
+	if (!m_fonts.Load(assetPath, 24.0f))
+	{
+		std::cerr << "Failed to init font: " << SDL_GetError() << '\n';
+
+		return false;
+	}
+
+	assetPath = GetAssetPath("map/map_20_30.txt");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
 	if (worldInitRes != InitializationResults::Success)
 	{

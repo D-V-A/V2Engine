@@ -9,6 +9,7 @@
 #include "window.h"
 #include "world.h"
 #include "input.h"
+#include "font.h"
 
 
 class Application
@@ -27,12 +28,15 @@ private:
 	void Render();
 
 	SDLContext m_sdl;
+	TTFContext m_ttf;
+
 	Window m_window;
 	Renderer m_renderer;
 	World m_world;
 	Player m_player;
 	Input m_input;
 	Camera m_camera;
+	Font m_fonts;
 
 	bool m_isRunning = false;
 };

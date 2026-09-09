@@ -5,9 +5,9 @@ project(V2Engine)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 include(FetchContent)
 
+# SDL3 
 FetchContent_Declare(
 	SDL3
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -75,12 +75,14 @@ set(SDL_UNINSTALL OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(SDL3)
 
+# SDL3 Image
 FetchContent_Declare(
 	SDL3_image
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
 	GIT_TAG release-3.4.4
 )
 
+#we don't need any of this yet
 set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_BMP OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_GIF OFF CACHE BOOL "" FORCE)
@@ -101,6 +103,15 @@ set(SDLIMAGE_XV OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_PNG ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(SDL3_image)
+
+#SDL3 text
+FetchContent_Declare(
+	SDL3_ttf
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+	GIT_TAG release-3.2.2
+)
+
+FetchContent_MakeAvailable(SDL3_ttf)
 
 file(GLOB_RECURSE V2ENGINE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
@@ -123,6 +134,7 @@ add_custom_command(TARGET V2Engine POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 		$<TARGET_FILE:SDL3::SDL3>
 		$<TARGET_FILE:SDL3_image::SDL3_image>
+		$<TARGET_FILE:SDL3_ttf::SDL3_ttf>
 		$<TARGET_FILE_DIR:V2Engine>
 )
 
@@ -136,4 +148,5 @@ add_custom_command(TARGET V2Engine POST_BUILD
 target_link_libraries(V2Engine PRIVATE 
 SDL3::SDL3 	
 SDL3_image::SDL3_image
+SDL3_ttf::SDL3_ttf
 )
