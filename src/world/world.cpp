@@ -3,11 +3,13 @@
 #include <limits>
 #include <cmath>
 
-#include "map_loader.h"
-#include "isometric.h"
-#include "renderer.h"
-#include "assets.h"
-#include "world.h"
+#include "world/map_loader.h"
+#include "world/isometric.h"
+#include "world/world.h"
+
+#include "graphics/renderer.h"
+
+#include "core/assets.h"
 
 #include "types/map_data.h"
 #include "types/rect.h"

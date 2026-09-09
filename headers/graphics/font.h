@@ -3,7 +3,6 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include <filesystem>
-#include <string>
 
 class Font
 {
@@ -16,7 +15,7 @@ public:
 	Font(const Font&) = delete;
 	Font& operator=(const Font&) = delete;
 
-	TTF_Font* GetNativeFont() const { return m_font; };
+	TTF_Font* GetNativeFont() const { return m_font; }
 
 private:
 	TTF_Font* m_font = nullptr;

@@ -1,6 +1,6 @@
 
 
-#include "window.h"
+#include "graphics/window.h"
 
 
 Window::~Window()

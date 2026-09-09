@@ -1,10 +1,13 @@
 #include <filesystem>
 #include <cassert>
 
-#include "character_animator.h"
-#include "isometric.h"
-#include "renderer.h"
-#include "assets.h"
+#include "entities/character_animator.h"
+
+#include "world/isometric.h"
+
+#include "graphics/renderer.h"
+
+#include "core/assets.h"
 
 
 bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charName)

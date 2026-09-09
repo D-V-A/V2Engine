@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
 
-#include "application.h"
-#include "isometric.h"
-#include "render_order.h"
-#include "assets.h"
+#include "world/render_order.h"
+#include "world/isometric.h"
+
+#include "core/application.h"
+#include "core/assets.h"
 
 bool Application::Initialize()
 {
@@ -28,18 +29,16 @@ bool Application::Initialize()
 		return false;
 	}
 
-
-	//From here text part is starting
-	if (!m_textRenderer.Initialize(m_renderer))
+	if (!m_ttf.Initialize())
 	{
-		std::cerr << "Failed to create text renderer: " << SDL_GetError() << '\n';
+		std::cerr << "Failed to create font context: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 
-	if (!m_ttf.Initialize())
+	if (!m_textRenderer.Initialize(m_renderer))
 	{
-		std::cerr << "Failed to create font context: " << SDL_GetError() << '\n';
+		std::cerr << "Failed to create text renderer: " << SDL_GetError() << '\n';
 
 		return false;
 	}
@@ -58,7 +57,6 @@ bool Application::Initialize()
 
 		return false;
 	}
-	//Here text part ends
 
 	assetPath = GetAssetPath("map/map_20_30.txt");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());

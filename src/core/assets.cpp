@@ -1,4 +1,4 @@
-#include "assets.h"
+#include "core/assets.h"
 
 std::filesystem::path GetAssetPath(const std::filesystem::path& relativePath)
 {

@@ -1,6 +1,6 @@
-#include "text_renderer.h"
-#include "renderer.h"
-#include "text.h"
+#include "graphics/text_renderer.h"
+#include "graphics/renderer.h"
+#include "graphics/text.h"
 
 #include "types/vector2f.h"
 

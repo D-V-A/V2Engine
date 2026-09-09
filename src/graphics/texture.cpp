@@ -1,8 +1,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
-#include "texture.h"
-#include "renderer.h"
+#include "graphics/texture.h"
+#include "graphics/renderer.h"
 
 bool Texture::Load(Renderer& renderer, const char* path)
 {

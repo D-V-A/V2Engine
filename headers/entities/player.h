@@ -2,8 +2,8 @@
 
 #include <array>
 
-#include "entity.h"
-#include "character_animator.h"
+#include "entities/character_animator.h"
+#include "entities/entity.h"
 
 #include "types/character_info.h"
 
@@ -24,8 +24,8 @@ public:
 
 	void UpdateAnimation(float deltaTime);
 
-	void SetViewDirection(Direction viewDirection) { m_viewDirection = viewDirection; };
-	void SetMoveDirection(Direction viewDirection) { m_moveDirection = viewDirection; };
+	void SetViewDirection(Direction viewDirection) { m_viewDirection = viewDirection; }
+	void SetMoveDirection(Direction viewDirection) { m_moveDirection = viewDirection; }
 	void SetState(CharacterState state);
 
 	Rect GetCollisionRectAt(const Vector2f& position) const;

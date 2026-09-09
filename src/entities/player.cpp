@@ -1,9 +1,11 @@
 #include <cassert>
 #include <cmath>
 
-#include "isometric.h"
-#include "renderer.h"
-#include "player.h"
+#include "world/isometric.h"
+
+#include "graphics/renderer.h"
+
+#include "entities/player.h"
 
 #include "types/vector2i.h"
 

@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
 
-#include "sdl_context.h"
+#include "core/sdl_context.h"
 
 bool SDLContext::Initialize()
 {

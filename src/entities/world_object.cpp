@@ -1,8 +1,10 @@
 #include <cassert>
 
-#include "world_object.h"
-#include "isometric.h"
-#include "renderer.h"
+#include "entities/world_object.h"
+
+#include "world/isometric.h"
+
+#include "graphics/renderer.h"
 
 WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect)
 	: Entity(position, renderFootprintSize),

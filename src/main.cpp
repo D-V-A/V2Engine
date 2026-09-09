@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
 
-#include "application.h"
+#include "core/application.h"
 
 int main()
 {

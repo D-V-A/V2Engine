@@ -2,7 +2,8 @@
 #include <string>
 #include <utility>
 
-#include "map_loader.h"
+#include "world/map_loader.h"
+
 #include "types/map_data.h"
 #include "types/rect.h"
 

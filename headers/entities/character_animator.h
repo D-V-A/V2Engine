@@ -2,7 +2,7 @@
 #include <string>
 #include <array>
 
-#include "texture.h"
+#include "graphics/texture.h"
 
 #include "types/rect.h"
 #include "types/character_info.h"
@@ -24,8 +24,8 @@ class CharacterAnimator
 public:
 	bool InitializeTextures(Renderer& renderer, std::string charName);
 
-	void AddMovement(float dst) { m_moveDistance += dst; };
-	void AddTime(float time)	{ m_animationTime += time; };
+	void AddMovement(float dst) { m_moveDistance += dst; }
+	void AddTime(float time)	{ m_animationTime += time; }
 
 	void ResetAnimation(bool fullReset = true);
 
@@ -34,7 +34,7 @@ public:
 
 	const Texture& GetCurrentTexture() const;
 	Rect GetCurrentFrame(Direction viewDirection) const;
-	float GetFrameSize() const { return frameSize; };
+	float GetFrameSize() const { return frameSize; }
 
 private:
 	CharacterAnimation m_animation = CharacterAnimation::Idle;

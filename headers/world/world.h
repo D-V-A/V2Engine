@@ -2,8 +2,9 @@
 
 #include<vector>
 
-#include "texture.h"
-#include "world_object.h"
+#include "graphics/texture.h"
+
+#include "entities/world_object.h"
 
 #include "types/vector2f.h"
 #include "types/map_data.h"
@@ -40,7 +41,7 @@ private:
 
 	bool InitializeObjects(Renderer& renderer, const MapData& mapInfo);
 	
-	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_surfaceTextures.at(surface); };
+	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_surfaceTextures.at(surface); }
 
 	struct SweepHit
 	{

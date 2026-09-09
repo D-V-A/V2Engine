@@ -2,16 +2,19 @@
 
 #include <SDL3/SDL.h>
 
-#include "text_renderer.h"
-#include "sdl_context.h"
-#include "renderer.h"
-#include "player.h"
-#include "camera.h"
-#include "window.h"
-#include "world.h"
-#include "input.h"
-#include "font.h"
-#include "text.h"
+#include "core/sdl_context.h"
+#include "core/input.h"
+
+#include "world/camera.h"
+#include "world/world.h"
+
+#include "graphics/text_renderer.h"
+#include "graphics/renderer.h"
+#include "graphics/window.h"
+#include "graphics/font.h"
+#include "graphics/text.h"
+
+#include "entities/player.h"
 
 
 class Application

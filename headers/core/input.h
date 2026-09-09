@@ -8,7 +8,7 @@ class Input
 public:
 	void Update();
 	
-	Vector2i GetDirection() const { return m_movementDirection; };
+	Vector2i GetDirection() const { return m_movementDirection; }
 	Vector2f GetMousePosition() const { return m_mousePosition; }
 	bool GetShiftState() const { return m_shiftState; }
 

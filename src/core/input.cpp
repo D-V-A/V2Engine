@@ -1,7 +1,7 @@
 #include<SDL3/SDL_keyboard.h>
 #include<SDL3/SDL_mouse.h>
 
-#include "input.h"
+#include "core/input.h"
 
 void Input::Update()
 {

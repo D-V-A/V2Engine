@@ -1,9 +1,11 @@
 #include <cassert>
 #include <queue>
 
-#include "render_order.h"
-#include "entity.h"
-#include "isometric.h"
+#include "world/render_order.h"
+
+#include "entities/entity.h"
+
+#include "world/isometric.h"
 
 std::vector<const Entity*> BuildRenderOrder(const std::vector<const Entity*>& entities)
 {

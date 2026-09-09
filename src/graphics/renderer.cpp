@@ -1,6 +1,6 @@
-#include "renderer.h"
-#include "texture.h"
-#include "window.h"
+#include "graphics/renderer.h"
+#include "graphics/texture.h"
+#include "graphics/window.h"
 
 bool Renderer::Initialize(Window &window)
 {

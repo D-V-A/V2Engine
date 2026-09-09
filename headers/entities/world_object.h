@@ -2,8 +2,9 @@
 
 #include <optional>
 
-#include "texture.h"
-#include "entity.h"
+#include "graphics/texture.h"
+
+#include "entities/entity.h"
 
 class WorldObject: public Entity
 {

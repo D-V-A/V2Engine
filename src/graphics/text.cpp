@@ -1,7 +1,6 @@
-#include "text.h"
-
-#include "font.h"
-#include "text_renderer.h"
+#include "graphics/text_renderer.h"
+#include "graphics/text.h"
+#include "graphics/font.h"
 
 Text::~Text()
 {
