@@ -2,8 +2,9 @@
 
 #include <SDL3_ttf/SDL_textengine.h>
 
+struct Vector2f;
+
 class Renderer;
-class Vector2f;
 class Text;
 
 class TextRenderer

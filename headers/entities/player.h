@@ -8,7 +8,7 @@
 #include "types/character_info.h"
 
 
-class Vector2i;
+struct Vector2i;
 
 class Player: public Entity
 {
