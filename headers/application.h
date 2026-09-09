@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "text_renderer.h"
 #include "sdl_context.h"
 #include "renderer.h"
 #include "player.h"
@@ -10,6 +11,7 @@
 #include "world.h"
 #include "input.h"
 #include "font.h"
+#include "text.h"
 
 
 class Application
@@ -32,11 +34,14 @@ private:
 
 	Window m_window;
 	Renderer m_renderer;
+	TextRenderer m_textRenderer;
+
 	World m_world;
 	Player m_player;
 	Input m_input;
 	Camera m_camera;
 	Font m_fonts;
+	Text m_testText;
 
 	bool m_isRunning = false;
 };

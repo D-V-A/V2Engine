@@ -1,6 +1,3 @@
-#include <iostream>
-
-#include "assets.h"
 #include "font.h"
 
 Font::~Font()

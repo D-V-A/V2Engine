@@ -28,6 +28,15 @@ bool Application::Initialize()
 		return false;
 	}
 
+
+	//From here text part is starting
+	if (!m_textRenderer.Initialize(m_renderer))
+	{
+		std::cerr << "Failed to create text renderer: " << SDL_GetError() << '\n';
+
+		return false;
+	}
+
 	if (!m_ttf.Initialize())
 	{
 		std::cerr << "Failed to create font context: " << SDL_GetError() << '\n';
@@ -42,6 +51,14 @@ bool Application::Initialize()
 
 		return false;
 	}
+
+	if (!m_testText.Initialize(m_textRenderer, m_fonts, "It just works!"))
+	{
+		std::cerr << "Failed to create text: " << SDL_GetError() << '\n';
+
+		return false;
+	}
+	//Here text part ends
 
 	assetPath = GetAssetPath("map/map_20_30.txt");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
@@ -191,5 +208,8 @@ void Application::Render()
 
 		entity->Render(m_renderer, screenPosition);
 	}
+
+	m_textRenderer.DrawText(m_testText, { 20.0f, 20.0f });
+
 	m_renderer.Present();
 }

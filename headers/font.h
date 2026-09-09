@@ -16,6 +16,8 @@ public:
 	Font(const Font&) = delete;
 	Font& operator=(const Font&) = delete;
 
+	TTF_Font* GetNativeFont() const { return m_font; };
+
 private:
 	TTF_Font* m_font = nullptr;
 };
