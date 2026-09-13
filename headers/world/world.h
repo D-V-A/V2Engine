@@ -43,7 +43,8 @@ private:
 	bool InitializeMap(Renderer& renderer, MapData& mapInfo);
 
 	bool InitializeObjects(Renderer& renderer, const MapData& mapInfo);
-	
+	const Texture* LoadObjectTexture(Renderer& renderer, const std::string& texturePath);
+
 	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_surfaceTextures.at(surface); }
 
 	struct SweepHit
@@ -68,4 +69,5 @@ private:
 	std::map<SurfaceType, Texture> m_surfaceTextures;
 
 	std::vector<WorldObject> m_objects;
+	std::map<std::string, Texture> m_objectTextures;
 };

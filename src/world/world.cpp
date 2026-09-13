@@ -60,6 +60,28 @@ bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)
 	return true;
 }
 
+const Texture* World::LoadObjectTexture(Renderer& renderer, const std::string& texturePath)
+{
+	auto it = m_objectTextures.find(texturePath);
+
+	if (it != m_objectTextures.end())
+		return &it->second;
+
+	Texture texture;
+
+	const auto assetPath = GetAssetPath(texturePath);
+
+	if (!texture.Load(renderer, assetPath.string().c_str()))
+		return nullptr;
+
+	const auto [insertedIt, inserted] = m_objectTextures.emplace(texturePath, std::move(texture));
+
+	if (!inserted)
+		return nullptr;
+
+	return &insertedIt->second;
+}
+
 bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 {
 	m_objects.clear();
@@ -69,12 +91,34 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 	{
 		const ObjectTypeData& typeData = mapInfo.objectTypes.at(objectInstance.type);
 
-		WorldObject object(objectInstance.position, typeData.renderFootprintSize, typeData.collision, typeData.states);
+		const Texture* baseTexture = LoadObjectTexture(renderer, typeData.texture);
 
-		const auto texturePath = GetAssetPath(typeData.texture);
-
-		if (!object.Initialize(renderer, texturePath.string().c_str()))
+		if (!baseTexture)
 			return false;
+
+		std::vector<WorldObjectRuntimeState> runtimeStates;
+		runtimeStates.reserve(typeData.states.size());
+
+		for (const WorldObjectState& stateData : typeData.states)
+		{
+			const Texture* stateTexture = baseTexture;
+
+			if (stateData.texture)
+			{
+				stateTexture = LoadObjectTexture(renderer, *stateData.texture);
+
+				if (!stateTexture)
+					return false;
+			}
+
+			WorldObjectRuntimeState runtimeState;
+			runtimeState.texture = stateTexture;
+			runtimeState.interaction = stateData.interaction;
+
+			runtimeStates.push_back(std::move(runtimeState));
+		}
+
+		WorldObject object(objectInstance.position, typeData.renderFootprintSize, typeData.collision, runtimeStates, *baseTexture);
 
 		m_objects.push_back(std::move(object));
 	}

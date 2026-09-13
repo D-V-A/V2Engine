@@ -3,6 +3,8 @@
 #include <optional>
 #include <string>
 
+#include "graphics/texture.h"
+
 struct WorldObjectInteraction
 {
 	std::string text;
@@ -12,5 +14,11 @@ struct WorldObjectInteraction
 struct WorldObjectState
 {
 	std::optional<std::string> texture;
+	std::optional<WorldObjectInteraction> interaction;
+};
+
+struct WorldObjectRuntimeState
+{
+	const Texture* texture = nullptr;
 	std::optional<WorldObjectInteraction> interaction;
 };

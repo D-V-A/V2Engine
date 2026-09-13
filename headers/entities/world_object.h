@@ -4,19 +4,18 @@
 #include <string>
 #include <vector>
 
-#include "graphics/texture.h"
-
 #include "entities/entity.h"
 
 #include "types/world_object_state.h"
 
+class Vector2f;
+class Texture;
+
 class WorldObject : public Entity
 {
 public:
-	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, const std::vector<WorldObjectState>& states);
-
-	bool Initialize(Renderer& renderer, const char* texturePath);
-
+	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect,
+		const std::vector<WorldObjectRuntimeState>& states, const Texture& baseTexture);
 public:
 	bool HasCollision() const;
 	Rect GetCollisionRect() const;
@@ -30,13 +29,12 @@ public:
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const override;
 
 private:
-	const WorldObjectState* GetCurrentState() const;
+	const WorldObjectRuntimeState* GetCurrentState() const;
 
-private:
-	Texture m_texture;
+	const Texture* m_currentTexture = nullptr;
 
 	std::optional<Rect> m_collisionRect;
 
-	std::vector<WorldObjectState> m_states;
+	std::vector<WorldObjectRuntimeState> m_states;
 	size_t m_currentState = 0;
 };

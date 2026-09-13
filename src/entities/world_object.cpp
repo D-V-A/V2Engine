@@ -5,16 +5,17 @@
 #include "world/isometric.h"
 
 #include "graphics/renderer.h"
+#include "graphics/texture.h"
 
-WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, const std::vector<WorldObjectState>& states)
+WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, 
+						const std::vector<WorldObjectRuntimeState>& states, const Texture& baseTexture)
 	: Entity(position, renderFootprintSize),
 	m_collisionRect(collisionRect),
-	m_states(states)
-{}
-
-bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
+	m_states(states),
+	m_currentTexture(&baseTexture)	
 {
-	return m_texture.Load(renderer, texturePath);
+	if (!m_states.empty() && m_states[0].texture)
+		m_currentTexture = m_states[0].texture;
 }
 
 bool WorldObject::HasCollision() const
@@ -36,17 +37,17 @@ Rect WorldObject::GetCollisionRect() const
 
 void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
-	const Texture& texture = m_texture;
+	assert(m_currentTexture);
 
 	Rect renderRect;
 	renderRect.size = {
-		static_cast<float>(texture.GetWidth()),
-		static_cast<float>(texture.GetHeight())
+		static_cast<float>(m_currentTexture->GetWidth()),
+		static_cast<float>(m_currentTexture->GetHeight())
 	};
 
 	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
-	renderer.DrawTexture(texture, renderRect);
+	renderer.DrawTexture(*m_currentTexture, renderRect);
 }
 
 bool WorldObject::Interact()
@@ -56,14 +57,18 @@ bool WorldObject::Interact()
 	if (!interaction || !interaction->nextState)
 		return false;
 
+	if (*interaction->nextState >= m_states.size())
+		return false;
+
 	m_currentState = *interaction->nextState;
+	m_currentTexture = m_states[m_currentState].texture;
 
 	return true;
 }
 
 bool WorldObject::IsInteractable() const
 {
-	const WorldObjectState* state = GetCurrentState();
+	const WorldObjectRuntimeState* state = GetCurrentState();
 
 	if (!state)
 		return false;
@@ -73,7 +78,7 @@ bool WorldObject::IsInteractable() const
 
 const WorldObjectInteraction* WorldObject::GetInteraction() const
 {
-	const WorldObjectState* state = GetCurrentState();
+	const WorldObjectRuntimeState* state = GetCurrentState();
 
 	if (!state || !state->interaction)
 		return nullptr;
@@ -81,7 +86,7 @@ const WorldObjectInteraction* WorldObject::GetInteraction() const
 	return &*state->interaction;
 }
 
-const WorldObjectState* WorldObject::GetCurrentState() const
+const WorldObjectRuntimeState* WorldObject::GetCurrentState() const
 {
 	if (m_states.empty())
 		return nullptr;
