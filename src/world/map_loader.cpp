@@ -79,7 +79,7 @@ namespace
 
 			SurfaceInfo surfaceInfo;
 
-			surfaceInfo.texture = "txt/" + surfaceJson.at("texture").get<std::string>();
+			surfaceInfo.texture = surfaceJson.at("texture").get<std::string>();
 			surfaceInfo.walkable = surfaceJson.at("walkable").get<bool>();
 
 			if (surfaceInfo.walkable)
@@ -154,7 +154,7 @@ namespace
 
 			ObjectTypeData objectTypeData;
 
-			objectTypeData.texture = "txt/" + objectJson.at("texture").get<std::string>();
+			objectTypeData.texture = objectJson.at("texture").get<std::string>();
 
 			const auto& footprintJson = objectJson.at("renderFootprint");
 
@@ -205,9 +205,7 @@ namespace
 				objectTypeData.collision = std::nullopt;
 			}
 
-			const bool interactable = objectJson.contains("interaction");
-
-			if (interactable)
+			if (objectJson.contains("interaction")) 
 			{
 				InteractionParams inter;
 
