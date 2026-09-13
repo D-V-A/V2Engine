@@ -3,10 +3,10 @@
 #include <numbers>
 #include <cmath>
 
-Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& size /*tile size*/, const Vector2f& origin)
+Vector2f WorldToScreen(const Vector2f& worldPosition, const Vector2f& tileSize, const Vector2f& origin)
 {
-	return{	origin.x + (worldPosition.x - worldPosition.y) * size.x / 2.0f,
-			origin.y + (worldPosition.x + worldPosition.y) * size.y / 2.0f };
+	return{	origin.x + (worldPosition.x - worldPosition.y) * tileSize.x / 2.0f,
+			origin.y + (worldPosition.x + worldPosition.y) * tileSize.y / 2.0f };
 }
 
 Vector2f WorldVectorToScreen(const Vector2f& worldVector, const Vector2f& tileSize)

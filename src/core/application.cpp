@@ -51,23 +51,23 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_interactionPrompt.Initialize(m_textRenderer, m_fonts))
+	if (!m_interactionPopup.Initialize(m_textRenderer, m_fonts))
 	{
 		std::cerr << "Failed to create text panel: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 
-	if (!m_interactionPrompt.SetText("Работаем, пацаны!"))
+	if (!m_interactionPopup.SetText("Работаем, пацаны!"))
 	{
 		std::cerr << "Failed to set text panel text: " << SDL_GetError() << '\n';
 
 		return false;
 	}
-	m_interactionPrompt.SetPosition({ 15.0f, 15.0f });
-	m_interactionPrompt.SetTextColor(GetColor(Colors::Yellow));
-	m_interactionPrompt.SetBackgroundColor(GetColor(Colors::Black));
-	m_interactionPrompt.SetVisible(false);
+	m_interactionPopup.SetPosition({ 15.0f, 15.0f });
+	m_interactionPopup.SetTextColor(GetColor(Colors::White));
+	m_interactionPopup.SetBackgroundColor(Color{0,0,0,50});
+	m_interactionPopup.SetVisible(false);
 
 	assetPath = GetAssetPath("map/map.json");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
@@ -167,12 +167,31 @@ void Application::FindInteraction(const Vector2f& position)
 
 	if (interactionTarget)
 	{
-		m_interactionPrompt.SetText("[E] " + interactionTarget->GetInteractionText().value());
-		m_interactionPrompt.SetVisible(true);
+		m_interactionPopup.SetText("[E] " + interactionTarget->GetInteractionText().value());
+		m_interactionPopup.SetVisible(true);
+
+		const Rect bounds = interactionTarget->GetRenderOrderBounds();
+
+		const Vector2f popupWorldPosition{
+			bounds.x() + bounds.width() * 0.5f,
+			bounds.y() + bounds.height() * 0.5f
+		};
+
+		const Vector2f tileSize{ m_world.GetTileWidth(), m_world.GetTileHeight() };
+		const Vector2f cameraOrigin = GetCameraOrigin(m_camera.GetPosition(), tileSize, m_window.GetCenter());
+
+		Vector2f popupScreenPosition = WorldToScreen(popupWorldPosition, tileSize, cameraOrigin);
+
+		const Vector2f panelSize = m_interactionPopup.GetSize();
+
+		popupScreenPosition.x -= panelSize.x * 0.5f;
+		popupScreenPosition.y -= panelSize.y + 10.0f;
+
+		m_interactionPopup.SetPosition(popupScreenPosition);
 	}
 	else
 	{
-		m_interactionPrompt.SetVisible(false);
+		m_interactionPopup.SetVisible(false);
 	}
 }
 
@@ -235,7 +254,7 @@ void Application::Render()
 		entity->Render(m_renderer, screenPosition);
 	}
 
-	m_interactionPrompt.Render(m_renderer, m_textRenderer);
+	m_interactionPopup.Render(m_renderer, m_textRenderer);
 
 	m_renderer.Present();
 }

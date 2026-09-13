@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "ui/panel.h"
-#include "ui/label.h"
+#include "ui/primitives/panel.h"
+#include "ui/primitives/label.h"
 
 #include "types/vector2f.h"
 #include "types/colors.h"
@@ -22,7 +22,9 @@ public:
 	void SetTextColor(const Color& color);
 	void SetBackgroundColor(const Color& color);
 	void SetPadding(const Vector2f& padding);
-	void SetVisible(bool vis) { m_visible = vis; };
+	void SetVisible(bool vis) { m_visible = vis; }
+
+	Vector2f GetSize() { return m_panel.GetSize(); }
 
 	void Render(Renderer& renderer, TextRenderer& textRenderer) const;
 

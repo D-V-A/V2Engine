@@ -33,7 +33,8 @@ void Renderer::FillRect(const Rect& rect, const Color& color)
 		rect.width(),
 		rect.height()
 	};
-	// Цвет прямоугольника: оранжевый.
+
+	SDL_SetRenderDrawBlendMode(m_sdlRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(m_sdlRenderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(m_sdlRenderer, &sdlRectangle);
 }

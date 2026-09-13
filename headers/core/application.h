@@ -47,7 +47,7 @@ private:
 	Input m_input;
 	Camera m_camera;
 	Font m_fonts;
-	TextPanel m_interactionPrompt;
+	TextPanel m_interactionPopup;
 
 	bool m_isRunning = false;
 };
