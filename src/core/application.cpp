@@ -51,12 +51,17 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_testText.Initialize(m_textRenderer, m_fonts, "It just works!"))
+	if (!m_testTextPanel.Initialize(m_textRenderer, m_fonts))
 	{
-		std::cerr << "Failed to create text: " << SDL_GetError() << '\n';
+		std::cerr << "Failed to create text panel: " << SDL_GetError() << '\n';
 
 		return false;
 	}
+
+	m_testTextPanel.SetText("Работаем, пацаны!");
+	m_testTextPanel.SetPosition({ 15.0f, 15.0f });
+	m_testTextPanel.SetTextColor(GetColor(Colors::Yellow));
+	m_testTextPanel.SetBackgroundColor(GetColor(Colors::Black));
 
 	assetPath = GetAssetPath("map/map_20_30.txt");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
@@ -207,8 +212,7 @@ void Application::Render()
 		entity->Render(m_renderer, screenPosition);
 	}
 
-	m_testText.SetText("Теперь оно точно работает!");
-	m_textRenderer.DrawText(m_testText, { 20.0f, 20.0f });
+	m_testTextPanel.Render(m_renderer, m_textRenderer);
 
 	m_renderer.Present();
 }

@@ -12,7 +12,8 @@
 #include "graphics/renderer.h"
 #include "graphics/window.h"
 #include "graphics/font.h"
-#include "graphics/text.h"
+
+#include "ui/text_panel.h"
 
 #include "entities/player.h"
 
@@ -44,7 +45,7 @@ private:
 	Input m_input;
 	Camera m_camera;
 	Font m_fonts;
-	Text m_testText;
+	TextPanel m_testTextPanel;
 
 	bool m_isRunning = false;
 };

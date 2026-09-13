@@ -1,7 +1,9 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+
 #include "types/rect.h"
+#include "types/colors.h"
 
 class Texture;
 class Window;
@@ -19,7 +21,7 @@ public:
 	bool Initialize(Window &window);
 
 	void Clear();
-	void FillRect(const Rect& rect);
+	void FillRect(const Rect& rect, const Color& color);
 	void Present();
 
 	SDL_Renderer* GetNativeRenderer() const{ return m_sdlRenderer; }
