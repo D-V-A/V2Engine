@@ -51,23 +51,23 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_testTextPanel.Initialize(m_textRenderer, m_fonts))
+	if (!m_interactionPrompt.Initialize(m_textRenderer, m_fonts))
 	{
 		std::cerr << "Failed to create text panel: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 
-	if (!m_testTextPanel.SetText("Работаем, пацаны!"))
+	if (!m_interactionPrompt.SetText("Работаем, пацаны!"))
 	{
 		std::cerr << "Failed to set text panel text: " << SDL_GetError() << '\n';
 
 		return false;
 	}
-	m_testTextPanel.SetPosition({ 15.0f, 15.0f });
-	m_testTextPanel.SetTextColor(GetColor(Colors::Yellow));
-	m_testTextPanel.SetBackgroundColor(GetColor(Colors::Black));
-	m_testTextPanel.SetVisible(true);
+	m_interactionPrompt.SetPosition({ 15.0f, 15.0f });
+	m_interactionPrompt.SetTextColor(GetColor(Colors::Yellow));
+	m_interactionPrompt.SetBackgroundColor(GetColor(Colors::Black));
+	m_interactionPrompt.SetVisible(false);
 
 	assetPath = GetAssetPath("map/map.json");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
@@ -156,7 +156,24 @@ void Application::Update(float deltaTime)
 
 	UpdatePlayerViewDirection();
 
+	FindInteraction(m_player.GetPosition());
+
 	m_player.UpdateAnimation(deltaTime);
+}
+
+void Application::FindInteraction(const Vector2f& position)
+{
+	const WorldObject* interactionTarget = m_world.FindInteractionTarget(m_player.GetCollisionRect());
+
+	if (interactionTarget)
+	{
+		m_interactionPrompt.SetText("[E] " + interactionTarget->GetInteractionText().value());
+		m_interactionPrompt.SetVisible(true);
+	}
+	else
+	{
+		m_interactionPrompt.SetVisible(false);
+	}
 }
 
 void Application::MovePlayer(float deltaTime)
@@ -218,7 +235,7 @@ void Application::Render()
 		entity->Render(m_renderer, screenPosition);
 	}
 
-	m_testTextPanel.Render(m_renderer, m_textRenderer);
+	m_interactionPrompt.Render(m_renderer, m_textRenderer);
 
 	m_renderer.Present();
 }

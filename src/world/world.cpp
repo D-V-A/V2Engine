@@ -14,6 +14,8 @@
 #include "types/map_data.h"
 #include "types/rect.h"
 
+#include "math/rect_utils.h"
+
 InitializationResults World::Initialize(Renderer& renderer, const char* mapPath)
 {
 	MapData mapLoadData;
@@ -194,18 +196,22 @@ World::SweepHit World::FindFirstCollision(const Rect& collisionRect, const Vecto
 	SweepHit nearestHit;
 
 	const Rect worldBounds[] = {
-		Rect //leftBound
-		{{ -1.0f, -1.0f },
-		{ 1.0f, static_cast<float>(m_height) + 2.0f }},
-		Rect //rightBound
-		{{ static_cast<float>(m_width), -1.0f },
-		{ 1.0f, static_cast<float>(m_height) + 2.0f }},
-		Rect //topBound
-		{{ -1.0f, -1.0f },
-		{ static_cast<float>(m_width) + 2.0f, 1.0f }},
-		Rect //bottomBound
-		{{ -1.0f, static_cast<float>(m_height) },
-		{ static_cast<float>(m_width) + 2.0f, 1.0f }}
+		Rect{
+			{ -1.0f, -1.0f },
+			{ 1.0f, static_cast<float>(m_height) + 2.0f }
+		},
+		Rect{
+			{ static_cast<float>(m_width), -1.0f },
+			{ 1.0f, static_cast<float>(m_height) + 2.0f }
+		},
+		Rect{
+			{ -1.0f, -1.0f },
+			{ static_cast<float>(m_width) + 2.0f, 1.0f }
+		},
+		Rect{
+			{ -1.0f, static_cast<float>(m_height) },
+			{ static_cast<float>(m_width) + 2.0f, 1.0f }
+		}
 	};
 
 	for (const Rect& bound : worldBounds)
@@ -218,59 +224,37 @@ World::SweepHit World::FindFirstCollision(const Rect& collisionRect, const Vecto
 
 	constexpr float epsilon = 0.0001f;
 
-	// --------------------------------
-	// Terrain
-	// --------------------------------
+	const Rect sweptBounds = GetSweptBounds(collisionRect, movement);
 
-	const float endX = collisionRect.x() + movement.x;
-	const float endY = collisionRect.y() + movement.y;
+	const int minTileX = std::max(0, static_cast<int>(std::floor(sweptBounds.x())));
+	const int minTileY = std::max(0, static_cast<int>(std::floor(sweptBounds.y())));
 
-	const float minX = std::min(collisionRect.x(), endX);
-	const float minY = std::min(collisionRect.y(), endY);
-
-	const float maxX = std::max(collisionRect.x() + collisionRect.width(), endX + collisionRect.width());
-
-	const float maxY = std::max(collisionRect.y() + collisionRect.height(), endY + collisionRect.height());
-
-	const int minTileX = std::max(0, static_cast<int>(std::floor(minX)));
-
-	const int minTileY = std::max(0, static_cast<int>(std::floor(minY)));
-
-	const int maxTileX = std::min(m_width - 1, static_cast<int>(std::floor(maxX - epsilon)));
-
-	const int maxTileY = std::min(m_height - 1, static_cast<int>(std::floor(maxY - epsilon)));
+	const int maxTileX = std::min(m_width - 1, static_cast<int>(std::floor(GetRight(sweptBounds) - epsilon)));
+	const int maxTileY = std::min(m_height - 1, static_cast<int>(std::floor(GetBottom(sweptBounds) - epsilon)));
 
 	for (int y = minTileY; y <= maxTileY; ++y)
 	{
 		for (int x = minTileX; x <= maxTileX; ++x)
 		{
-			const size_t index =
-				static_cast<size_t>(y * m_width + x);
+			const size_t index = static_cast<size_t>(y * m_width + x);
 
 			const TileData& tile = m_tiles[index];
-
-			const SurfaceInfo& surface =
-				m_surfaceTypes.at(tile.surface);
+			const SurfaceInfo& surface = m_surfaceTypes.at(tile.surface);
 
 			if (surface.walkable)
 				continue;
 
-			Rect tileRect{
-				{static_cast<float>(x),	static_cast<float>(y)},
+			const Rect tileRect{
+				{ static_cast<float>(x), static_cast<float>(y) },
 				{ 1.0f, 1.0f }
 			};
 
-			const SweepHit hit =
-				SweepRect(collisionRect, movement, tileRect);
+			const SweepHit hit = SweepRect(collisionRect, movement, tileRect);
 
 			if (hit.hit && hit.time < nearestHit.time)
 				nearestHit = hit;
 		}
 	}
-
-	// --------------------------------
-	// Objects
-	// --------------------------------
 
 	for (const WorldObject& object : m_objects)
 	{
@@ -297,23 +281,18 @@ World::SweepHit World::SweepRect(const Rect& movingRect, const Vector2f& movemen
 
 	if (movement.x > 0.0f)
 	{
-		xEntry = (obstacle.x() - (movingRect.x() + movingRect.width())) / movement.x;
-
-		xExit = ((obstacle.x() + obstacle.width()) - movingRect.x()) / movement.x;
+		xEntry = (obstacle.x() - GetRight(movingRect)) / movement.x;
+		xExit = (GetRight(obstacle) - movingRect.x()) / movement.x;
 	}
 	else if (movement.x < 0.0f)
 	{
-		xEntry = ((obstacle.x() + obstacle.width()) - movingRect.x()) / movement.x;
-
-		xExit = (obstacle.x() - (movingRect.x() + movingRect.width())) / movement.x;
+		xEntry = (GetRight(obstacle) - movingRect.x()) / movement.x;
+		xExit = (obstacle.x() - GetRight(movingRect)) / movement.x;
 	}
 	else
 	{
-		if (movingRect.x() + movingRect.width() <= obstacle.x()	
-			|| movingRect.x() >= obstacle.x() + obstacle.width())
-		{
+		if (!OverlapsX(movingRect, obstacle))
 			return result;
-		}
 
 		xEntry = -std::numeric_limits<float>::infinity();
 		xExit = std::numeric_limits<float>::infinity();
@@ -321,23 +300,18 @@ World::SweepHit World::SweepRect(const Rect& movingRect, const Vector2f& movemen
 
 	if (movement.y > 0.0f)
 	{
-		yEntry = (obstacle.y() - (movingRect.y() + movingRect.height())) / movement.y;
-
-		yExit = ((obstacle.y() + obstacle.height()) - movingRect.y()) / movement.y;
+		yEntry = (obstacle.y() - GetBottom(movingRect)) / movement.y;
+		yExit = (GetBottom(obstacle) - movingRect.y()) / movement.y;
 	}
 	else if (movement.y < 0.0f)
 	{
-		yEntry = ((obstacle.y() + obstacle.height()) - movingRect.y()) / movement.y;
-
-		yExit = (obstacle.y() - (movingRect.y() + movingRect.height())) / movement.y;
+		yEntry = (GetBottom(obstacle) - movingRect.y()) / movement.y;
+		yExit = (obstacle.y() - GetBottom(movingRect)) / movement.y;
 	}
 	else
 	{
-		if (movingRect.y() + movingRect.height() <= obstacle.y() 
-			|| movingRect.y() >= obstacle.y() + obstacle.height())
-		{
+		if (!OverlapsY(movingRect, obstacle))
 			return result;
-		}
 
 		yEntry = -std::numeric_limits<float>::infinity();
 		yExit = std::numeric_limits<float>::infinity();
@@ -346,24 +320,45 @@ World::SweepHit World::SweepRect(const Rect& movingRect, const Vector2f& movemen
 	const float entryTime = std::max(xEntry, yEntry);
 	const float exitTime = std::min(xExit, yExit);
 
-	if (entryTime > exitTime
-		|| entryTime < 0.0f
-		|| entryTime > 1.0f)
-	{
+	if (entryTime > exitTime || entryTime < 0.0f || entryTime > 1.0f)
 		return result;
-	}
 
 	result.hit = true;
 	result.time = entryTime;
 
 	if (xEntry > yEntry)
-	{
 		result.normal.x = movement.x > 0.0f ? -1.0f : 1.0f;
-	}
 	else
-	{
 		result.normal.y = movement.y > 0.0f ? -1.0f : 1.0f;
-	}
 
 	return result;
+}
+
+const WorldObject* World::FindInteractionTarget(const Rect& interactionSource) const
+{
+	constexpr float interactionDistance = 0.5f;
+	constexpr float maxDistanceSquared = interactionDistance * interactionDistance;
+
+	const WorldObject* nearestObject = nullptr;
+	float nearestDistanceSquared = maxDistanceSquared;
+
+	for (const WorldObject& object : m_objects)
+	{
+		if (!object.IsInteractable())
+			continue;
+
+		const Rect objectBounds = object.HasCollision()
+			? object.GetCollisionRect()
+			: object.GetRenderOrderBounds();
+
+		const float distanceSquared = GetDistanceSquared(interactionSource, objectBounds);
+
+		if (distanceSquared > nearestDistanceSquared)
+			continue;
+
+		nearestDistanceSquared = distanceSquared;
+		nearestObject = &object;
+	}
+
+	return nearestObject;
 }

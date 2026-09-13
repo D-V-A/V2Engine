@@ -12,6 +12,16 @@ WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::o
 	m_interactionText(interactionText)
 {}
 
+bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
+{
+	return m_texture.Load(renderer, texturePath);
+}
+
+bool WorldObject::HasCollision() const
+{
+	return m_collisionRect.has_value();
+}
+
 Rect WorldObject::GetCollisionRect() const
 {
 	assert(m_collisionRect.has_value());
@@ -22,16 +32,6 @@ Rect WorldObject::GetCollisionRect() const
 	result.y() += m_position.y;
 
 	return result;
-}
-
-bool WorldObject::HasCollision() const
-{
-	return m_collisionRect.has_value();
-}
-
-bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
-{
-	return m_texture.Load(renderer, texturePath);
 }
 
 void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) const
@@ -47,4 +47,22 @@ void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) con
 	renderRect.position = GetTopLeft(screenPosition, renderRect.size, m_pivot);
 
 	renderer.DrawTexture(texture, renderRect);
+}
+
+bool WorldObject::IsInteractable() const
+{
+	return m_interactionText.has_value();
+}
+
+const std::optional<std::string>& WorldObject::GetInteractionText() const 
+{
+	return m_interactionText;
+}
+
+Rect WorldObject::GetInteractionRect() const
+{
+	if (m_collisionRect.has_value())
+		return GetCollisionRect();
+
+	return GetRenderOrderBounds();
 }

@@ -27,9 +27,11 @@ private:
 	bool Initialize();
 
 	void ProcessEvents();
+
 	void Update(float deltaTime);
 	void MovePlayer(float deltaTime);
 	void UpdatePlayerViewDirection();
+	void FindInteraction(const Vector2f& position);
 
 	void Render();
 
@@ -45,7 +47,7 @@ private:
 	Input m_input;
 	Camera m_camera;
 	Font m_fonts;
-	TextPanel m_testTextPanel;
+	TextPanel m_interactionPrompt;
 
 	bool m_isRunning = false;
 };

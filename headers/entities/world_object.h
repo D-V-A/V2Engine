@@ -18,6 +18,10 @@ public:
 	bool HasCollision() const;
 	Rect GetCollisionRect() const;
 
+	bool IsInteractable() const;
+	const std::optional<std::string>& GetInteractionText() const;
+	Rect GetInteractionRect() const;
+
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const override;
 
 private:

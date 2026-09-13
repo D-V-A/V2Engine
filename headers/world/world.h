@@ -25,6 +25,7 @@ public:
 	InitializationResults Initialize(Renderer& renderer, const char* mapPath);
 	void Render(Renderer& renderer, const Vector2f& origin) const;
 
+public:
 	float GetTileWidth() const { return m_tileWidth; }
 	float GetTileHeight() const { return m_tileHeight; }
 
@@ -35,6 +36,7 @@ public:
 	float GetSpeedModifierAt(const Vector2f& position) const;
 
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
+	const WorldObject* FindInteractionTarget(const Rect& interactionSource) const;
 
 private:
 	bool InitializeMap(Renderer& renderer, MapData& mapInfo);
@@ -51,7 +53,6 @@ private:
 	};
 
 	SweepHit SweepRect(const Rect& movingRect, const Vector2f& movement, const Rect& obstacle) const;
-
 	SweepHit FindFirstCollision(const Rect& collisionRect, const Vector2f& movement) const;
 
 	int m_width = 0;//map width in tiles
