@@ -25,6 +25,8 @@ public:
 	const WorldObjectInteraction* GetInteraction() const;
 	Rect GetInteractionRect() const;
 
+	bool Interact();
+
 	void Render(Renderer& renderer, const Vector2f& screenPosition) const override;
 
 private:

@@ -49,6 +49,18 @@ void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) con
 	renderer.DrawTexture(texture, renderRect);
 }
 
+bool WorldObject::Interact()
+{
+	const WorldObjectInteraction* interaction = GetInteraction();
+
+	if (!interaction || !interaction->nextState)
+		return false;
+
+	m_currentState = *interaction->nextState;
+
+	return true;
+}
+
 bool WorldObject::IsInteractable() const
 {
 	const WorldObjectState* state = GetCurrentState();

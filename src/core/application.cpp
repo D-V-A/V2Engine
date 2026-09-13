@@ -156,6 +156,9 @@ void Application::Update(float deltaTime)
 
 	UpdatePlayerViewDirection();
 
+	if (m_input.GetInteractionPressed())
+		m_world.Interact(m_player.GetCollisionRect());
+
 	FindInteraction(m_player.GetPosition());
 
 	m_player.UpdateAnimation(deltaTime);

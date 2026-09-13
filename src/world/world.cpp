@@ -326,6 +326,35 @@ World::SweepHit World::SweepRect(const Rect& movingRect, const Vector2f& movemen
 	return result;
 }
 
+bool World::Interact(const Rect& interactionSource)
+{
+	constexpr float interactionDistance = 0.5f;
+	constexpr float maxDistanceSquared = interactionDistance * interactionDistance;
+
+	WorldObject* nearestObject = nullptr;
+	float nearestDistanceSquared = maxDistanceSquared;
+
+	for (WorldObject& object : m_objects)
+	{
+		if (!object.IsInteractable())
+			continue;
+
+		const Rect objectBounds = object.GetInteractionRect();
+		const float distanceSquared = GetDistanceSquared(interactionSource, objectBounds);
+
+		if (distanceSquared > nearestDistanceSquared)
+			continue;
+
+		nearestDistanceSquared = distanceSquared;
+		nearestObject = &object;
+	}
+
+	if (!nearestObject)
+		return false;
+
+	return nearestObject->Interact();
+}
+
 const WorldObject* World::FindInteractionTarget(const Rect& interactionSource) const
 {
 	constexpr float interactionDistance = 0.5f;

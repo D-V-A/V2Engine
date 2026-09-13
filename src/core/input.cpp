@@ -18,4 +18,9 @@ void Input::Update()
 	m_mousePosition = { mouseX, mouseY };
 
 	m_shiftState = static_cast<bool>(m_keyboardState[SDL_SCANCODE_LSHIFT]) || static_cast<bool>(m_keyboardState[SDL_SCANCODE_RSHIFT]);
+
+	const bool interactionState = static_cast<bool>(m_keyboardState[SDL_SCANCODE_E]);
+
+	m_interactionPressed = interactionState && !m_previousInteractionState;
+	m_previousInteractionState = interactionState;
 }

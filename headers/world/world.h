@@ -38,6 +38,7 @@ public:
 	Vector2f ResolveMovement(const Rect& collisionRect, const Vector2f& movement) const;
 	const WorldObject* FindInteractionTarget(const Rect& interactionSource) const;
 
+	bool Interact(const Rect& interactionSource);
 private:
 	bool InitializeMap(Renderer& renderer, MapData& mapInfo);
 
