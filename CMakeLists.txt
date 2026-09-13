@@ -113,6 +113,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL3_ttf)
 
+FetchContent_Declare(
+	nlohmann_json
+	GIT_REPOSITORY https://github.com/nlohmann/json.git
+	GIT_TAG v3.12.0
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+
 file(GLOB_RECURSE V2ENGINE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h"
@@ -145,8 +153,9 @@ add_custom_command(TARGET V2Engine POST_BUILD
 		$<TARGET_FILE_DIR:V2Engine>/assets
 )
 
-target_link_libraries(V2Engine PRIVATE 
-SDL3::SDL3 	
-SDL3_image::SDL3_image
-SDL3_ttf::SDL3_ttf
+target_link_libraries(V2Engine PRIVATE
+	SDL3::SDL3
+	SDL3_image::SDL3_image
+	SDL3_ttf::SDL3_ttf
+	nlohmann_json::nlohmann_json
 )

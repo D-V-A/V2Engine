@@ -22,6 +22,7 @@ public:
 	void SetTextColor(const Color& color);
 	void SetBackgroundColor(const Color& color);
 	void SetPadding(const Vector2f& padding);
+	void SetVisible(bool vis) { m_visible = vis; };
 
 	void Render(Renderer& renderer, TextRenderer& textRenderer) const;
 
@@ -30,6 +31,8 @@ private:
 
 	Panel m_panel;
 	Label m_label;
+
+	bool m_visible = false;
 
 	Vector2f m_position;
 	Vector2f m_padding{ 5.0f, 5.0f };

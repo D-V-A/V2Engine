@@ -67,31 +67,17 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 	{
 		const ObjectTypeData& typeData = mapInfo.objectTypes.at(objectInstance.type);
 
+		std::optional<std::string> interactionText;
+		if (typeData.interaction)
+			interactionText = typeData.interaction->text;
+
 		WorldObject object(
 			objectInstance.position,
 			typeData.renderFootprintSize,
-			typeData.collision);
+			typeData.collision,
+			interactionText);
 
-		std::filesystem::path texturePath;
-
-		switch (objectInstance.type)
-		{
-		case ObjectType::Crate:
-			texturePath = GetAssetPath("txt/crate.png");
-			break;
-
-		case ObjectType::Tree:
-			texturePath = GetAssetPath("txt/tree.png");
-			break;
-
-		case ObjectType::Rock:
-			texturePath = GetAssetPath("txt/rock.png");
-			break;
-
-		case ObjectType::Bush:
-			texturePath = GetAssetPath("txt/bush.png");
-			break;
-		}
+		const auto texturePath = GetAssetPath(typeData.texture);
 		
 		if (!object.Initialize(renderer, texturePath.string().c_str()))
 			return false;

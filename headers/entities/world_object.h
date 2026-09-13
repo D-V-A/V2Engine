@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <string>
 
 #include "graphics/texture.h"
 
@@ -9,7 +10,7 @@
 class WorldObject: public Entity
 {
 public:
-	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect);
+	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect = std::nullopt, std::optional<std::string> interactionText = std::nullopt);
 
 	bool Initialize(Renderer& renderer, const char* texturePath);
 
@@ -23,4 +24,6 @@ private:
 	Texture m_texture;
 
 	std::optional<Rect> m_collisionRect;
+	
+	std::optional<std::string> m_interactionText;
 };

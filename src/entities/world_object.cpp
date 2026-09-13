@@ -6,9 +6,10 @@
 
 #include "graphics/renderer.h"
 
-WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect)
+WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, std::optional<std::string> interactionText)
 	: Entity(position, renderFootprintSize),
-	m_collisionRect(collisionRect)
+	m_collisionRect(collisionRect),
+	m_interactionText(interactionText)
 {}
 
 Rect WorldObject::GetCollisionRect() const

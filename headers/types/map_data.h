@@ -11,11 +11,12 @@
 //MapTiles
 enum class SurfaceType
 {
-	Void,
-	Road,
-	Grass,
-	Dirt,
-	Water
+	Void	= 0,
+	Grass	= 1,
+	Dirt	= 2,
+	Road	= 3,
+	Water	= 4,
+	Count
 };
 
 struct TileData
@@ -40,10 +41,17 @@ enum class ObjectType
 	Bush
 };
 
+struct InteractionParams
+{
+	std::string text;
+};
+
 struct ObjectTypeData
 {
 	Vector2f renderFootprintSize{};
+	std::string texture;
 	std::optional<Rect> collision;
+	std::optional<InteractionParams> interaction;
 };
 
 struct ObjectInstanceData

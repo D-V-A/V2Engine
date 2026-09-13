@@ -48,6 +48,9 @@ void TextPanel::SetBackgroundColor(const Color& color)
 
 void TextPanel::Render(Renderer& renderer, TextRenderer& textRenderer) const
 {
+	if (!m_visible)
+		return;
+
 	m_panel.Render(renderer);
 	m_label.Render(textRenderer);
 }

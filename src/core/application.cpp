@@ -67,8 +67,9 @@ bool Application::Initialize()
 	m_testTextPanel.SetPosition({ 15.0f, 15.0f });
 	m_testTextPanel.SetTextColor(GetColor(Colors::Yellow));
 	m_testTextPanel.SetBackgroundColor(GetColor(Colors::Black));
+	m_testTextPanel.SetVisible(true);
 
-	assetPath = GetAssetPath("map/map_20_30.txt");
+	assetPath = GetAssetPath("map/map.json");
 	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
 	if (worldInitRes != InitializationResults::Success)
 	{

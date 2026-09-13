@@ -1,6 +1,8 @@
-
+#include <fstream>
 #include <string>
 #include <utility>
+
+#include <nlohmann/json.hpp>
 
 #include "world/map_loader.h"
 
@@ -9,23 +11,25 @@
 
 namespace
 {
-	bool CharToSurfaceType(char symbol, SurfaceType& surfaceType)
-	{
-		switch (symbol)
-		{
-		case 'R':
-			surfaceType = SurfaceType::Road;
-			return true;
+	using json = nlohmann::json;
 
-		case 'G':
+	bool IdToSurfaceType(int id, SurfaceType& surfaceType)
+	{
+		switch (id)
+		{
+		case 1:
 			surfaceType = SurfaceType::Grass;
 			return true;
 
-		case 'D':
+		case 2:
 			surfaceType = SurfaceType::Dirt;
 			return true;
 
-		case 'W':
+		case 3:
+			surfaceType = SurfaceType::Road;
+			return true;
+
+		case 4:
 			surfaceType = SurfaceType::Water;
 			return true;
 
@@ -34,23 +38,23 @@ namespace
 		}
 	}
 
-	bool CharToObjectType(char symbol, ObjectType& objectType) 
+	bool IdToObjectType(int id, ObjectType& objectType)
 	{
-		switch (symbol)
+		switch (id)
 		{
-		case 'C':
+		case 0:
 			objectType = ObjectType::Crate;
 			return true;
 
-		case 'T':
+		case 1:
 			objectType = ObjectType::Tree;
 			return true;
 
-		case 'R':
+		case 2:
 			objectType = ObjectType::Rock;
 			return true;
 
-		case 'B':
+		case 3:
 			objectType = ObjectType::Bush;
 			return true;
 
@@ -58,223 +62,252 @@ namespace
 			return false;
 		}
 	}
+
+	bool LoadSurfaceTypes(const json& mapJson, MapData& mapData)
+	{
+		if (!mapJson.contains("surfaceTypes") || !mapJson["surfaceTypes"].is_array())
+			return false;
+
+		for (const auto& surfaceJson : mapJson["surfaceTypes"])
+		{
+			SurfaceType surfaceType;
+
+			const int id = surfaceJson.at("id").get<int>();
+
+			if (!IdToSurfaceType(id, surfaceType))
+				return false;
+
+			SurfaceInfo surfaceInfo;
+
+			surfaceInfo.texture = "txt/" + surfaceJson.at("texture").get<std::string>();
+			surfaceInfo.walkable = surfaceJson.at("walkable").get<bool>();
+
+			if (surfaceInfo.walkable)
+			{
+				if (!surfaceJson.contains("speedModifier"))
+					return false;
+
+				surfaceInfo.speedModifier = surfaceJson.at("speedModifier").get<float>();
+
+				if (*surfaceInfo.speedModifier <= 0.0f)
+					return false;
+			}
+			else
+			{
+				surfaceInfo.speedModifier = std::nullopt;
+			}
+
+			const auto [it, inserted] = mapData.surfaceTypes.emplace(surfaceType, std::move(surfaceInfo));
+
+			if (!inserted)
+				return false;
+		}
+
+		return true;
+	}
+
+	bool LoadTiles(const json& mapJson, MapData& mapData)
+	{
+		if (!mapJson.contains("tiles") || !mapJson["tiles"].is_array())
+			return false;
+
+		const auto& tilesJson = mapJson["tiles"];
+
+		const size_t expectedTileCount = static_cast<size_t>(mapData.width) * static_cast<size_t>(mapData.height);
+
+		if (tilesJson.size() != expectedTileCount)
+			return false;
+
+		mapData.tiles.reserve(expectedTileCount);
+
+		for (const auto& tileJson : tilesJson)
+		{
+			SurfaceType surfaceType;
+
+			const int id = tileJson.get<int>();
+
+			if (!IdToSurfaceType(id, surfaceType))
+				return false;
+
+			if (!mapData.surfaceTypes.contains(surfaceType))
+				return false;
+
+			mapData.tiles.push_back({ surfaceType });
+		}
+
+		return true;
+	}
+
+	bool LoadObjectTypes(const json& mapJson, MapData& mapData)
+	{
+		if (!mapJson.contains("objectTypes") || !mapJson["objectTypes"].is_array())
+			return false;
+
+		for (const auto& objectJson : mapJson["objectTypes"])
+		{
+			ObjectType objectType;
+
+			const int id = objectJson.at("id").get<int>();
+
+			if (!IdToObjectType(id, objectType))
+				return false;
+
+			ObjectTypeData objectTypeData;
+
+			objectTypeData.texture = "txt/" + objectJson.at("texture").get<std::string>();
+
+			const auto& footprintJson = objectJson.at("renderFootprint");
+
+			if (!footprintJson.is_array() || footprintJson.size() != 2)
+				return false;
+
+			objectTypeData.renderFootprintSize = {
+				footprintJson[0].get<float>(),
+				footprintJson[1].get<float>()
+			};
+
+			const bool hasCollisionOffset = objectJson.contains("collisionOffset");
+			const bool hasCollisionSize = objectJson.contains("collisionSize");
+
+			if (hasCollisionOffset != hasCollisionSize)
+				return false;
+
+			if (hasCollisionOffset)
+			{
+				const auto& offsetJson = objectJson["collisionOffset"];
+				const auto& sizeJson = objectJson["collisionSize"];
+
+				if (!offsetJson.is_array() || offsetJson.size() != 2)
+					return false;
+
+				if (!sizeJson.is_array() || sizeJson.size() != 2)
+					return false;
+
+				Rect collision;
+
+				collision.position = {
+					offsetJson[0].get<float>(),
+					offsetJson[1].get<float>()
+				};
+
+				collision.size = {
+					sizeJson[0].get<float>(),
+					sizeJson[1].get<float>()
+				};
+
+				if (collision.width() <= 0.0f || collision.height() <= 0.0f)
+					return false;
+
+				objectTypeData.collision = collision;
+			}
+			else
+			{
+				objectTypeData.collision = std::nullopt;
+			}
+
+			const bool interactable = objectJson.contains("interaction");
+
+			if (interactable)
+			{
+				InteractionParams inter;
+
+				const auto& interactionJson = objectJson.at("interaction");
+				if (!interactionJson.contains("text"))
+					return false;
+				inter.text = interactionJson.at("text").get<std::string>();
+
+				objectTypeData.interaction = inter;
+			}
+			else
+			{
+				objectTypeData.interaction = std::nullopt;
+			}
+
+			const auto [it, inserted] = mapData.objectTypes.emplace(objectType, std::move(objectTypeData));
+
+			if (!inserted)
+				return false;
+		}
+
+		return true;
+	}
+
+	bool LoadObjects(const json& mapJson, MapData& mapData)
+	{
+		if (!mapJson.contains("objects") || !mapJson["objects"].is_array())
+			return false;
+
+		const auto& objectsJson = mapJson["objects"];
+
+		mapData.objects.reserve(objectsJson.size());
+
+		for (const auto& objectJson : objectsJson)
+		{
+			ObjectInstanceData objectData;
+
+			const int typeId = objectJson.at("type").get<int>();
+
+			if (!IdToObjectType(typeId, objectData.type))
+				return false;
+
+			if (!mapData.objectTypes.contains(objectData.type))
+				return false;
+
+			const auto& positionJson = objectJson.at("position");
+
+			if (!positionJson.is_array() || positionJson.size() != 2)
+				return false;
+
+			objectData.position = {
+				positionJson[0].get<float>(),
+				positionJson[1].get<float>()
+			};
+
+			mapData.objects.push_back(objectData);
+		}
+
+		return true;
+	}
 }
 
-bool MapLoader::Load(const char* path, MapData& mapData)
+bool MapLoader::Load(const std::filesystem::path& path, MapData& mapData)
 {
 	std::ifstream file(path);
 
 	if (!file.is_open())
 		return false;
 
-	MapData loadedMap;
-
-	if(!LoadMap(file, loadedMap))
-		return false;
-
-	if (!LoadObjects(file, loadedMap))
-		return false;
-
-	mapData = std::move(loadedMap);
-
-	return true;
-}
-
-bool MapLoader::LoadMap(std::ifstream& file, MapData& mapData)
-{
-	std::string header;
-	int typesCount = 0;
-
-	if (!(file >> header >> typesCount))
-		return false;
-
-	if (header != "SURFACE_TYPES" || typesCount <= 0)
-		return false;
-
-	for (int i = 0; i < typesCount; i++)
+	try
 	{
-		SurfaceType surfaceType;
-		SurfaceInfo surfData;
-		if (!LoadSurfaceType(file, surfaceType, surfData))
+		json mapJson;
+		file >> mapJson;
+
+		MapData loadedMap;
+
+		loadedMap.width = mapJson.at("width").get<int>();
+		loadedMap.height = mapJson.at("height").get<int>();
+
+		if (loadedMap.width <= 0 || loadedMap.height <= 0)
 			return false;
 
-		const auto [it, inserted] = mapData.surfaceTypes.emplace(surfaceType, std::move(surfData));
-
-		if (!inserted)
-			return false;
-	}
-
-	int width = 0;
-	int height = 0;
-
-	if (!(file >> width >> height))
-		return false;
-
-	if (width <= 0 || height <= 0)
-		return false;
-
-	mapData.width = width;
-	mapData.height = height;
-	mapData.tiles.reserve(static_cast<size_t>(width) * height);
-
-	std::string row;
-
-	for (int y = 0; y < height; ++y)
-	{
-		if (!(file >> row))
+		if (!LoadSurfaceTypes(mapJson, loadedMap))
 			return false;
 
-		if (row.size() != static_cast<size_t>(width))
+		if (!LoadTiles(mapJson, loadedMap))
 			return false;
 
-		for (char symbol : row)
-		{
-			SurfaceType surfaceType;
-
-			if (!CharToSurfaceType(symbol, surfaceType) || !mapData.surfaceTypes.contains(surfaceType))
-				return false;
-
-			mapData.tiles.push_back({ surfaceType });
-		}
-	}
-
-	return true;
-}
-
-bool MapLoader::LoadSurfaceType(std::ifstream& file, SurfaceType& type, SurfaceInfo& data)
-{
-	char typeSymbol;
-
-	if (!(file >> typeSymbol))
-		return false;
-
-	if (!CharToSurfaceType(typeSymbol, type))
-		return false;
-
-	std::string walkable;
-	if (!(file >> walkable))
-		return false;
-
-	if (walkable == "NOT_WALKABLE")
-	{
-		data.walkable = false;
-		data.speedModifier = std::nullopt;
-	}
-	else if(walkable == "WALKABLE")
-	{
-		float modifier;
-		
-		if (!(file >> modifier) || modifier <= 0.0f)
-			return false;
-		
-		data.walkable = true;
-		data.speedModifier = modifier;
-	}
-	else
-		return false;
-
-	std::string texturePath;
-	if (!(file >> texturePath))
-		return false;
-
-	data.texture = std::move(texturePath);
-
-	return true;
-}
-
-bool MapLoader::LoadObjects(std::ifstream& file, MapData& mapData)
-{
-	std::string header;
-	int typesCount = 0;
-
-	if (!(file >> header >> typesCount))
-		return false;
-
-	if (header != "OBJECT_TYPES" || typesCount < 0)
-		return false;
-
-	for (int i = 0; i < typesCount; i++)
-	{
-		ObjectType type;
-		ObjectTypeData typeData;
-
-		if(!LoadObjectType(file, type, typeData))
+		if (!LoadObjectTypes(mapJson, loadedMap))
 			return false;
 
-		const auto [it, inserted] = mapData.objectTypes.emplace(type, std::move(typeData));
-
-		if (!inserted)
-			return false;
-	}
-
-	int objectCount = 0;
-
-	if (!(file >> header >> objectCount))
-		return false;
-
-	if (header != "OBJECTS" || objectCount < 0)
-		return false;
-
-	mapData.objects.reserve(objectCount);
-
-	for (int i = 0; i < objectCount; i++)
-	{
-		ObjectInstanceData obj;
-		
-		if (!LoadObject(file, obj) || !mapData.objectTypes.contains(obj.type))
+		if (!LoadObjects(mapJson, loadedMap))
 			return false;
 
-		mapData.objects.push_back(obj);
-	}
-	return true;
-}
+		mapData = std::move(loadedMap);
 
-bool MapLoader::LoadObjectType(std::ifstream& file, ObjectType& type, ObjectTypeData& data)
-{
-	char typeSymbol;
-
-	if (!(file >> typeSymbol >> data.renderFootprintSize.x >> data.renderFootprintSize.y))
-		return false;
-
-	if (!CharToObjectType(typeSymbol, type))
-		return false;
-
-	std::string collisionType;
-
-	if (!(file >> collisionType))
-		return false;
-
-	if (collisionType == "NO_COLLISION")
-	{
-		data.collision = std::nullopt;
 		return true;
 	}
-
-	if (collisionType != "COLLISION")
+	catch (const json::exception&)
+	{
 		return false;
-
-	Rect collision;
-
-	if (!(file >> collision.x() >> collision.y() >> collision.width() >> collision.height()))
-		return false;
-
-	if (collision.width() <= 0.0f || collision.height() <= 0.0f)
-		return false;
-
-	data.collision = collision;
-
-	return true;
-}
-
-bool MapLoader::LoadObject(std::ifstream& file, ObjectInstanceData& objectData)
-{
-	char type;
-
-	if (!(file >> type >> objectData.position.x >> objectData.position.y))
-		return false;
-
-	if (!CharToObjectType(type, objectData.type))
-		return false;
-
-	return true;
+	}
 }
