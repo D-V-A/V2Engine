@@ -207,6 +207,7 @@ void Application::Render()
 		entity->Render(m_renderer, screenPosition);
 	}
 
+	m_testText.SetText("Теперь оно точно работает!");
 	m_textRenderer.DrawText(m_testText, { 20.0f, 20.0f });
 
 	m_renderer.Present();

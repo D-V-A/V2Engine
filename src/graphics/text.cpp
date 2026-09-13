@@ -19,3 +19,24 @@ bool Text::Initialize(TextRenderer& textRenderer, Font& font, const std::string&
 
 	return true;
 }
+
+bool Text::SetText(const std::string& text)
+{
+	return TTF_SetTextString(m_text, text.c_str(), 0);
+}
+
+bool Text::SetColor(const Color& color)
+{
+	return TTF_SetTextColor(m_text, color.r, color.g, color.b, color.a);
+}
+
+Vector2f Text::GetSize() const
+{
+	int width = 0;
+	int height = 0;
+
+	if (!TTF_GetTextSize(m_text, &width, &height))
+		return {};
+
+	return { static_cast<float>(width), static_cast<float>(height) };
+}
