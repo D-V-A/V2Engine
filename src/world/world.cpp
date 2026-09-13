@@ -69,18 +69,10 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 	{
 		const ObjectTypeData& typeData = mapInfo.objectTypes.at(objectInstance.type);
 
-		std::optional<std::string> interactionText;
-		if (typeData.interaction)
-			interactionText = typeData.interaction->text;
-
-		WorldObject object(
-			objectInstance.position,
-			typeData.renderFootprintSize,
-			typeData.collision,
-			interactionText);
+		WorldObject object(objectInstance.position, typeData.renderFootprintSize, typeData.collision, typeData.states);
 
 		const auto texturePath = GetAssetPath(typeData.texture);
-		
+
 		if (!object.Initialize(renderer, texturePath.string().c_str()))
 			return false;
 

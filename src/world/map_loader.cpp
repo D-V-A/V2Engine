@@ -42,19 +42,19 @@ namespace
 	{
 		switch (id)
 		{
-		case 0:
+		case 1:
 			objectType = ObjectType::Crate;
 			return true;
 
-		case 1:
+		case 2:
 			objectType = ObjectType::Tree;
 			return true;
 
-		case 2:
+		case 3:
 			objectType = ObjectType::Rock;
 			return true;
 
-		case 3:
+		case 4:
 			objectType = ObjectType::Bush;
 			return true;
 
@@ -138,6 +138,57 @@ namespace
 		return true;
 	}
 
+	bool LoadObjectStates(const json& objectJson, ObjectTypeData& objectTypeData)
+	{
+		if (!objectJson.contains("states"))
+			return true;
+
+		const auto& statesJson = objectJson["states"];
+
+		if (!statesJson.is_array())
+			return false;
+
+		objectTypeData.states.reserve(statesJson.size());
+
+		for (const auto& stateJson : statesJson)
+		{
+			WorldObjectState stateData;
+
+			if (stateJson.contains("texture"))
+				stateData.texture = stateJson.at("texture").get<std::string>();
+
+			if (stateJson.contains("interaction"))
+			{
+				const auto& interactionJson = stateJson.at("interaction");
+
+				if (!interactionJson.is_object())
+					return false;
+
+				WorldObjectInteraction interaction;
+
+				interaction.text = interactionJson.at("text").get<std::string>();
+
+				if (interactionJson.contains("nextState"))
+					interaction.nextState = interactionJson.at("nextState").get<size_t>();
+
+				stateData.interaction = std::move(interaction);
+			}
+
+			objectTypeData.states.push_back(std::move(stateData));
+		}
+
+		for (const WorldObjectState& state : objectTypeData.states)
+		{
+			if (state.interaction && state.interaction->nextState)
+			{
+				if (*state.interaction->nextState >= objectTypeData.states.size())
+					return false;
+			}
+		}
+
+		return true;
+	}
+	
 	bool LoadObjectTypes(const json& mapJson, MapData& mapData)
 	{
 		if (!mapJson.contains("objectTypes") || !mapJson["objectTypes"].is_array())
@@ -205,21 +256,8 @@ namespace
 				objectTypeData.collision = std::nullopt;
 			}
 
-			if (objectJson.contains("interaction")) 
-			{
-				InteractionParams inter;
-
-				const auto& interactionJson = objectJson.at("interaction");
-				if (!interactionJson.contains("text"))
-					return false;
-				inter.text = interactionJson.at("text").get<std::string>();
-
-				objectTypeData.interaction = inter;
-			}
-			else
-			{
-				objectTypeData.interaction = std::nullopt;
-			}
+			if (!LoadObjectStates(objectJson, objectTypeData))
+				return false;
 
 			const auto [it, inserted] = mapData.objectTypes.emplace(objectType, std::move(objectTypeData));
 

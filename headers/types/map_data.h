@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 
+#include "types/world_object_state.h"
 #include "types/vector2f.h"
 #include "types/rect.h"
 
@@ -41,17 +42,12 @@ enum class ObjectType
 	Bush
 };
 
-struct InteractionParams
-{
-	std::string text;
-};
-
 struct ObjectTypeData
 {
 	Vector2f renderFootprintSize{};
-	std::string texture;
+	std::string texture;//base texture
 	std::optional<Rect> collision;
-	std::optional<InteractionParams> interaction;
+	std::vector<WorldObjectState> states;
 };
 
 struct ObjectInstanceData

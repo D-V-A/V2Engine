@@ -167,7 +167,9 @@ void Application::FindInteraction(const Vector2f& position)
 
 	if (interactionTarget)
 	{
-		m_interactionPopup.SetText("[E] " + interactionTarget->GetInteractionText().value());
+		const WorldObjectInteraction* interaction = interactionTarget->GetInteraction();
+		m_interactionPopup.SetText("[E] " + interaction->text);
+
 		m_interactionPopup.SetVisible(true);
 
 		const Rect bounds = interactionTarget->GetRenderOrderBounds();

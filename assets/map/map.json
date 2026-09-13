@@ -34,18 +34,29 @@
 	
 	"objectTypes":[
 		{
-			"id": 0,
+			"id": 1,
 			"name": "crate",
 			"texture": "txt/crate.png",
-			"renderFootprint": [1.0, 1.0],
-			"collisionOffset": [-1.0, -1.0],
-			"collisionSize": [1.0, 1.0],
-			"interaction": {
-				"text": "Open crate"
-			}
+			"renderFootprint": [ 1.0, 1.0 ],
+			"collisionOffset": [ -1.0, -1.0 ],
+			"collisionSize": [ 1.0, 1.0 ],
+
+			"states": [
+				{
+					"name": "closed",
+					"interaction": {
+						"text": "Open crate",
+						"nextState": 1
+					}
+				},
+				{
+					"name": "empty",
+					"texture": "txt/crate_empty.png"
+				}
+			]
 		},
 		{
-			"id": 1,
+			"id": 2,
 			"name": "tree",
 			"texture": "txt/tree.png",
 			"renderFootprint": [1.5, 1.5],
@@ -53,7 +64,7 @@
 			"collisionSize": [0.6, 0.6]
 		},
 		{
-			"id": 2,
+			"id": 3,
 			"name": "rock",
 			"texture": "txt/rock.png",
 			"renderFootprint": [0.5, 0.5],
@@ -61,7 +72,7 @@
 			"collisionSize": [0.5, 0.5]
 		},		
 		{
-			"id": 3,
+			"id": 4,
 			"name": "bush",
 			"texture": "txt/bush.png",
 			"renderFootprint": [0.75, 0.75]
@@ -103,47 +114,47 @@
 
 	"objects": [
 		{
-			"type": 1,
+			"type": 2,
 			"position": [1.90284, 9.59239]
 		},
 		{
-			"type": 0,
+			"type": 1,
 			"position": [5.0, 5.0]
 		},	
 		{
-			"type": 2,
+			"type": 3,
 			"position": [6.57601, 21.4552]
 		},
 		{
-			"type": 0,
+			"type": 1,
 			"position": [8.45144, 26.0198]
 		},
 		{
-			"type": 2,
+			"type": 3,
 			"position": [18.9716, 23.7141]
 		},
 		{
-			"type": 2,
+			"type": 3,
 			"position": [1.38699, 29.5846]
 		},
 		{
-			"type": 3,
+			"type": 4,
 			"position": [4.27084, 12.6316]
 		},
 		{
-			"type": 0,
+			"type": 1,
 			"position": [13.2929, 27.1229]
 		},
 		{
-			"type": 1,
+			"type": 2,
 			"position": [9.19314, 15.7892]
 		},
 		{
-			"type": 1,
+			"type": 2,
 			"position": [3.65152, 29.6518]
 		},
 		{
-			"type": 2,
+			"type": 3,
 			"position": [16.7871, 22.4295]
 		}
 	]

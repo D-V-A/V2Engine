@@ -6,10 +6,10 @@
 
 #include "graphics/renderer.h"
 
-WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, std::optional<std::string> interactionText)
+WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, const std::vector<WorldObjectState>& states)
 	: Entity(position, renderFootprintSize),
 	m_collisionRect(collisionRect),
-	m_interactionText(interactionText)
+	m_states(states)
 {}
 
 bool WorldObject::Initialize(Renderer& renderer, const char* texturePath)
@@ -51,12 +51,30 @@ void WorldObject::Render(Renderer& renderer, const Vector2f& screenPosition) con
 
 bool WorldObject::IsInteractable() const
 {
-	return m_interactionText.has_value();
+	const WorldObjectState* state = GetCurrentState();
+
+	if (!state)
+		return false;
+
+	return state->interaction.has_value();
 }
 
-const std::optional<std::string>& WorldObject::GetInteractionText() const 
+const WorldObjectInteraction* WorldObject::GetInteraction() const
 {
-	return m_interactionText;
+	const WorldObjectState* state = GetCurrentState();
+
+	if (!state || !state->interaction)
+		return nullptr;
+
+	return &*state->interaction;
+}
+
+const WorldObjectState* WorldObject::GetCurrentState() const
+{
+	if (m_states.empty())
+		return nullptr;
+
+	return &m_states[m_currentState];
 }
 
 Rect WorldObject::GetInteractionRect() const
