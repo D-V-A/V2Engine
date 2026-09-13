@@ -1,5 +1,6 @@
 #include "graphics/renderer.h"
-#include "graphics/panel.h"
+
+#include "ui/panel.h"
 
 void Panel::Render(Renderer& renderer)const
 {

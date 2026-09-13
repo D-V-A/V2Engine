@@ -1,11 +1,7 @@
-#include "graphics/font.h"
-#include "graphics/label.h"
 #include "graphics/text_renderer.h"
+#include "graphics/font.h"
 
-bool Label::Initialize(TextRenderer& textRenderer, Font& font, const std::string& text)
-{
-	return m_text.Initialize(textRenderer, font, text);
-}
+#include "ui/label.h"
 
 bool Label::Initialize(TextRenderer& textRenderer, Font& font)
 {

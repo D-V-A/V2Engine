@@ -12,7 +12,6 @@ class TextRenderer;
 class Label
 {
 public:
-	bool Initialize(TextRenderer& textRenderer, Font& font, const std::string& text);
 	bool Initialize(TextRenderer& textRenderer, Font& font);
 
 	bool SetText(const std::string& text);

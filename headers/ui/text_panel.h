@@ -1,7 +1,16 @@
 #pragma once
 
-#include "graphics/panel.h"
-#include "graphics/label.h"
+#include <string>
+
+#include "ui/panel.h"
+#include "ui/label.h"
+
+#include "types/vector2f.h"
+#include "types/colors.h"
+
+class Font;
+class Renderer;
+class TextRenderer;
 
 class TextPanel
 {

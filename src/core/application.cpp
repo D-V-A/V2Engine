@@ -58,7 +58,12 @@ bool Application::Initialize()
 		return false;
 	}
 
-	m_testTextPanel.SetText("Работаем, пацаны!");
+	if (!m_testTextPanel.SetText("Работаем, пацаны!"))
+	{
+		std::cerr << "Failed to set text panel text: " << SDL_GetError() << '\n';
+
+		return false;
+	}
 	m_testTextPanel.SetPosition({ 15.0f, 15.0f });
 	m_testTextPanel.SetTextColor(GetColor(Colors::Yellow));
 	m_testTextPanel.SetBackgroundColor(GetColor(Colors::Black));
