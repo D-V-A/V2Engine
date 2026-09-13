@@ -24,7 +24,7 @@ public:
 	void SetPadding(const Vector2f& padding);
 	void SetVisible(bool vis) { m_visible = vis; }
 
-	Vector2f GetSize() { return m_panel.GetSize(); }
+	Vector2f GetSize() const { return m_panel.GetSize(); }
 
 	void Render(Renderer& renderer, TextRenderer& textRenderer) const;
 
