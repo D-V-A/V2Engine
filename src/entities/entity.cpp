@@ -1,9 +1,5 @@
 #include "entities/entity.h"
 
-Entity::Entity(Vector2f pos) : m_position(pos)
-{
-}
-
 Entity::Entity(Vector2f pos, Vector2f renderFootprintSize) : m_position(pos)
 {
 	m_renderOrderBounds.position = { -renderFootprintSize.x, -renderFootprintSize.y };

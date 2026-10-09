@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cassert>
 #include <limits>
 #include <cmath>
 
@@ -16,20 +15,20 @@
 
 #include "math/rect_utils.h"
 
-InitializationResults World::Initialize(Renderer& renderer, const char* mapPath)
+InitializationResult World::Initialize(Renderer& renderer, const char* mapPath)
 {
 	MapData mapLoadData;
 
 	if (!MapLoader::Load(mapPath, mapLoadData))
-		return InitializationResults::InfoLoadFail;
+		return InitializationResult::InfoLoadFail;
 
 	if (!InitializeMap(renderer, mapLoadData))
-		return InitializationResults::MapInitFail;
+		return InitializationResult::MapInitFail;
 
 	if (!InitializeObjects(renderer, mapLoadData))
-		return InitializationResults::ObjTxtFail;
+		return InitializationResult::ObjectInitFail;
 
-	return InitializationResults::Success;
+	return InitializationResult::Success;
 }
 
 bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)

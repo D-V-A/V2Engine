@@ -4,6 +4,8 @@
 
 #include "world/isometric.h"
 
+#include "types/vector2f.h"
+
 #include "graphics/renderer.h"
 #include "graphics/texture.h"
 

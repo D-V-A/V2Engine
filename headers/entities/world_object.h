@@ -1,15 +1,16 @@
 #pragma once
 
 #include <optional>
-#include <string>
 #include <vector>
 
 #include "entities/entity.h"
 
 #include "types/world_object_state.h"
+#include "types/rect.h"
 
-class Vector2f;
+struct Vector2f;
 class Texture;
+class Renderer;
 
 class WorldObject : public Entity
 {

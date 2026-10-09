@@ -1,9 +1,11 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 
 #include "types/rect.h"
 #include "types/vector2f.h"
+
 
 inline float GetRight(const Rect& rect)
 {

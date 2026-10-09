@@ -11,18 +11,18 @@
 
 class Renderer;
 
-enum InitializationResults
+enum InitializationResult
 {
 	Success,
 	InfoLoadFail,
 	MapInitFail,
-	ObjTxtFail
+	ObjectInitFail
 };
 
 class World
 {
 public:
-	InitializationResults Initialize(Renderer& renderer, const char* mapPath);
+	InitializationResult Initialize(Renderer& renderer, const char* mapPath);
 	void Render(Renderer& renderer, const Vector2f& origin) const;
 
 public:

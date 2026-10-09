@@ -44,14 +44,14 @@ bool Application::Initialize()
 	}
 
 	std::filesystem::path assetPath = GetAssetPath("fnt/PTSans-Regular.ttf");
-	if (!m_fonts.Load(assetPath, 24.0f))
+	if (!m_font.Load(assetPath, 24.0f))
 	{
 		std::cerr << "Failed to init font: " << SDL_GetError() << '\n';
 
 		return false;
 	}
 
-	if (!m_interactionPopup.Initialize(m_textRenderer, m_fonts))
+	if (!m_interactionPopup.Initialize(m_textRenderer, m_font))
 	{
 		std::cerr << "Failed to create text panel: " << SDL_GetError() << '\n';
 
@@ -70,19 +70,19 @@ bool Application::Initialize()
 	m_interactionPopup.SetVisible(false);
 
 	assetPath = GetAssetPath("map/map.json");
-	InitializationResults worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
-	if (worldInitRes != InitializationResults::Success)
+	InitializationResult worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
+	if (worldInitRes != InitializationResult::Success)
 	{
 		switch (worldInitRes)
 		{
-		case(InitializationResults::InfoLoadFail):
+		case(InitializationResult::InfoLoadFail):
 			std::cerr << "Failed to load map info: " << assetPath << '\n';
 			break;
-		case(InitializationResults::MapInitFail):
+		case(InitializationResult::MapInitFail):
 			std::cerr << "Failed to init map: " << SDL_GetError() << '\n';
 			break;
-		case(InitializationResults::ObjTxtFail):
-			std::cerr << "Failed to init object model: " << SDL_GetError() << '\n';
+		case(InitializationResult::ObjectInitFail):
+			std::cerr << "Failed to init objects: " << SDL_GetError() << '\n';
 			break;
 		}
 
@@ -159,12 +159,12 @@ void Application::Update(float deltaTime)
 	if (m_input.GetInteractionPressed())
 		m_world.Interact(m_player.GetCollisionRect());
 
-	FindInteraction(m_player.GetPosition());
+	FindInteraction();
 
 	m_player.UpdateAnimation(deltaTime);
 }
 
-void Application::FindInteraction(const Vector2f& position)
+void Application::FindInteraction()
 {
 	const WorldObject* interactionTarget = m_world.FindInteractionTarget(m_player.GetCollisionRect());
 

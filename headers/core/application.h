@@ -31,7 +31,7 @@ private:
 	void Update(float deltaTime);
 	void MovePlayer(float deltaTime);
 	void UpdatePlayerViewDirection();
-	void FindInteraction(const Vector2f& position);
+	void FindInteraction();
 
 	void Render();
 
@@ -46,7 +46,7 @@ private:
 	Player m_player;
 	Input m_input;
 	Camera m_camera;
-	Font m_fonts;
+	Font m_font;
 	TextPanel m_interactionPopup;
 
 	bool m_isRunning = false;
