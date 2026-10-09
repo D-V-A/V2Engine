@@ -17,7 +17,7 @@ class WorldObject : public Entity
 {
 public:
 	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect,
-		const std::vector<WorldObjectRuntimeState> states, std::shared_ptr<Texture> baseTexture);
+		std::vector<WorldObjectRuntimeState> states, std::shared_ptr<Texture> baseTexture);
 public:
 	bool HasCollision() const;
 	Rect GetCollisionRect() const;
@@ -37,6 +37,6 @@ private:
 
 	std::optional<Rect> m_collisionRect;
 
-	const std::vector<WorldObjectRuntimeState> m_states;
+	std::vector<WorldObjectRuntimeState> m_states;
 	size_t m_currentState = 0;
 };

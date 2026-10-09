@@ -11,7 +11,7 @@
 #include "graphics/texture.h"
 
 WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, 
-						const std::vector<WorldObjectRuntimeState> states, std::shared_ptr<Texture> baseTexture)
+						std::vector<WorldObjectRuntimeState> states, std::shared_ptr<Texture> baseTexture)
 	: Entity(position, renderFootprintSize),
 	m_collisionRect(collisionRect),
 	m_states(std::move(states)),

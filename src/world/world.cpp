@@ -39,9 +39,7 @@ bool World::InitializeMap(ResourceManager& resManager, MapData& mapInfo)
 	{
 		std::shared_ptr<Texture> txt;
 
-		auto assetPath = GetAssetPath(it->second.texture);
-
-		txt = resManager.GetTexture(assetPath);
+		txt = resManager.GetTexture(it->second.texture);
 		if (!txt)
 			return false;
 		

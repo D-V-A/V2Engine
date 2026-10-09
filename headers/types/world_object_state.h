@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 
-//#include "graphics/texture.h"
-
 class Texture;
 
 struct WorldObjectInteraction
