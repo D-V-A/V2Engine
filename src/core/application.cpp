@@ -70,7 +70,7 @@ bool Application::Initialize()
 	m_interactionPopup.SetVisible(false);
 
 	assetPath = GetAssetPath("map/map.json");
-	InitializationResult worldInitRes = m_world.Initialize(m_renderer, assetPath.string().c_str());
+	InitializationResult worldInitRes = m_world.Initialize(m_resourceManager, assetPath.string().c_str());
 	if (worldInitRes != InitializationResult::Success)
 	{
 		switch (worldInitRes)
@@ -89,7 +89,7 @@ bool Application::Initialize()
 		return false;
 	}
 
-	if (!m_player.Initialize(m_renderer))
+	if (!m_player.Initialize(m_resourceManager, "player"))
 	{
 		std::cerr << "Failed to init player model: " << SDL_GetError() << '\n';
 

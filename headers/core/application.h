@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "core/resource_manager.h"
 #include "core/sdl_context.h"
 #include "core/input.h"
 
@@ -41,6 +42,8 @@ private:
 	Window m_window;
 	Renderer m_renderer;
 	TextRenderer m_textRenderer;
+
+	ResourceManager m_resourceManager{ m_renderer };
 
 	World m_world;
 	Character m_player;

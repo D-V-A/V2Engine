@@ -14,9 +14,9 @@ Character::Character() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 	m_renderOrderBounds = m_collisionRect;
 }
 
-bool Character::Initialize(Renderer& renderer)
+bool Character::Initialize(ResourceManager& resManager, std::string charName)
 {	
-	return m_animator.InitializeTextures(renderer, "player");
+	return m_animator.InitializeTextures(resManager, charName);
 }
 
 float Character::GetViewDirectionPenalty() const

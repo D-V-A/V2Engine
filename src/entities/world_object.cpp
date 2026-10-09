@@ -1,4 +1,5 @@
 #include <cassert>
+#include <utility>
 
 #include "entities/world_object.h"
 
@@ -10,11 +11,11 @@
 #include "graphics/texture.h"
 
 WorldObject::WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect, 
-						const std::vector<WorldObjectRuntimeState>& states, const Texture& baseTexture)
+						const std::vector<WorldObjectRuntimeState>& states, std::shared_ptr<Texture> baseTexture)
 	: Entity(position, renderFootprintSize),
 	m_collisionRect(collisionRect),
-	m_states(states),
-	m_currentTexture(&baseTexture)	
+	m_states(std::move(states)),
+	m_currentTexture(std::move(baseTexture))
 {
 	if (!m_states.empty() && m_states[0].texture)
 		m_currentTexture = m_states[0].texture;

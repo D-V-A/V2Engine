@@ -1,6 +1,7 @@
 #pragma once
 
 #include<vector>
+#include <memory>
 
 #include "graphics/texture.h"
 
@@ -9,6 +10,7 @@
 #include "types/vector2f.h"
 #include "types/map_data.h"
 
+class ResourceManager;
 class Renderer;
 
 enum InitializationResult
@@ -22,7 +24,7 @@ enum InitializationResult
 class World
 {
 public:
-	InitializationResult Initialize(Renderer& renderer, const char* mapPath);
+	InitializationResult Initialize(ResourceManager& resManager, const char* mapPath);
 	void Render(Renderer& renderer, const Vector2f& origin) const;
 
 public:
@@ -40,12 +42,11 @@ public:
 
 	bool Interact(const Rect& interactionSource);
 private:
-	bool InitializeMap(Renderer& renderer, MapData& mapInfo);
+	bool InitializeMap(ResourceManager& resManager, MapData& mapInfo);
 
-	bool InitializeObjects(Renderer& renderer, const MapData& mapInfo);
-	const Texture* LoadObjectTexture(Renderer& renderer, const std::string& texturePath);
+	bool InitializeObjects(ResourceManager& resManager, const MapData& mapInfo);
 
-	const Texture& GetSurfaceTexture(SurfaceType surface) const { return m_surfaceTextures.at(surface); }
+	const Texture& GetSurfaceTexture(SurfaceType surface) const { return *m_surfaceTextures.at(surface); }
 
 	struct SweepHit
 	{
@@ -66,8 +67,8 @@ private:
 
 	std::vector<TileData> m_tiles;
 	std::map<SurfaceType, SurfaceInfo> m_surfaceTypes;
-	std::map<SurfaceType, Texture> m_surfaceTextures;
+	std::map<SurfaceType, std::shared_ptr<Texture>> m_surfaceTextures;
 
 	std::vector<WorldObject> m_objects;
-	std::map<std::string, Texture> m_objectTextures;
+	std::map<std::string, std::shared_ptr<Texture>> m_objectTextures;
 };

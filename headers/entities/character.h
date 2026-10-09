@@ -10,13 +10,15 @@
 
 struct Vector2i;
 
+class ResourceManager;
+
 class Character: public Entity
 {
 public:
 	Character();
 
 public:	
-	bool Initialize(Renderer& renderer);
+	bool Initialize(ResourceManager& resManager, std::string charName);
 
 	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const;
 

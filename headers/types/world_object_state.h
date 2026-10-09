@@ -19,6 +19,6 @@ struct WorldObjectState
 
 struct WorldObjectRuntimeState
 {
-	const Texture* texture = nullptr;
+	std::shared_ptr<Texture> texture;
 	std::optional<WorldObjectInteraction> interaction;
 };

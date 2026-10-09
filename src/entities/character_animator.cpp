@@ -5,12 +5,11 @@
 
 #include "world/isometric.h"
 
-#include "graphics/renderer.h"
-
+#include "core/resource_manager.h"
 #include "core/assets.h"
 
 
-bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charName)
+bool CharacterAnimator::InitializeTextures(ResourceManager& resManager, std::string charName)
 {
 	for (int animationsCount = 0; animationsCount < static_cast<int>(CharacterAnimation::Count); animationsCount++)
 	{		
@@ -41,7 +40,8 @@ bool CharacterAnimator::InitializeTextures(Renderer& renderer, std::string charN
 
 		std::filesystem::path assetPath = GetAssetPath(strPath);
 
-		if (!m_textures[animationsCount].Load(renderer, assetPath.string().c_str()))
+		m_textures[animationsCount] = resManager.GetTexture(assetPath);
+		if (!m_textures[animationsCount])
 			return false;
 	}
 	return true;
@@ -160,7 +160,7 @@ void CharacterAnimator::SelectAnimation(CharacterState state, Direction movement
 
 const Texture& CharacterAnimator::GetCurrentTexture() const
 {
-	return m_textures[static_cast<size_t>(m_animation)];
+	return *m_textures[static_cast<size_t>(m_animation)];
 };
 
 Rect CharacterAnimator::GetCurrentFrame(Direction viewDirection) const

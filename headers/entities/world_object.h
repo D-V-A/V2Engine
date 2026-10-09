@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <memory>
 #include <vector>
 
 #include "entities/entity.h"
@@ -16,7 +17,7 @@ class WorldObject : public Entity
 {
 public:
 	WorldObject(Vector2f position, Vector2f renderFootprintSize, std::optional<Rect> collisionRect,
-		const std::vector<WorldObjectRuntimeState>& states, const Texture& baseTexture);
+		const std::vector<WorldObjectRuntimeState>& states, std::shared_ptr<Texture> baseTexture);
 public:
 	bool HasCollision() const;
 	Rect GetCollisionRect() const;
@@ -32,7 +33,7 @@ public:
 private:
 	const WorldObjectRuntimeState* GetCurrentState() const;
 
-	const Texture* m_currentTexture = nullptr;
+	std::shared_ptr<Texture> m_currentTexture;
 
 	std::optional<Rect> m_collisionRect;
 

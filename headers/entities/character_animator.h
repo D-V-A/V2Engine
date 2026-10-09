@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 #include <array>
 
 #include "graphics/texture.h"
@@ -18,11 +19,12 @@ enum class CharacterAnimation
 	Count
 };
 
+class ResourceManager;
 
 class CharacterAnimator
 {
 public:
-	bool InitializeTextures(Renderer& renderer, std::string charName);
+	bool InitializeTextures(ResourceManager& resManager, std::string charName);
 
 	void AddMovement(float dst) { m_moveDistance += dst; }
 	void AddTime(float time)	{ m_animationTime += time; }
@@ -42,7 +44,7 @@ private:
 	float m_moveDistance = 0.0f;
 	int m_currentFrame = 0;
 
-	std::array<Texture, static_cast<size_t>(CharacterAnimation::Count)> m_textures;
+	std::array<std::shared_ptr<Texture>, static_cast<size_t>(CharacterAnimation::Count)> m_textures;
 
 	static constexpr float frameSize = 128.0f;
 	static constexpr int frameCount = 14;

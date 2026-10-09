@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 #include <limits>
 #include <cmath>
 
@@ -8,6 +9,7 @@
 
 #include "graphics/renderer.h"
 
+#include "core/resource_manager.h"
 #include "core/assets.h"
 
 #include "types/map_data.h"
@@ -15,30 +17,32 @@
 
 #include "math/rect_utils.h"
 
-InitializationResult World::Initialize(Renderer& renderer, const char* mapPath)
+InitializationResult World::Initialize(ResourceManager& resManager, const char* mapPath)
 {
 	MapData mapLoadData;
 
 	if (!MapLoader::Load(mapPath, mapLoadData))
 		return InitializationResult::InfoLoadFail;
 
-	if (!InitializeMap(renderer, mapLoadData))
+	if (!InitializeMap(resManager, mapLoadData))
 		return InitializationResult::MapInitFail;
 
-	if (!InitializeObjects(renderer, mapLoadData))
+	if (!InitializeObjects(resManager, mapLoadData))
 		return InitializationResult::ObjectInitFail;
 
 	return InitializationResult::Success;
 }
 
-bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)
+bool World::InitializeMap(ResourceManager& resManager, MapData& mapInfo)
 {
 	for (auto it = mapInfo.surfaceTypes.cbegin(); it != mapInfo.surfaceTypes.cend(); it++)
 	{
-		Texture txt;
+		std::shared_ptr<Texture> txt;
 
 		auto assetPath = GetAssetPath(it->second.texture);
-		if (!txt.Load(renderer, assetPath.string().c_str()))
+
+		txt = resManager.GetTexture(assetPath);
+		if (!txt)
 			return false;
 		
 		const auto [iter, inserted] = m_surfaceTextures.emplace(it->first, std::move(txt));
@@ -47,8 +51,8 @@ bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)
 			return false;
 	}
 
-	m_tileWidth = static_cast<float>(m_surfaceTextures.begin()->second.GetWidth());
-	m_tileHeight = static_cast<float>(m_surfaceTextures.begin()->second.GetHeight());
+	m_tileWidth = static_cast<float>(m_surfaceTextures.begin()->second->GetWidth());
+	m_tileHeight = static_cast<float>(m_surfaceTextures.begin()->second->GetHeight());
 
 	m_width = mapInfo.width;
 	m_height = mapInfo.height;
@@ -59,29 +63,7 @@ bool World::InitializeMap(Renderer& renderer, MapData& mapInfo)
 	return true;
 }
 
-const Texture* World::LoadObjectTexture(Renderer& renderer, const std::string& texturePath)
-{
-	auto it = m_objectTextures.find(texturePath);
-
-	if (it != m_objectTextures.end())
-		return &it->second;
-
-	Texture texture;
-
-	const auto assetPath = GetAssetPath(texturePath);
-
-	if (!texture.Load(renderer, assetPath.string().c_str()))
-		return nullptr;
-
-	const auto [insertedIt, inserted] = m_objectTextures.emplace(texturePath, std::move(texture));
-
-	if (!inserted)
-		return nullptr;
-
-	return &insertedIt->second;
-}
-
-bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
+bool World::InitializeObjects(ResourceManager& resManager, const MapData& mapInfo)
 {
 	m_objects.clear();
 	m_objects.reserve(mapInfo.objects.size());
@@ -90,8 +72,7 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 	{
 		const ObjectTypeData& typeData = mapInfo.objectTypes.at(objectInstance.type);
 
-		const Texture* baseTexture = LoadObjectTexture(renderer, typeData.texture);
-
+		const std::shared_ptr<Texture>baseTexture = resManager.GetTexture(typeData.texture);
 		if (!baseTexture)
 			return false;
 
@@ -100,24 +81,24 @@ bool World::InitializeObjects(Renderer& renderer, const MapData& mapInfo)
 
 		for (const WorldObjectState& stateData : typeData.states)
 		{
-			const Texture* stateTexture = baseTexture;
+			std::shared_ptr<Texture> stateTexture = baseTexture;
 
 			if (stateData.texture)
 			{
-				stateTexture = LoadObjectTexture(renderer, *stateData.texture);
+				stateTexture = resManager.GetTexture(*stateData.texture);
 
 				if (!stateTexture)
 					return false;
 			}
 
 			WorldObjectRuntimeState runtimeState;
-			runtimeState.texture = stateTexture;
+			runtimeState.texture = std::move(stateTexture);
 			runtimeState.interaction = stateData.interaction;
 
 			runtimeStates.push_back(std::move(runtimeState));
 		}
 
-		WorldObject object(objectInstance.position, typeData.renderFootprintSize, typeData.collision, runtimeStates, *baseTexture);
+		WorldObject object(objectInstance.position, typeData.renderFootprintSize, typeData.collision, runtimeStates, baseTexture);
 
 		m_objects.push_back(std::move(object));
 	}
