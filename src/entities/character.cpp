@@ -5,23 +5,23 @@
 
 #include "graphics/renderer.h"
 
-#include "entities/player.h"
+#include "entities/character.h"
 
 #include "types/vector2i.h"
 
-Player::Player() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
+Character::Character() : Entity({ 1.0f, 1.0f }, { 0.5f, 1.0f })
 {	
 	m_renderOrderBounds = m_collisionRect;
 }
 
-bool Player::Initialize(Renderer& renderer)
+bool Character::Initialize(Renderer& renderer)
 {	
 	return m_animator.InitializeTextures(renderer, "player");
 }
 
-float Player::GetViewDirectionPenalty() const
+float Character::GetViewDirectionPenalty() const
 {
-	const int difference = GetDirectionDifference(m_moveDirection, m_viewDirection);
+	const int difference = GetDirectionDifference(m_state.moveDirection, m_state.viewDirection);
 
 	switch (difference)
 	{
@@ -49,15 +49,15 @@ float Player::GetViewDirectionPenalty() const
 	}
 }
 
-float Player::GetStateSpeedModifier() const
+float Character::GetStateSpeedModifier() const
 {
-	switch (m_state)
+	switch (m_state.movement)
 	{
-	case CharacterState::Idle:
+	case CharacterMovement::Idle:
 		return 1.0f;
-	case CharacterState::Walking:
+	case CharacterMovement::Walking:
 		return 1.0f;
-	case CharacterState::Running:
+	case CharacterMovement::Running:
 		return 1.6f;
 	default:
 		assert(false);
@@ -65,7 +65,7 @@ float Player::GetStateSpeedModifier() const
 	}
 }
 
-Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const
+Vector2f Character::CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const
 {
 	const float speed = 
 		(((direction.x != 0 && direction.y != 0) ? 1.4142136f : 2.0f) 
@@ -76,7 +76,7 @@ Vector2f Player::CalculateMovement(float deltaTime, const Vector2i& direction, c
 	return { speed * direction.x * deltaTime, -speed * direction.y * deltaTime };
 }
 
-Rect Player::GetCollisionRectAt(const Vector2f& pos) const
+Rect Character::GetCollisionRectAt(const Vector2f& pos) const
 {
 	Rect result = m_collisionRect;
 	result.x() += pos.x;
@@ -85,12 +85,12 @@ Rect Player::GetCollisionRectAt(const Vector2f& pos) const
 	return result;
 }
 
-Rect Player::GetCollisionRect() const
+Rect Character::GetCollisionRect() const
 {
 	return GetCollisionRectAt(GetPosition());
 }
 
-void Player::MovePlayer(const Vector2f& movement)
+void Character::MoveCharacter(const Vector2f& movement)
 {
 	m_position.x += movement.x;
 	m_position.y += movement.y;
@@ -98,29 +98,29 @@ void Player::MovePlayer(const Vector2f& movement)
 	m_animator.AddMovement(std::sqrt(movement.x * movement.x + movement.y * movement.y));
 }
 
-void Player::SetState(CharacterState state)
+void Character::SetMovement(CharacterMovement move)
 {
-	if (m_state == state)
+	if (m_state.movement == move)
 		return;
 
-	const bool motionToMotion = (m_state != CharacterState::Idle && state != CharacterState::Idle);
+	const bool motionToMotion = (m_state.movement != CharacterMovement::Idle && move != CharacterMovement::Idle);
 
-	m_state = state;
+	m_state.movement = move;
 
 	m_animator.ResetAnimation(!motionToMotion);
 }
 
-void Player::UpdateAnimation(float deltaTime)
+void Character::UpdateAnimation(float deltaTime)
 {
 	m_animator.AddTime(deltaTime);
-	m_animator.SelectAnimation(m_state, m_moveDirection ,m_viewDirection);
+	m_animator.SelectAnimation(m_state, m_state.moveDirection , m_state.viewDirection);
 	m_animator.UpdateAnimation();
 }
 
-void Player::Render(Renderer& renderer, const Vector2f& screenPosition) const
+void Character::Render(Renderer& renderer, const Vector2f& screenPosition) const
 {
 	const Texture& texture = m_animator.GetCurrentTexture();
-	const Rect sourceFrame = m_animator.GetCurrentFrame(m_viewDirection);
+	const Rect sourceFrame = m_animator.GetCurrentFrame(m_state.viewDirection);
 	const float frameSize = m_animator.GetFrameSize();
 
 	const Rect renderRect{

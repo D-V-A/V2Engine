@@ -117,18 +117,18 @@ void CharacterAnimator::SelectAnimation(CharacterState state, Direction movement
 {
 	const int difference = GetDirectionDifference(movementDirection, viewDirection);
 
-	switch (state)
+	switch (state.movement)
 	{
-	case(CharacterState::Idle):
+	case(CharacterMovement::Idle):
 		m_animation = CharacterAnimation::Idle;
 		return;
-	case(CharacterState::Running):
+	case(CharacterMovement::Running):
 		if (difference == 0) 
 		{
 			m_animation = CharacterAnimation::RunForward;
 			return;
 		}
-	case(CharacterState::Walking):
+	case(CharacterMovement::Walking):
 		switch (difference)
 		{
 		case 0:

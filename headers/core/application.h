@@ -15,7 +15,7 @@
 
 #include "ui/text_panel.h"
 
-#include "entities/player.h"
+#include "entities/character.h"
 
 
 class Application
@@ -43,7 +43,7 @@ private:
 	TextRenderer m_textRenderer;
 
 	World m_world;
-	Player m_player;
+	Character m_player;
 	Input m_input;
 	Camera m_camera;
 	Font m_font;

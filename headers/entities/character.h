@@ -10,23 +10,23 @@
 
 struct Vector2i;
 
-class Player: public Entity
+class Character: public Entity
 {
 public:
-	Player();
+	Character();
 
 public:	
 	bool Initialize(Renderer& renderer);
 
 	Vector2f CalculateMovement(float deltaTime, const Vector2i& direction, const float surfaceTypeModifier) const;
 
-	void MovePlayer(const Vector2f& movement);
+	void MoveCharacter(const Vector2f& movement);
 
 	void UpdateAnimation(float deltaTime);
 
-	void SetViewDirection(Direction viewDirection) { m_viewDirection = viewDirection; }
-	void SetMoveDirection(Direction viewDirection) { m_moveDirection = viewDirection; }
-	void SetState(CharacterState state);
+	void SetViewDirection(Direction viewDirection) { m_state.viewDirection = viewDirection; }
+	void SetMoveDirection(Direction viewDirection) { m_state.moveDirection = viewDirection; }
+	void SetMovement(CharacterMovement state);
 
 	Rect GetCollisionRectAt(const Vector2f& position) const;
 	Rect GetCollisionRect() const;
@@ -45,7 +45,5 @@ private:
 
 	Vector2f m_feetPositionInFrame{ 67.0f, 84.0f };//relative to the top-left corner of the frame
 
-	CharacterState m_state = CharacterState::Idle;
-	Direction m_viewDirection = Direction::South;
-	Direction m_moveDirection = Direction::South;
+	CharacterState m_state;
 };

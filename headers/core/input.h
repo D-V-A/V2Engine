@@ -14,11 +14,13 @@ public:
 
 	bool GetInteractionPressed() const { return m_interactionPressed; }
 
+	bool GetAimState() const { return m_aimState; }
 private:
 	Vector2i m_movementDirection{ 0,0 };
 	const bool* m_keyboardState = nullptr;
 
 	Vector2f m_mousePosition;
+	bool m_aimState = false;
 
 	bool m_shiftState = false;
 
