@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <cassert>
 
 #include "entities/character_animator.h"
@@ -6,7 +5,6 @@
 #include "world/isometric.h"
 
 #include "core/resource_manager.h"
-#include "core/assets.h"
 
 
 bool CharacterAnimator::InitializeTextures(ResourceManager& resManager, std::string charName)
@@ -38,9 +36,7 @@ bool CharacterAnimator::InitializeTextures(ResourceManager& resManager, std::str
 			return false;
 		}
 
-		std::filesystem::path assetPath = GetAssetPath(strPath);
-
-		m_textures[animationsCount] = resManager.GetTexture(assetPath);
+		m_textures[animationsCount] = resManager.GetTexture(strPath);
 		if (!m_textures[animationsCount])
 			return false;
 	}

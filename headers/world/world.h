@@ -70,5 +70,4 @@ private:
 	std::map<SurfaceType, std::shared_ptr<Texture>> m_surfaceTextures;
 
 	std::vector<WorldObject> m_objects;
-	std::map<std::string, std::shared_ptr<Texture>> m_objectTextures;
 };
